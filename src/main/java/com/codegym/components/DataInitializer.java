@@ -2,7 +2,7 @@ package com.codegym.components;
 
 
 import com.codegym.entity.Role;
-import com.codegym.repositories.RoleRepository;
+import com.codegym.repository.RoleRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

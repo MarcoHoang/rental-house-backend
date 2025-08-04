@@ -23,7 +23,7 @@ public interface UserMapper {
         return UserResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
-                .name(user.getName())
+                .name(user.getUsername())
                 .phone(user.getPhone())
                 .role(Long.parseLong(user.getRole().getName()))
                 .build();

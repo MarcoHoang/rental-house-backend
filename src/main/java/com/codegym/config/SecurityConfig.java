@@ -1,7 +1,7 @@
 package com.codegym.config;
 
 
-import com.codegym.repositories.UserRepository;
+import com.codegym.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

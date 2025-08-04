@@ -1,4 +1,4 @@
-package com.codegym.controller;
+package com.codegym.controller.api;
 
 
 import com.codegym.dto.ApiResponse;
