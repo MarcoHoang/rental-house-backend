@@ -19,10 +19,10 @@ public class User extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String username;
 
     @Column(unique = true, nullable = false)
     private String email;

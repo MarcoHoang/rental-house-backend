@@ -33,11 +33,18 @@ public class House {
 
     private Double price;
 
+    private double area;
+
     private Double latitude;   // để hiển thị trên bản đồ
     private Double longitude;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private Status status; // AVAILABLE, RENTED, INACTIVE
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "house_type", nullable = false)
+    private HouseType houseType;
 
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HouseImage> images;
@@ -49,6 +56,14 @@ public class House {
         AVAILABLE,
         RENTED,
         INACTIVE
+    }
+
+    public enum HouseType {
+        APARTMENT,
+        VILLA,
+        TOWNHOUSE,
+        BOARDING_HOUSE,
+        WHOLE_HOUSE
     }
 
     @PrePersist

@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
 
+import static com.codegym.constants.RoleConstants.ADMIN;
+
 @Configuration
 public class DataSeeder {
     @Bean
@@ -27,11 +29,11 @@ public class DataSeeder {
 
             // Seed admin user
             if (userRepository.findByUsername("admin").isEmpty()) {
-                Role adminRole = roleRepository.findByName(RoleConstants.ADMIN).orElseThrow();
+                Role adminRole = roleRepository.findByName(ADMIN).orElseThrow();
                 User admin = new User();
                 admin.setUsername("admin");
                 admin.setPassword(passwordEncoder.encode("admin123"));
-                admin.setRoles(Set.of(adminRole));
+                admin.setRole(adminRole);
                 userRepository.save(admin);
             }
         };

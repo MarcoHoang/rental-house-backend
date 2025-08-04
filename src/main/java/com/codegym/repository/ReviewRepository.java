@@ -1,4 +1,7 @@
 package com.codegym.repository;
 
-public class ReviewRepository {
+import com.codegym.entity.Review;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ReviewRepository extends JpaRepository<Review, Long> {
 }

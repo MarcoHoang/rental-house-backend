@@ -38,7 +38,7 @@ public class JwtTokenUtil {
     public String generateToken(User user) throws Exception {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
-        claims.put("name", user.getName());
+        claims.put("name", user.getUsername());
         claims.put("email", user.getEmail());
         claims.put("image", user.getAvatarUrl());
 

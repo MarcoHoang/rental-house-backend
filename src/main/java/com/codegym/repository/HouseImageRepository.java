@@ -1,4 +1,7 @@
 package com.codegym.repository;
 
-public class HouseImageRepository {
+import com.codegym.entity.HouseImage;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface HouseImageRepository extends JpaRepository<HouseImage, Long> {
 }
