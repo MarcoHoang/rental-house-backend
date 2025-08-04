@@ -63,7 +63,7 @@ public class AuthService {
         }
 
         User user = userMapper.toEntity(request, role);
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // encode ở service
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
 
         return ApiResponse.success(StatusCode.SUCCESS, MessageCode.REGISTER_SUCCESS, null);
