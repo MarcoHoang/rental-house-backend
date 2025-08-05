@@ -41,7 +41,7 @@ public class JwtTokenUtil {
         claims.put("name", user.getUsername());
         claims.put("email", user.getEmail());
         claims.put("image", user.getAvatarUrl());
-        claims.put("role", user.getRole().getName());
+        claims.put("role","ROLE_" + user.getRole().getName());
 
         try {
             return Jwts.builder()
