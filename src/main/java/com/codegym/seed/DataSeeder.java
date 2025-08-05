@@ -29,26 +29,28 @@ public class DataSeeder {
 
             // Seed admin user
             if (userRepository.findByUsername("admin").isEmpty()) {
-                // Tìm role ADMIN, nếu không thấy sẽ báo lỗi (đúng vì admin phải có role)
-                Role adminRole = roleRepository.findByName(ADMIN)
+                // Tìm role ADMIN, nếu không thấy sẽ báo lỗi
+                Role adminRole = roleRepository.findByName("ADMIN")
                         .orElseThrow(() -> new RuntimeException("Error: ADMIN role not found."));
 
-                // Dùng Builder để code gọn gàng và dễ đọc hơn
                 User admin = User.builder()
                         .username("admin")
-                        .email("admin@rentalhouse.com") // Bổ sung email
-                        .phone("0000000000") // Bổ sung số điện thoại
-                        .password(passwordEncoder.encode("admin123")) // Mật khẩu đã mã hóa
-                        .role(adminRole) // Gán role
-                        .active(true) // Set tài khoản active
-                        .avatarUrl("https://example.com/default-avatar.png") // Cung cấp avatar mặc định
-                        .facebookAccountId(0) // Cung cấp giá trị mặc định
-                        .googleAccountId(0)   // Cung cấp giá trị mặc định
+                        .email("admin@rentalhouse.com")
+                        .phone("0000000000")
+                        .password(passwordEncoder.encode("admin123"))
+                        .role(adminRole)
+                        .active(true)
+                        .avatarUrl("https://example.com/default-avatar.png")
+                        .facebookAccountId(null)
+                        .googleAccountId(null)
+                        .fullName("Administrator")
+                        .address("System Address")
                         .build();
 
                 userRepository.save(admin);
                 System.out.println("Admin user created successfully!");
             }
+
         };
     }
 }

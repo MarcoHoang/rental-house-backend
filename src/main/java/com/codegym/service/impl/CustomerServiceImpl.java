@@ -1,7 +1,6 @@
 package com.codegym.service.impl;
 
 import com.codegym.dto.response.CustomerDTO;
-import com.codegym.entity.Customer;
 import com.codegym.entity.User;
 import com.codegym.repository.CustomerRepository;
 import com.codegym.repository.UserRepository;
@@ -21,28 +20,27 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private UserRepository userRepository;
 
-    private CustomerDTO toDTO(Customer customer) {
+    private CustomerDTO toDTO(User customer) {
         CustomerDTO dto = new CustomerDTO();
         dto.setId(customer.getId());
         dto.setFullName(customer.getFullName());
         dto.setAddress(customer.getAddress());
         dto.setPhone(customer.getPhone());
-        dto.setAvatar(customer.getAvatar());
-        dto.setUsername(customer.getUser().getUsername());
-        dto.setEmail(customer.getUser().getEmail());
+        dto.setAvatar(customer.getAvatarUrl());
+        dto.setUsername(customer.getUsername());
+        dto.setEmail(customer.getEmail());
         return dto;
     }
 
-    private Customer toEntity(CustomerDTO dto, User user) {
-        Customer customer = new Customer();
-        customer.setId(dto.getId());
-        customer.setUser(user);
-        customer.setFullName(dto.getFullName());
-        customer.setAddress(dto.getAddress());
-        customer.setPhone(dto.getPhone());
-        customer.setAvatar(dto.getAvatar() != null ? dto.getAvatar() : "/images/default-avatar.png");
-        return customer;
+    private User toEntity(CustomerDTO dto, User user) {
+        user.setFullName(dto.getFullName());
+        user.setAddress(dto.getAddress());
+        user.setPhone(dto.getPhone());
+        user.setAvatarUrl(dto.getAvatar() != null ? dto.getAvatar() : "/images/default-avatar.png");
+        // Không cập nhật username và email ở đây nếu chúng là thông tin không cho sửa
+        return user;
     }
+
 
     @Override
     public List<CustomerDTO> getAllCustomers() {
@@ -58,7 +56,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDTO createCustomer(CustomerDTO dto) {
         User user = userRepository.findById(dto.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Customer customer = toEntity(dto, user);
+        User customer = toEntity(dto, user);
         customer.setId(user.getId()); // Vì dùng chung ID với User
         return toDTO(customerRepository.save(customer));
     }
@@ -67,7 +65,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDTO updateCustomer(Long id, CustomerDTO dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Customer customer = toEntity(dto, user);
+        User customer = toEntity(dto, user);
         customer.setId(id); // giữ lại ID gốc
         return toDTO(customerRepository.save(customer));
     }

@@ -9,6 +9,7 @@ import com.codegym.service.HouseRenterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,13 +25,20 @@ public class HouseRenterServiceImpl implements HouseRenterService {
     private HouseRenterDTO toDTO(HouseRenter houseRenter) {
         HouseRenterDTO dto = new HouseRenterDTO();
         dto.setId(houseRenter.getId());
-        dto.setFullName(houseRenter.getFullName());
+        dto.setNationalId(houseRenter.getNationalId());
+        dto.setProofOfOwnershipUrl(houseRenter.getProofOfOwnershipUrl());
         dto.setAddress(houseRenter.getAddress());
-        dto.setPhone(houseRenter.getPhone());
-        dto.setAvatar(houseRenter.getAvatar());
-        dto.setApproved(houseRenter.isApproved());
-        dto.setUsername(houseRenter.getUser().getUsername());
-        dto.setEmail(houseRenter.getUser().getEmail());
+        dto.setApprovedDate(houseRenter.getApprovedDate());
+        dto.setApproved(houseRenter.getApprovedDate() != null); // approved = true nếu approvedDate != null
+
+        if (houseRenter.getUser() != null) {
+            dto.setFullName(houseRenter.getUser().getFullName());
+            dto.setUsername(houseRenter.getUser().getUsername());
+            dto.setEmail(houseRenter.getUser().getEmail());
+            dto.setPhone(houseRenter.getUser().getPhone());
+            dto.setAvatar(houseRenter.getUser().getAvatarUrl());
+        }
+
         return dto;
     }
 
@@ -38,11 +46,11 @@ public class HouseRenterServiceImpl implements HouseRenterService {
         HouseRenter houseRenter = new HouseRenter();
         houseRenter.setId(dto.getId());
         houseRenter.setUser(user);
-        houseRenter.setFullName(dto.getFullName());
+        houseRenter.setNationalId(dto.getNationalId());
+        houseRenter.setProofOfOwnershipUrl(dto.getProofOfOwnershipUrl());
         houseRenter.setAddress(dto.getAddress());
-        houseRenter.setPhone(dto.getPhone());
-        houseRenter.setAvatar(dto.getAvatar() != null ? dto.getAvatar() : "/images/default-avatar.png");
-        houseRenter.setApproved(dto.isApproved());
+        houseRenter.setApprovedDate(dto.getApprovedDate());
+
         return houseRenter;
     }
 

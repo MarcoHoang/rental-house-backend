@@ -36,30 +36,35 @@ public class User extends BaseEntity implements UserDetails {
     @Transient
     private String confirmPassword;
 
-    @Column(name = "facebook_account_id", nullable = false)
-    private int facebookAccountId;
+    @Column(name = "facebook_account_id")
+    private String facebookAccountId;
 
-    @Column(name = "google_account_id", nullable = false)
-    private int googleAccountId;
+    @Column(name = "google_account_id")
+    private String googleAccountId;
 
     private boolean active;
 
     @Column(name = "img")
-    private String avatarUrl;
+    private String avatarUrl = "/images/default-avatar.png";
 
-    @ManyToOne
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "address")
+    private String address;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
+
+    // Nếu giữ HouseRenter, ánh xạ liên kết 1-1
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private HouseRenter houseRenter;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(() -> role.getName());
     }
-
-//    @Override
-//    public String getUsername() {
-//        return email;
-//    }
 
     @Override
     public boolean isAccountNonExpired() {
