@@ -24,6 +24,20 @@ public class ReviewController {
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách đánh giá thành công", reviews));
     }
 
+    // Lấy đánh giá theo houseId
+    @GetMapping("/house/{houseId}")
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getReviewsByHouseId(@PathVariable Long houseId) {
+        List<ReviewDTO> reviews = reviewService.getReviewsByHouseId(houseId);
+        return ResponseEntity.ok(ApiResponse.success("Lấy đánh giá theo nhà thành công", reviews));
+    }
+
+    // Ẩn đánh giá
+    @PutMapping("/{id}/hide")
+    public ResponseEntity<ApiResponse<ReviewDTO>> hideReview(@PathVariable Long id) {
+        ReviewDTO dto = reviewService.hideReview(id);
+        return ResponseEntity.ok(ApiResponse.success("Ẩn đánh giá thành công", dto));
+    }
+
     // Lấy đánh giá theo ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ReviewDTO>> getReviewById(@PathVariable Long id) {

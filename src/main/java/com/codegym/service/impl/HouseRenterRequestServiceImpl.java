@@ -1,4 +1,6 @@
+
 package com.codegym.service.impl;
+
 
 import com.codegym.dto.response.HouseRenterRequestDTO;
 import com.codegym.entity.HouseRenterRequest;
@@ -59,5 +61,18 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
                 .requestDate(entity.getRequestDate())
                 .processedDate(entity.getProcessedDate())
                 .build();
+    }
+
+    @Override
+    public HouseRenterRequestDTO createRequest(HouseRenterRequestDTO dto) {
+        // TODO: validate, kiểm tra user đã có yêu cầu chưa, tạo mới entity
+        HouseRenterRequest entity = new HouseRenterRequest();
+        // Giả sử đã có phương thức setUser, setRequestDate, ...
+        // entity.setUser(...);
+        // entity.setRequestDate(java.time.LocalDateTime.now());
+        // entity.setStatus(HouseRenterRequest.Status.PENDING);
+        // entity.setReason(dto.getReason());
+        // ...
+        return mapToDTO(houseRenterRequestRepository.save(entity));
     }
 }

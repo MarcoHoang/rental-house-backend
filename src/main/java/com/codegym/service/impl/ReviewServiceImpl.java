@@ -1,3 +1,4 @@
+
 package com.codegym.service.impl;
 
 import com.codegym.dto.response.ReviewDTO;
@@ -80,6 +81,18 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new RuntimeException("House not found"));
         Review review = toEntity(reviewDTO, reviewer, house);
         review.setId(id);
+        return toDTO(reviewRepository.save(review));
+    }
+
+    @Override
+    public List<ReviewDTO> getReviewsByHouseId(Long houseId) {
+        return reviewRepository.findAll().stream().filter(r -> r.getHouse().getId().equals(houseId)).map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public ReviewDTO hideReview(Long id) {
+        Review review = reviewRepository.findById(id).orElseThrow();
+        review.setIsVisible(false);
         return toDTO(reviewRepository.save(review));
     }
 }

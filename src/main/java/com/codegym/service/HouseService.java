@@ -10,4 +10,10 @@ public interface HouseService {
     HouseDTO createHouse(HouseDTO dto);
     HouseDTO updateHouse(Long id, HouseDTO dto);
     void deleteHouse(Long id);
+
+    // Thêm các phương thức mới
+    List<HouseDTO> searchHouses(String keyword);
+    List<HouseDTO> getTopHouses();
+    HouseDTO updateHouseStatus(Long id, String status);
+    List<String> getHouseImages(Long id);
 }

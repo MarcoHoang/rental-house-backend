@@ -48,10 +48,52 @@ public class RentalController {
         return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin thuê nhà thành công", updated));
     }
 
-    // Xóa bản ghi thuê nhà
+    // Xóa bản ghi thuê nhà (hủy thuê)
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         rentalService.delete(id);
         return ResponseEntity.ok(ApiResponse.success("Xóa bản ghi thuê nhà thành công", null));
+    }
+
+    // Lịch sử thuê nhà của user
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<RentalDTO>>> getUserRentals(@PathVariable Long userId) {
+        List<RentalDTO> rentals = rentalService.getUserRentals(userId);
+        return ResponseEntity.ok(ApiResponse.success("Lấy lịch sử thuê nhà thành công", rentals));
+    }
+
+    // Lịch thuê nhà của chủ nhà
+    @GetMapping("/landlord/{landlordId}")
+    public ResponseEntity<ApiResponse<List<RentalDTO>>> getHouseRenterRentals(@PathVariable Long landlordId) {
+        List<RentalDTO> rentals = rentalService.getHouseRenterRentals(landlordId);
+        return ResponseEntity.ok(ApiResponse.success("Lấy lịch thuê nhà của chủ nhà thành công", rentals));
+    }
+
+    // Tìm kiếm lịch thuê
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<RentalDTO>>> searchRentals(@RequestParam(required = false) String keyword) {
+        List<RentalDTO> rentals = rentalService.searchRentals(keyword);
+        return ResponseEntity.ok(ApiResponse.success("Tìm kiếm lịch thuê thành công", rentals));
+    }
+
+    // Checkin nhà
+    @PutMapping("/{id}/checkin")
+    public ResponseEntity<ApiResponse<RentalDTO>> checkin(@PathVariable Long id) {
+        RentalDTO dto = rentalService.checkin(id);
+        return ResponseEntity.ok(ApiResponse.success("Checkin thành công", dto));
+    }
+
+    // Checkout nhà
+    @PutMapping("/{id}/checkout")
+    public ResponseEntity<ApiResponse<RentalDTO>> checkout(@PathVariable Long id) {
+        RentalDTO dto = rentalService.checkout(id);
+        return ResponseEntity.ok(ApiResponse.success("Checkout thành công", dto));
+    }
+
+    // Thống kê thu nhập theo tháng của chủ nhà
+    @GetMapping("/landlord/{landlordId}/income")
+    public ResponseEntity<ApiResponse<Double>> getHouseRenterIncome(@PathVariable Long landlordId) {
+        Double income = rentalService.getHouseRenterIncome(landlordId);
+        return ResponseEntity.ok(ApiResponse.success("Thống kê thu nhập thành công", income));
     }
 }

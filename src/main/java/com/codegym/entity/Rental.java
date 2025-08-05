@@ -39,6 +39,8 @@ public class Rental {
 
     private LocalDateTime updatedAt;
 
+    private Double totalPrice;
+
     public enum Status {
         PENDING,      // Người dùng vừa đặt
         APPROVED,     // Chủ nhà xác nhận

@@ -1,3 +1,4 @@
+
 package com.codegym.service.impl;
 
 import com.codegym.dto.response.HouseDTO;
@@ -91,5 +92,33 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public void deleteHouse(Long id) {
         houseRepository.deleteById(id);
+    }
+
+    @Override
+    public List<HouseDTO> searchHouses(String keyword) {
+        // TODO: Tìm kiếm theo tiêu đề, địa chỉ, mô tả, ...
+        return houseRepository.findAll().stream()
+                .filter(h -> keyword == null || h.getTitle().toLowerCase().contains(keyword.toLowerCase()))
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<HouseDTO> getTopHouses() {
+        // TODO: Lấy top 5 nhà nhiều lượt thuê nhất
+        return houseRepository.findAll().stream().limit(5).map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public HouseDTO updateHouseStatus(Long id, String status) {
+        House house = houseRepository.findById(id).orElseThrow(() -> new RuntimeException("House not found"));
+        house.setStatus(com.codegym.entity.House.Status.valueOf(status));
+        return toDTO(houseRepository.save(house));
+    }
+
+    @Override
+    public List<String> getHouseImages(Long id) {
+        House house = houseRepository.findById(id).orElseThrow(() -> new RuntimeException("House not found"));
+        return house.getImages() != null ? house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList()) : List.of();
     }
 }

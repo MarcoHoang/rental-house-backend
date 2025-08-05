@@ -1,3 +1,4 @@
+
 package com.codegym.service.impl;
 
 import com.codegym.dto.response.RentalDTO;
@@ -84,5 +85,43 @@ public class RentalServiceImpl implements RentalService {
                 .endDate(dto.getEndDate())
                 .status(dto.getStatus())
                 .build();
+    }
+
+    @Override
+    public List<RentalDTO> getUserRentals(Long userId) {
+        // TODO: Lấy lịch sử thuê nhà của user
+        return rentalRepository.findAll().stream().filter(r -> r.getRenter().getId().equals(userId)).map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RentalDTO> getHouseRenterRentals(Long houseRenterId) {
+        // TODO: Lấy lịch thuê nhà của chủ nhà
+        return rentalRepository.findAll().stream().filter(r -> r.getHouse().getHouseRenter().getId().equals(houseRenterId)).map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RentalDTO> searchRentals(String keyword) {
+        // TODO: Tìm kiếm lịch thuê theo keyword
+        return rentalRepository.findAll().stream().filter(r -> keyword == null || r.getHouse().getTitle().toLowerCase().contains(keyword.toLowerCase())).map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public RentalDTO checkin(Long id) {
+        Rental rental = rentalRepository.findById(id).orElseThrow();
+        rental.setStatus(com.codegym.entity.Rental.Status.CHECKED_IN);
+        return convertToDTO(rentalRepository.save(rental));
+    }
+
+    @Override
+    public RentalDTO checkout(Long id) {
+        Rental rental = rentalRepository.findById(id).orElseThrow();
+        rental.setStatus(com.codegym.entity.Rental.Status.CHECKED_OUT);
+        return convertToDTO(rentalRepository.save(rental));
+    }
+
+    @Override
+    public Double getHouseRenterIncome(Long houseRenterId) {
+        // TODO: Thống kê thu nhập theo tháng của chủ nhà
+        return rentalRepository.findAll().stream().filter(r -> r.getHouse().getHouseRenter().getId().equals(houseRenterId)).mapToDouble(r -> r.getTotalPrice() != null ? r.getTotalPrice() : 0).sum();
     }
 }

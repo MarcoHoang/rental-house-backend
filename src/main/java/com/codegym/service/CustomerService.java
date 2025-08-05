@@ -10,4 +10,6 @@ public interface CustomerService {
     CustomerDTO createCustomer(CustomerDTO dto);
     CustomerDTO updateCustomer(Long id, CustomerDTO dto);
     void deleteCustomer(Long id);
+    void changePassword(Long id, String newPassword);
+    CustomerDTO updateProfile(Long id, CustomerDTO dto);
 }

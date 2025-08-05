@@ -10,4 +10,12 @@ public interface RentalService {
     RentalDTO create(RentalDTO rentalDTO);
     RentalDTO update(Long id, RentalDTO rentalDTO);
     void delete(Long id);
+
+    // Thêm các phương thức mới
+    List<RentalDTO> getUserRentals(Long userId);
+    List<RentalDTO> getHouseRenterRentals(Long landlordId);
+    List<RentalDTO> searchRentals(String keyword);
+    RentalDTO checkin(Long id);
+    RentalDTO checkout(Long id);
+    Double getHouseRenterIncome(Long landlordId);
 }

@@ -24,6 +24,41 @@ public class HouseController {
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách nhà thành công", houses));
     }
 
+    // Tìm kiếm, lọc danh sách nhà
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<HouseDTO>>> searchHouses(@RequestParam(required = false) String keyword) {
+        List<HouseDTO> houses = houseService.searchHouses(keyword);
+        return ResponseEntity.ok(ApiResponse.success("Tìm kiếm nhà thành công", houses));
+    }
+
+    // Top 5 nhà nhiều lượt thuê
+    @GetMapping("/top")
+    public ResponseEntity<ApiResponse<List<HouseDTO>>> getTopHouses() {
+        List<HouseDTO> houses = houseService.getTopHouses();
+        return ResponseEntity.ok(ApiResponse.success("Top 5 nhà nhiều lượt thuê", houses));
+    }
+
+    // Cập nhật trạng thái thuê
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ApiResponse<HouseDTO>> updateHouseStatus(@PathVariable Long id, @RequestParam String status) {
+        HouseDTO updated = houseService.updateHouseStatus(id, status);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật trạng thái nhà thành công", updated));
+    }
+
+    // Xem vị trí trên bản đồ
+    @GetMapping("/{id}/map")
+    public ResponseEntity<ApiResponse<HouseDTO>> getHouseMap(@PathVariable Long id) {
+        HouseDTO dto = houseService.getHouseById(id);
+        return ResponseEntity.ok(ApiResponse.success("Lấy vị trí nhà thành công", dto));
+    }
+
+    // Lấy danh sách ảnh của nhà
+    @GetMapping("/{id}/images")
+    public ResponseEntity<ApiResponse<List<String>>> getHouseImages(@PathVariable Long id) {
+        List<String> images = houseService.getHouseImages(id);
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách ảnh thành công", images));
+    }
+
     // Lấy nhà theo ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<HouseDTO>> getHouseById(@PathVariable Long id) {

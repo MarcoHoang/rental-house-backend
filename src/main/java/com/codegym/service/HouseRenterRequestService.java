@@ -12,4 +12,6 @@ public interface HouseRenterRequestService {
     HouseRenterRequestDTO approveRequest(Long id);
 
     HouseRenterRequestDTO rejectRequest(Long id, String reason);
+
+    HouseRenterRequestDTO createRequest(HouseRenterRequestDTO dto);
 }

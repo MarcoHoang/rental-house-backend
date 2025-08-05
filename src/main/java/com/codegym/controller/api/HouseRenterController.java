@@ -19,15 +19,37 @@ public class HouseRenterController {
 
     // Lấy tất cả landlord
     @GetMapping
-    public ResponseEntity<ApiResponse<List<HouseRenterDTO>>> getAllLandlords() {
-        List<HouseRenterDTO> landlords = houseRenterService.getAllLandlords();
+    public ResponseEntity<ApiResponse<List<HouseRenterDTO>>> getAllHouseRenters() {
+        List<HouseRenterDTO> landlords = houseRenterService.getAllHouseRenters();
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách chủ nhà thành công", landlords));
+    }
+
+    // Khóa chủ nhà
+    @PutMapping("/{id}/lock")
+    public ResponseEntity<ApiResponse<Void>> lockHouseRenter(@PathVariable Long id) {
+        houseRenterService.lockHouseRenter(id);
+        return ResponseEntity.ok(ApiResponse.success("Khóa chủ nhà thành công", null));
+    }
+
+    // Mở khóa chủ nhà
+    @PutMapping("/{id}/unlock")
+    public ResponseEntity<ApiResponse<Void>> unlockHouseRenter(@PathVariable Long id) {
+        houseRenterService.unlockHouseRenter(id);
+        return ResponseEntity.ok(ApiResponse.success("Mở khóa chủ nhà thành công", null));
+    }
+
+    // Xem danh sách nhà cho thuê của chủ nhà
+    @GetMapping("/{id}/houses")
+    public ResponseEntity<ApiResponse<List<Object>>> getHouseRenterHouses(@PathVariable Long id) {
+        // Object có thể thay bằng HouseDTO nếu có
+        List<Object> houses = houseRenterService.getHouseRenterHouses(id);
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách nhà cho thuê thành công", houses));
     }
 
     // Lấy landlord theo ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<HouseRenterDTO>> getLandlordById(@PathVariable Long id) {
-        HouseRenterDTO dto = houseRenterService.getLandlordById(id);
+    public ResponseEntity<ApiResponse<HouseRenterDTO>> getHouseRenterById(@PathVariable Long id) {
+        HouseRenterDTO dto = houseRenterService.getHouseRenterById(id);
         if (dto == null) {
             return ResponseEntity.ok(ApiResponse.error("404", "Không tìm thấy chủ nhà với ID = " + id));
         }
@@ -36,22 +58,22 @@ public class HouseRenterController {
 
     // Tạo mới landlord
     @PostMapping
-    public ResponseEntity<ApiResponse<HouseRenterDTO>> createLandlord(@RequestBody HouseRenterDTO dto) {
-        HouseRenterDTO created = houseRenterService.createLandlord(dto);
+    public ResponseEntity<ApiResponse<HouseRenterDTO>> createHouseRenter(@RequestBody HouseRenterDTO dto) {
+        HouseRenterDTO created = houseRenterService.createHouseRenter(dto);
         return ResponseEntity.ok(ApiResponse.success("Tạo chủ nhà mới thành công", created));
     }
 
     // Cập nhật landlord
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<HouseRenterDTO>> updateLandlord(@PathVariable Long id, @RequestBody HouseRenterDTO dto) {
-        HouseRenterDTO updated = houseRenterService.updateLandlord(id, dto);
+    public ResponseEntity<ApiResponse<HouseRenterDTO>> updateHouseRenter(@PathVariable Long id, @RequestBody HouseRenterDTO dto) {
+        HouseRenterDTO updated = houseRenterService.updateHouseRenter(id, dto);
         return ResponseEntity.ok(ApiResponse.success("Cập nhật chủ nhà thành công", updated));
     }
 
     // Xóa landlord
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteLandlord(@PathVariable Long id) {
-        houseRenterService.deleteLandlord(id);
+    public ResponseEntity<ApiResponse<Void>> deleteHouseRenter(@PathVariable Long id) {
+        houseRenterService.deleteHouseRenter(id);
         return ResponseEntity.ok(ApiResponse.success("Xóa chủ nhà thành công", null));
     }
 }

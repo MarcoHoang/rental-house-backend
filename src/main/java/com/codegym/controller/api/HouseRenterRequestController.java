@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/landlord-requests")
+@RequestMapping("/api/house-renter-requests")
 @RequiredArgsConstructor
 public class HouseRenterRequestController {
 
@@ -21,6 +21,13 @@ public class HouseRenterRequestController {
     public ResponseEntity<ApiResponse<List<HouseRenterRequestDTO>>> getAllRequests() {
         List<HouseRenterRequestDTO> requests = houseRenterRequestService.findAll();
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách yêu cầu thành công", requests));
+    }
+
+    // Tạo mới yêu cầu làm chủ nhà
+    @PostMapping
+    public ResponseEntity<ApiResponse<HouseRenterRequestDTO>> createRequest(@RequestBody HouseRenterRequestDTO dto) {
+        HouseRenterRequestDTO created = houseRenterRequestService.createRequest(dto);
+        return ResponseEntity.ok(ApiResponse.success("Tạo yêu cầu làm chủ nhà thành công", created));
     }
 
     // Lấy yêu cầu theo userId

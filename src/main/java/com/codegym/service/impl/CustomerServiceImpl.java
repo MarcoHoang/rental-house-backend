@@ -1,4 +1,6 @@
+
 package com.codegym.service.impl;
+
 
 import com.codegym.dto.response.CustomerDTO;
 import com.codegym.entity.User;
@@ -73,5 +75,23 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
+    }
+
+    // Đổi mật khẩu
+    public void changePassword(Long id, String newPassword) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setPassword(newPassword); // Nên mã hóa mật khẩu
+        userRepository.save(user);
+    }
+
+    // Cập nhật profile
+    public CustomerDTO updateProfile(Long id, CustomerDTO dto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setFullName(dto.getFullName());
+        user.setAddress(dto.getAddress());
+        user.setPhone(dto.getPhone());
+        user.setAvatarUrl(dto.getAvatar());
+        userRepository.save(user);
+        return toDTO(user);
     }
 }

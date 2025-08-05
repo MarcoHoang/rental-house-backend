@@ -1,3 +1,4 @@
+
 package com.codegym.service.impl;
 
 import com.codegym.dto.response.HouseRenterDTO;
@@ -55,17 +56,17 @@ public class HouseRenterServiceImpl implements HouseRenterService {
     }
 
     @Override
-    public List<HouseRenterDTO> getAllLandlords() {
+    public List<HouseRenterDTO> getAllHouseRenters() {
         return houseRenterRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Override
-    public HouseRenterDTO getLandlordById(Long id) {
+    public HouseRenterDTO getHouseRenterById(Long id) {
         return houseRenterRepository.findById(id).map(this::toDTO).orElse(null);
     }
 
     @Override
-    public HouseRenterDTO createLandlord(HouseRenterDTO dto) {
+    public HouseRenterDTO createHouseRenter(HouseRenterDTO dto) {
         User user = userRepository.findById(dto.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         HouseRenter houseRenter = toEntity(dto, user);
@@ -74,7 +75,7 @@ public class HouseRenterServiceImpl implements HouseRenterService {
     }
 
     @Override
-    public HouseRenterDTO updateLandlord(Long id, HouseRenterDTO dto) {
+    public HouseRenterDTO updateHouseRenter(Long id, HouseRenterDTO dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         HouseRenter houseRenter = toEntity(dto, user);
@@ -83,7 +84,31 @@ public class HouseRenterServiceImpl implements HouseRenterService {
     }
 
     @Override
-    public void deleteLandlord(Long id) {
+    public void deleteHouseRenter(Long id) {
         houseRenterRepository.deleteById(id);
+    }
+
+    @Override
+    public void lockHouseRenter(Long id) {
+        HouseRenter houseRenter = houseRenterRepository.findById(id).orElseThrow(() -> new RuntimeException("HouseRenter not found"));
+        if (houseRenter.getUser() != null) {
+            houseRenter.getUser().setActive(false);
+            userRepository.save(houseRenter.getUser());
+        }
+    }
+
+    @Override
+    public void unlockHouseRenter(Long id) {
+        HouseRenter houseRenter = houseRenterRepository.findById(id).orElseThrow(() -> new RuntimeException("HouseRenter not found"));
+        if (houseRenter.getUser() != null) {
+            houseRenter.getUser().setActive(true);
+            userRepository.save(houseRenter.getUser());
+        }
+    }
+
+    @Override
+    public List<Object> getHouseRenterHouses(Long id) {
+        // TODO: Lấy danh sách nhà cho thuê của chủ nhà (có thể trả về List<HouseDTO>)
+        return List.of();
     }
 }

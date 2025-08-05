@@ -17,14 +17,28 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    // Lấy tất cả khách hàng
+    // Đổi mật khẩu
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<ApiResponse<Void>> changePassword(@PathVariable Long id, @RequestBody String newPassword) {
+        customerService.changePassword(id, newPassword);
+        return ResponseEntity.ok(ApiResponse.success("Đổi mật khẩu thành công", null));
+    }
+
+    // Cập nhật profile
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<ApiResponse<CustomerDTO>> updateProfile(@PathVariable Long id, @RequestBody CustomerDTO dto) {
+        CustomerDTO updated = customerService.updateProfile(id, dto);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật profile thành công", updated));
+    }
+
+    // Lấy tất cả khách hàng (admin)
     @GetMapping
     public ResponseEntity<ApiResponse<List<CustomerDTO>>> getAllCustomers() {
         List<CustomerDTO> customers = customerService.getAllCustomers();
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách khách hàng thành công", customers));
     }
 
-    // Lấy khách hàng theo ID
+    // Lấy thông tin user
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<CustomerDTO>> getCustomerById(@PathVariable Long id) {
         CustomerDTO dto = customerService.getCustomerById(id);

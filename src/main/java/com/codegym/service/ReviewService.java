@@ -12,4 +12,8 @@ public interface ReviewService {
 
     ReviewDTO getReviewById(Long id);
     ReviewDTO updateReview(Long id, ReviewDTO reviewDTO);
+
+    // Thêm các phương thức mới
+    List<ReviewDTO> getReviewsByHouseId(Long houseId);
+    ReviewDTO hideReview(Long id);
 }
