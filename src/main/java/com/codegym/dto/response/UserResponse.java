@@ -15,6 +15,6 @@ public class UserResponse {
     private String address;
     private String phone;
     private boolean active;
-    private long role;
+    private String role;
 }
 

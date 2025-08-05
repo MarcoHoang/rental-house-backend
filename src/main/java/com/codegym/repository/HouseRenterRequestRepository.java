@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface HouseRenterRequestRepository extends JpaRepository<HouseRenterRequest, Long> {
     Optional<HouseRenterRequest> findByUserId(Long userId);
+
+    boolean existsByUserIdAndStatus(Long userId, HouseRenterRequest.Status status);
 }

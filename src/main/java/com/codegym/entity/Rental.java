@@ -42,6 +42,7 @@ public class Rental {
     private Double totalPrice;
 
     public enum Status {
+        SCHEDULED,
         PENDING,      // Người dùng vừa đặt
         APPROVED,     // Chủ nhà xác nhận
         CHECKED_IN,   // Khách đã nhận phòng

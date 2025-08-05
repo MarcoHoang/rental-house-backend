@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ReviewDTO {
     private Long id;
 

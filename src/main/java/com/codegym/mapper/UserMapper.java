@@ -23,7 +23,7 @@ public interface UserMapper {
                 .email(user.getEmail())
                 .username(user.getUsername())
                 .phone(user.getPhone())
-                .role(Long.parseLong(user.getRole().getName()))
+                .role(user.getRole().getName().name())
                 .build();
     }
 }

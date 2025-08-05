@@ -1,6 +1,7 @@
 package com.codegym.seed;
 
 import com.codegym.entity.Role;
+import com.codegym.entity.RoleName;
 import com.codegym.entity.User;
 import com.codegym.repository.RoleRepository;
 import com.codegym.repository.UserRepository;
@@ -8,8 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import static com.codegym.constants.RoleConstants.ADMIN;
 
 @Configuration
 public class DataSeeder {
@@ -20,8 +19,7 @@ public class DataSeeder {
             PasswordEncoder passwordEncoder) {
         return args -> {
             // Seed roles
-            for (String roleName : new String[]{"ADMIN", "SALON_OWNER", "USER"}) {
-                // Chỉ tạo role mới nếu nó chưa tồn tại
+            for (RoleName roleName : RoleName.values()) {
                 if (roleRepository.findByName(roleName).isEmpty()) {
                     roleRepository.save(new Role(roleName));
                 }
@@ -29,9 +27,8 @@ public class DataSeeder {
 
             // Seed admin user
             if (userRepository.findByUsername("admin").isEmpty()) {
-                // Tìm role ADMIN, nếu không thấy sẽ báo lỗi
-                Role adminRole = roleRepository.findByName("ADMIN")
-                        .orElseThrow(() -> new RuntimeException("Error: ADMIN role not found."));
+                Role adminRole = roleRepository.findByName(RoleName.ADMIN)
+                        .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
 
                 User admin = User.builder()
                         .username("admin")
