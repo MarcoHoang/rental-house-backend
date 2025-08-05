@@ -1,5 +1,6 @@
 package com.codegym.controller.api;
 
+import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.CustomerDTO;
 import com.codegym.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/customers")
-@CrossOrigin("*") // Cho phép frontend truy cập nếu gọi từ domain khác
+@CrossOrigin("*")
 public class CustomerController {
 
     @Autowired
@@ -18,36 +19,39 @@ public class CustomerController {
 
     // Lấy tất cả khách hàng
     @GetMapping
-    public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
-        return ResponseEntity.ok(customerService.getAllCustomers());
+    public ResponseEntity<ApiResponse<List<CustomerDTO>>> getAllCustomers() {
+        List<CustomerDTO> customers = customerService.getAllCustomers();
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách khách hàng thành công", customers));
     }
 
     // Lấy khách hàng theo ID
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<CustomerDTO>> getCustomerById(@PathVariable Long id) {
         CustomerDTO dto = customerService.getCustomerById(id);
         if (dto == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(ApiResponse.error("404", "Không tìm thấy khách hàng với ID = " + id));
         }
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(ApiResponse.success("Lấy thông tin khách hàng thành công", dto));
     }
 
-    // Tạo mới khách hàng (đã có User trước đó)
+    // Tạo mới khách hàng
     @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO dto) {
-        return ResponseEntity.ok(customerService.createCustomer(dto));
+    public ResponseEntity<ApiResponse<CustomerDTO>> createCustomer(@RequestBody CustomerDTO dto) {
+        CustomerDTO created = customerService.createCustomer(dto);
+        return ResponseEntity.ok(ApiResponse.success("Tạo khách hàng mới thành công", created));
     }
 
     // Cập nhật thông tin khách hàng
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO dto) {
-        return ResponseEntity.ok(customerService.updateCustomer(id, dto));
+    public ResponseEntity<ApiResponse<CustomerDTO>> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO dto) {
+        CustomerDTO updated = customerService.updateCustomer(id, dto);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật khách hàng thành công", updated));
     }
 
     // Xóa khách hàng
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("Xóa khách hàng thành công", null));
     }
 }

@@ -25,8 +25,8 @@ public class HouseServiceImpl implements HouseService {
     private HouseDTO toDTO(House house) {
         return HouseDTO.builder()
                 .id(house.getId())
-                .landlordId(house.getLandlord().getId())
-                .landlordName(house.getLandlord().getUsername())
+                .landlordId(house.getHouseRenter().getId())
+                .landlordName(house.getHouseRenter().getUsername())
                 .title(house.getTitle())
                 .description(house.getDescription())
                 .address(house.getAddress())
@@ -37,7 +37,7 @@ public class HouseServiceImpl implements HouseService {
                 .status(house.getStatus())
                 .houseType(house.getHouseType())
                 .imageUrls(house.getImages() != null
-                        ? house.getImages().stream().map(HouseImage::getUrl).collect(Collectors.toList())
+                        ? house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList())
                         : null)
                 .createdAt(house.getCreatedAt())
                 .updatedAt(house.getUpdatedAt())
@@ -47,7 +47,7 @@ public class HouseServiceImpl implements HouseService {
     private House toEntity(HouseDTO dto, User landlord) {
         House house = new House();
         house.setId(dto.getId());
-        house.setLandlord(landlord);
+        house.setHouseRenter(landlord);
         house.setTitle(dto.getTitle());
         house.setDescription(dto.getDescription());
         house.setAddress(dto.getAddress());

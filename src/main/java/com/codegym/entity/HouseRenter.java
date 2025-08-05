@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Landlord {
+public class HouseRenter {
 
     @Id
     private Long id;

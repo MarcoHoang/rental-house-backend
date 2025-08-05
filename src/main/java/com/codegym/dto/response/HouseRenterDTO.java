@@ -5,7 +5,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LandlordDTO {
+public class HouseRenterDTO {
     private Long id;
     private String fullName;
     private String address;

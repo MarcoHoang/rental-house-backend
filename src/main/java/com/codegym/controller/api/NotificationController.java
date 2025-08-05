@@ -1,5 +1,6 @@
 package com.codegym.controller.api;
 
+import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.NotificationDTO;
 import com.codegym.service.NotificationService;
 import jakarta.validation.Valid;
@@ -16,25 +17,34 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
+    // Lấy danh sách thông báo theo user
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<NotificationDTO>> getByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(notificationService.findByReceiverId(userId));
+    public ResponseEntity<ApiResponse<List<NotificationDTO>>> getByUser(@PathVariable Long userId) {
+        List<NotificationDTO> notifications = notificationService.findByReceiverId(userId);
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách thông báo thành công", notifications));
     }
 
+    // Đánh dấu thông báo đã đọc
     @PutMapping("/{id}/read")
-    public ResponseEntity<NotificationDTO> markAsRead(@PathVariable Long id) {
-        return ResponseEntity.ok(notificationService.markAsRead(id));
+    public ResponseEntity<ApiResponse<NotificationDTO>> markAsRead(@PathVariable Long id) {
+        NotificationDTO dto = notificationService.markAsRead(id);
+        if (dto == null) {
+            return ResponseEntity.ok(ApiResponse.error("404", "Không tìm thấy thông báo để đánh dấu đã đọc với ID = " + id));
+        }
+        return ResponseEntity.ok(ApiResponse.success("Đánh dấu đã đọc thành công", dto));
     }
 
+    // Xóa thông báo
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         notificationService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("Xóa thông báo thành công", null));
     }
 
+    // Tạo mới thông báo
     @PostMapping
-    public ResponseEntity<NotificationDTO> create(@Valid @RequestBody NotificationDTO dto) {
-        return ResponseEntity.ok(notificationService.create(dto));
+    public ResponseEntity<ApiResponse<NotificationDTO>> create(@Valid @RequestBody NotificationDTO dto) {
+        NotificationDTO created = notificationService.create(dto);
+        return ResponseEntity.ok(ApiResponse.success("Tạo thông báo mới thành công", created));
     }
 }
-

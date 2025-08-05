@@ -18,7 +18,7 @@ import java.util.List;
 public class User extends BaseEntity implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -56,10 +56,10 @@ public class User extends BaseEntity implements UserDetails {
         return List.of(() -> role.getName());
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
+//    @Override
+//    public String getUsername() {
+//        return email;
+//    }
 
     @Override
     public boolean isAccountNonExpired() {

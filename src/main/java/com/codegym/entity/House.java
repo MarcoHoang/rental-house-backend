@@ -19,8 +19,8 @@ public class House {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY) // Một chủ nhà có thể có nhiều căn
-    @JoinColumn(name = "landlord_id", nullable = false)
-    private User landlord;
+    @JoinColumn(name = "houserenter_id", nullable = false)
+    private User houseRenter;
 
     @Column(nullable = false)
     private String title;

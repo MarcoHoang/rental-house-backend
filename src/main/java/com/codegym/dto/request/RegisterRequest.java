@@ -15,7 +15,7 @@ public class RegisterRequest {
 
     @NotBlank(message = "Name không được để trống")
     @Size(max = 100, message = "Name phải nhỏ hơn 100 ký tự")
-    private String name;
+    private String username;
 
     @NotBlank(message = "Số điện thoại không được để trống")
     @Pattern(regexp = "^0\\d{9}$", message = "Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số")

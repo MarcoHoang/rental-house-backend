@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LandlordRequestDTO {
+public class HouseRenterRequestDTO {
     private Long id;
     private Long userId;
     private String userEmail;
-    private String userName;
+    private String username;
     private String status;
     private String reason;
     private LocalDateTime requestDate;
