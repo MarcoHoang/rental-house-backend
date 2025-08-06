@@ -3,15 +3,15 @@ package com.codegym.service.impl;
 import com.codegym.dto.response.NotificationDTO;
 import com.codegym.entity.Notification;
 import com.codegym.entity.User;
+import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.NotificationRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.NotificationService;
-import jakarta.persistence.EntityNotFoundException;
+import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,12 +22,20 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
+    private User findUserByIdOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
+    }
+
+    private Notification findNotificationByIdOrThrow(Long notificationId) {
+        return notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.NOTIFICATION_NOT_FOUND, notificationId));
+    }
+
     @Override
-    @Transactional(readOnly = true) // Thêm transactional cho các phương thức chỉ đọc
+    @Transactional(readOnly = true)
     public List<NotificationDTO> findByReceiverId(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new EntityNotFoundException("Không tìm thấy người dùng với ID: " + userId);
-        }
+        findUserByIdOrThrow(userId);
         return notificationRepository.findByReceiverIdOrderByCreatedAtDesc(userId)
                 .stream().map(this::toDTO).collect(Collectors.toList());
     }
@@ -35,11 +43,10 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public NotificationDTO create(NotificationDTO dto) {
-        User user = userRepository.findById(dto.getReceiverId())
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng nhận thông báo với ID: " + dto.getReceiverId()));
+        User receiver = findUserByIdOrThrow(dto.getReceiverId());
 
         Notification notification = Notification.builder()
-                .receiver(user)
+                .receiver(receiver)
                 .type(dto.getType())
                 .content(dto.getContent())
                 .isRead(false)
@@ -51,8 +58,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public NotificationDTO markAsRead(Long id) {
-        Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy thông báo để đánh dấu đã đọc với ID: " + id));
+        Notification notification = findNotificationByIdOrThrow(id);
 
         if (Boolean.TRUE.equals(notification.getIsRead())) {
             return toDTO(notification);
@@ -62,13 +68,13 @@ public class NotificationServiceImpl implements NotificationService {
         return toDTO(notificationRepository.save(notification));
     }
 
+
+
     @Override
     @Transactional
     public void deleteById(Long id) {
-        if (!notificationRepository.existsById(id)) {
-            throw new EntityNotFoundException("Không thể xóa. Thông báo với ID: " + id + " không tồn tại.");
-        }
-        notificationRepository.deleteById(id);
+        Notification notification = findNotificationByIdOrThrow(id);
+        notificationRepository.delete(notification);
     }
 
     private NotificationDTO toDTO(Notification n) {

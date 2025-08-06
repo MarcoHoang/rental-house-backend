@@ -3,15 +3,16 @@ package com.codegym.controller.api;
 import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.ReviewDTO;
 import com.codegym.service.ReviewService;
-import com.codegym.utils.MessageUtil;
 import com.codegym.utils.StatusCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -20,61 +21,47 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
-    private final MessageUtil messageUtil;
+    private final MessageSource messageSource;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getAllReviews() {
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getAllReviews(Locale locale) {
         List<ReviewDTO> reviews = reviewService.getAllReviews();
-        String message = messageUtil.getMessage("review.list.found");
-        ApiResponse<List<ReviewDTO>> response = new ApiResponse<>(StatusCode.GET_LIST_SUCCESS.getCode(), message, reviews);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(reviews, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/house/{houseId}")
-    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getReviewsByHouseId(@PathVariable Long houseId) {
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getReviewsByHouseId(@PathVariable Long houseId, Locale locale) {
         List<ReviewDTO> reviews = reviewService.getReviewsByHouseId(houseId);
-        String message = messageUtil.getMessage("review.list.byHouse.found");
-        ApiResponse<List<ReviewDTO>> response = new ApiResponse<>(StatusCode.GET_LIST_SUCCESS.getCode(), message, reviews);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(reviews, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     @PutMapping("/{id}/toggle-visibility")
-    public ResponseEntity<ApiResponse<ReviewDTO>> toggleReviewVisibility(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ReviewDTO>> toggleReviewVisibility(@PathVariable Long id, Locale locale) {
         ReviewDTO dto = reviewService.toggleVisibility(id);
-        String message = messageUtil.getMessage("review.visibility.toggled");
-        ApiResponse<ReviewDTO> response = new ApiResponse<>(StatusCode.UPDATED_SUCCESS.getCode(), message, dto);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ReviewDTO>> getReviewById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ReviewDTO>> getReviewById(@PathVariable Long id, Locale locale) {
         ReviewDTO review = reviewService.getReviewById(id);
-        String message = messageUtil.getMessage("review.get.found");
-        ApiResponse<ReviewDTO> response = new ApiResponse<>(StatusCode.SUCCESS.getCode(), message, review);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(review, StatusCode.SUCCESS, messageSource, locale));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ReviewDTO>> createReview(@Valid @RequestBody ReviewDTO reviewDTO) {
+    public ResponseEntity<ApiResponse<ReviewDTO>> createReview(@Valid @RequestBody ReviewDTO reviewDTO, Locale locale) {
         ReviewDTO created = reviewService.createReview(reviewDTO);
-        String message = messageUtil.getMessage("review.created");
-        ApiResponse<ReviewDTO> response = new ApiResponse<>(StatusCode.CREATED_SUCCESS.getCode(), message, created);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiResponse.success(created, StatusCode.CREATED_SUCCESS, messageSource, locale), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ReviewDTO>> updateReview(@PathVariable Long id, @Valid @RequestBody ReviewDTO reviewDTO) {
+    public ResponseEntity<ApiResponse<ReviewDTO>> updateReview(@PathVariable Long id, @Valid @RequestBody ReviewDTO reviewDTO, Locale locale) {
         ReviewDTO updated = reviewService.updateReview(id, reviewDTO);
-        String message = messageUtil.getMessage("review.updated");
-        ApiResponse<ReviewDTO> response = new ApiResponse<>(StatusCode.UPDATED_SUCCESS.getCode(), message, updated);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long id, Locale locale) {
         reviewService.deleteReview(id);
-        String message = messageUtil.getMessage("review.deleted");
-        ApiResponse<Void> response = new ApiResponse<>(StatusCode.DELETED_SUCCESS.getCode(), message);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
     }
 }

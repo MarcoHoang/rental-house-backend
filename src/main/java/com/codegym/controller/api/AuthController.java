@@ -8,12 +8,12 @@ import com.codegym.service.AuthService;
 import com.codegym.utils.StatusCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource; // ✅ Import
+import org.springframework.context.MessageSource; // Vẫn cần inject MessageSource
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Locale; // ✅ Import
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,32 +22,27 @@ import java.util.Locale; // ✅ Import
 public class AuthController {
 
     private final AuthService authService;
-    private final MessageSource messageSource; // ✅ Inject MessageSource thông qua constructor
+    private final MessageSource messageSource; // Vẫn inject để truyền vào factory method
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request, Locale locale) {
         String token = authService.login(request);
         LoginResponse loginResponse = new LoginResponse(token);
 
-        // Lấy thông báo từ file message
-        String message = messageSource.getMessage("auth.login.success", null, locale);
-
-        // Tạo response với mã thành công và thông báo cụ thể
-        ApiResponse<LoginResponse> response = new ApiResponse<>(StatusCode.SUCCESS.getCode(), message, loginResponse);
-
-        return ResponseEntity.ok(response);
+        // Sử dụng static factory method
+        return ResponseEntity.ok(
+                ApiResponse.success(loginResponse, StatusCode.LOGIN_SUCCESS, messageSource, locale)
+        );
     }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody RegisterRequest request, Locale locale) {
         authService.register(request);
 
-        // Lấy thông báo từ file message
-        String message = messageSource.getMessage("auth.register.success", null, locale);
-
-        // Tạo response với mã thành công và thông báo cụ thể
-        ApiResponse<Void> response = new ApiResponse<>(StatusCode.SUCCESS.getCode(), message);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        // Sử dụng static factory method
+        return new ResponseEntity<>(
+                ApiResponse.success(StatusCode.REGISTER_SUCCESS, messageSource, locale),
+                HttpStatus.CREATED
+        );
     }
 }

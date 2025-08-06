@@ -1,16 +1,20 @@
 package com.codegym.exception;
 
 import com.codegym.utils.StatusCode;
-import lombok.Getter;
 
-@Getter
-public class ResourceNotFoundException extends RuntimeException {
-    private final StatusCode statusCode = StatusCode.RESOURCE_NOT_FOUND;
-    private final Object[] args;
+/**
+ * Exception chuyên dùng cho các trường hợp không tìm thấy tài nguyên.
+ * Kế thừa trực tiếp từ AppException và được xử lý riêng trong GlobalExceptionHandler
+ * để trả về HTTP Status 404 NOT FOUND.
+ */
+public class ResourceNotFoundException extends AppException {
 
-    public ResourceNotFoundException(String resourceName, Object... args) {
-        // message ở đây chỉ dùng để ghi log, không hiển thị cho user
-        super(String.format("%s not found with params: %s", resourceName, java.util.Arrays.toString(args)));
-        this.args = new Object[]{resourceName, java.util.Arrays.toString(args)};
+    /**
+     * Constructor chính và duy nhất.
+     * @param statusCode Mã trạng thái cụ thể (ví dụ: USER_NOT_FOUND, HOUSE_NOT_FOUND).
+     * @param args Các tham số cho message (ví dụ: ID của tài nguyên không tìm thấy).
+     */
+    public ResourceNotFoundException(StatusCode statusCode, Object... args) {
+        super(statusCode, args);
     }
 }

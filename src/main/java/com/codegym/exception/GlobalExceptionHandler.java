@@ -3,6 +3,7 @@ package com.codegym.exception;
 import com.codegym.dto.ApiResponse;
 import com.codegym.utils.MessageUtil;
 import com.codegym.utils.StatusCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,6 +30,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageUtil messageUtil;
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
+        StatusCode statusCode = ex.getStatusCode();
+        String message = messageUtil.getMessage(statusCode.getMessageKey(), ex.getArgs());
+        return buildErrorResponse(message, statusCode, HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAppException(AppException ex, WebRequest request) {
+        StatusCode statusCode = ex.getStatusCode();
+        String message = messageUtil.getMessage(statusCode.getMessageKey(), ex.getArgs());
+        HttpStatus httpStatus = isConflictError(statusCode) ? HttpStatus.CONFLICT : HttpStatus.BAD_REQUEST;
+        return buildErrorResponse(message, statusCode, httpStatus, request);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -41,43 +57,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         StatusCode statusCode = StatusCode.VALIDATION_ERROR;
         String mainMessage = messageUtil.getMessage(statusCode.getMessageKey());
-        ApiError errorDetails = new ApiError(mainMessage, extractPath(request), validationErrors);
 
-        // Đã sửa: Sử dụng constructor (String code, String message, T data)
+        ApiError errorDetails = new ApiError(mainMessage, extractPath(request), validationErrors);
         ApiResponse<ApiError> response = new ApiResponse<>(statusCode.getCode(), mainMessage, errorDetails);
 
-        return new ResponseEntity<>(response, headers, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse<ApiError>> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
-        StatusCode statusCode = ex.getStatusCode();
-        String message = messageUtil.getMessage(statusCode.getMessageKey(), ex.getArgs());
-        return buildErrorResponse(message, statusCode, HttpStatus.NOT_FOUND, request);
-    }
-
-    @ExceptionHandler({DuplicateEmailException.class, DuplicatePhoneException.class})
-    public ResponseEntity<ApiResponse<ApiError>> handleDuplicateInfo(RuntimeException ex, WebRequest request) {
-        StatusCode statusCode;
-        if (ex instanceof DuplicateEmailException) {
-            statusCode = StatusCode.EMAIL_ALREADY_EXISTS;
-        } else { // DuplicatePhoneException
-            statusCode = StatusCode.PHONE_ALREADY_EXISTS;
-        }
-        String message = messageUtil.getMessage(statusCode.getMessageKey());
-        return buildErrorResponse(message, statusCode, HttpStatus.CONFLICT, request);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ApiResponse<ApiError>> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
+    public ResponseEntity<ApiResponse<Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
         String requiredType = Objects.requireNonNull(ex.getRequiredType()).getSimpleName();
         StatusCode statusCode = StatusCode.VALIDATION_ERROR;
+        // Giả sử bạn có key 'error.param.typeMismatch' trong messages.properties
         String message = messageUtil.getMessage("error.param.typeMismatch", ex.getName(), requiredType);
         return buildErrorResponse(message, statusCode, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiResponse<ApiError>> handleDatabaseError(DataIntegrityViolationException ex, WebRequest request) {
+    public ResponseEntity<ApiResponse<Object>> handleDatabaseError(DataIntegrityViolationException ex, WebRequest request) {
         StatusCode statusCode = StatusCode.DATA_INTEGRITY_VIOLATION;
         String message = messageUtil.getMessage(statusCode.getMessageKey());
         log.error("Data integrity violation: {}", ex.getMostSpecificCause().getMessage());
@@ -85,24 +82,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<ApiError>> handleAllUncaughtException(Exception ex, WebRequest request) {
+    public ResponseEntity<ApiResponse<Object>> handleAllUncaughtException(Exception ex, WebRequest request) {
         log.error("An unexpected error occurred", ex);
         StatusCode statusCode = StatusCode.INTERNAL_ERROR;
         String message = messageUtil.getMessage(statusCode.getMessageKey());
         return buildErrorResponse(message, statusCode, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
-    /**
-     * Phương thức trợ giúp đã được cập nhật để sử dụng constructor đúng của ApiResponse.
-     */
-    private ResponseEntity<ApiResponse<ApiError>> buildErrorResponse(
+    private ResponseEntity<ApiResponse<Object>> buildErrorResponse(
             String message, StatusCode statusCode, HttpStatus httpStatus, WebRequest request) {
         ApiError errorDetails = new ApiError(message, extractPath(request));
-
-        // Đã sửa: Sử dụng constructor (String code, String message, T data)
-        ApiResponse<ApiError> response = new ApiResponse<>(statusCode.getCode(), message, errorDetails);
-
+        ApiResponse<Object> response = new ApiResponse<>(statusCode.getCode(), message, errorDetails);
         return new ResponseEntity<>(response, httpStatus);
+    }
+
+    private boolean isConflictError(StatusCode statusCode) {
+        return List.of(
+                StatusCode.EMAIL_ALREADY_EXISTS,
+                StatusCode.PHONE_ALREADY_EXISTS,
+                StatusCode.USERNAME_ALREADY_EXISTS,
+                StatusCode.DATA_INTEGRITY_VIOLATION,
+                StatusCode.USER_ALREADY_HOUSE_RENTER,
+                StatusCode.PENDING_REQUEST_EXISTS
+        ).contains(statusCode);
     }
 
     private String extractPath(WebRequest request) {
@@ -110,6 +112,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             return request.getDescription(false).replace("uri=", "");
         } catch (Exception e) {
             return "N/A";
+        }
+    }
+
+    @Getter
+    private static class ApiError {
+        private String message;
+        private String path;
+        private List<String> details;
+
+        public ApiError(String message, String path) {
+            this.message = message;
+            this.path = path;
+        }
+
+        public ApiError(String message, String path, List<String> details) {
+            this.message = message;
+            this.path = path;
+            this.details = details;
         }
     }
 }

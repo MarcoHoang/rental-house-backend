@@ -4,11 +4,13 @@ import com.codegym.dto.response.HouseRenterRequestDTO;
 import com.codegym.entity.HouseRenter;
 import com.codegym.entity.HouseRenterRequest;
 import com.codegym.entity.User;
+import com.codegym.exception.AppException;
+import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HouseRenterRepository;
 import com.codegym.repository.HouseRenterRequestRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.HouseRenterRequestService;
-import jakarta.persistence.EntityNotFoundException;
+import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +40,7 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
     public HouseRenterRequestDTO findByUserId(Long userId) {
         return houseRenterRequestRepository.findByUserId(userId)
                 .map(this::mapToDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy yêu cầu từ người dùng có ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.REQUEST_NOT_FOUND, userId));
     }
 
     @Override
@@ -46,13 +48,13 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
     public HouseRenterRequestDTO createRequest(HouseRenterRequestDTO dto) {
         Long userId = dto.getUserId();
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng với ID: " + userId + " để tạo yêu cầu."));
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
 
         if (houseRenterRepository.existsById(userId)) {
-            throw new IllegalArgumentException("Người dùng này đã là một chủ nhà.");
+            throw new AppException(StatusCode.USER_ALREADY_HOUSE_RENTER);
         }
         if (houseRenterRequestRepository.existsByUserIdAndStatus(userId, HouseRenterRequest.Status.PENDING)) {
-            throw new IllegalArgumentException("Bạn đã có một yêu cầu đang chờ xử lý. Vui lòng đợi quản trị viên phê duyệt.");
+            throw new AppException(StatusCode.PENDING_REQUEST_EXISTS);
         }
 
         HouseRenterRequest entity = new HouseRenterRequest();
@@ -67,11 +69,10 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
     @Override
     @Transactional
     public HouseRenterRequestDTO approveRequest(Long id) {
-        HouseRenterRequest request = houseRenterRequestRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy yêu cầu với ID: " + id));
+        HouseRenterRequest request = findRequestByIdOrThrow(id);
 
         if (request.getStatus() != HouseRenterRequest.Status.PENDING) {
-            throw new IllegalStateException("Chỉ có thể duyệt các yêu cầu đang ở trạng thái PENDING.");
+            throw new AppException(StatusCode.INVALID_REQUEST_STATUS);
         }
 
         request.setStatus(HouseRenterRequest.Status.APPROVED);
@@ -84,14 +85,8 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
             newHouseRenter.setId(user.getId());
             newHouseRenter.setUser(user);
             newHouseRenter.setApprovedDate(LocalDateTime.now());
-            // newHouseRenter.setNationalId(request.getNationalId());
             houseRenterRepository.save(newHouseRenter);
         }
-
-        // 5. (Tùy chọn) Cập nhật Role cho User nếu hệ thống của bạn có phân quyền
-        // Role houseRenterRole = roleRepository.findByName("ROLE_HOUSE_RENTER").orElseThrow(...);
-        // user.getRoles().add(houseRenterRole);
-        // userRepository.save(user);
 
         return mapToDTO(request);
     }
@@ -99,11 +94,10 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
     @Override
     @Transactional
     public HouseRenterRequestDTO rejectRequest(Long id, String reason) {
-        HouseRenterRequest request = houseRenterRequestRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy yêu cầu với ID: " + id));
+        HouseRenterRequest request = findRequestByIdOrThrow(id);
 
         if (request.getStatus() != HouseRenterRequest.Status.PENDING) {
-            throw new IllegalStateException("Chỉ có thể từ chối các yêu cầu đang ở trạng thái PENDING.");
+            throw new AppException(StatusCode.INVALID_REQUEST_STATUS);
         }
 
         request.setStatus(HouseRenterRequest.Status.REJECTED);
@@ -111,6 +105,11 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
         request.setProcessedDate(LocalDateTime.now());
 
         return mapToDTO(houseRenterRequestRepository.save(request));
+    }
+
+    private HouseRenterRequest findRequestByIdOrThrow(Long id) {
+        return houseRenterRequestRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.REQUEST_NOT_FOUND, id));
     }
 
     private HouseRenterRequestDTO mapToDTO(HouseRenterRequest entity) {

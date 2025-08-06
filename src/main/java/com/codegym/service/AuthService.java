@@ -6,20 +6,21 @@ import com.codegym.dto.request.RegisterRequest;
 import com.codegym.entity.Role;
 import com.codegym.entity.RoleName;
 import com.codegym.entity.User;
-import com.codegym.exception.DuplicateEmailException;
-import com.codegym.exception.DuplicatePhoneException;
+import com.codegym.exception.AppException;
+import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.mapper.UserMapper;
 import com.codegym.repository.RoleRepository;
 import com.codegym.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -30,35 +31,34 @@ public class AuthService {
 
     public String login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BadCredentialsException("Email hoặc mật khẩu không chính xác."));
+                .orElseThrow(() -> new AppException(StatusCode.INVALID_CREDENTIALS));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Email hoặc mật khẩu không chính xác.");
+            throw new AppException(StatusCode.INVALID_CREDENTIALS);
         }
 
         try {
             return jwtTokenUtil.generateToken(user);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Không thể tạo token xác thực. Vui lòng thử lại sau.");
+            log.error("Cannot create JWT Token", e);
+            throw new AppException(StatusCode.INTERNAL_ERROR);
         }
     }
 
     @Transactional
     public void register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateEmailException("Email " + request.getEmail() + " đã được đăng ký.");
+            throw new AppException(StatusCode.EMAIL_ALREADY_EXISTS);
         }
         if (userRepository.existsByPhone(request.getPhone())) {
-            throw new DuplicatePhoneException("Số điện thoại " + request.getPhone() + " đã được đăng ký.");
+            throw new AppException(StatusCode.PHONE_ALREADY_EXISTS);
         }
 
         Role role = roleRepository.findByName(RoleName.USER)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy vai trò mặc định (USER)."));
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.ROLE_NOT_FOUND));
 
         User user = userMapper.toEntity(request, role);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
-
     }
 }

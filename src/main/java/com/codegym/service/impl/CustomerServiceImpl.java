@@ -2,13 +2,13 @@ package com.codegym.service.impl;
 
 import com.codegym.dto.response.CustomerDTO;
 import com.codegym.entity.User;
-import com.codegym.exception.DuplicateEmailException;
-import com.codegym.exception.DuplicatePhoneException;
+import com.codegym.exception.AppException;
+import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.CustomerRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.CustomerService;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.codegym.utils.StatusCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +17,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private CustomerDTO toDTO(User user) {
         CustomerDTO dto = new CustomerDTO();
@@ -54,11 +50,22 @@ public class CustomerServiceImpl implements CustomerService {
     private void updateEntityFromDTO(User user, CustomerDTO dto) {
         user.setFullName(dto.getFullName());
         user.setAddress(dto.getAddress());
-        if (!user.getPhone().equals(dto.getPhone()) && userRepository.existsByPhone(dto.getPhone())) {
-            throw new DuplicatePhoneException("Số điện thoại " + dto.getPhone() + " đã được sử dụng.");
+
+        if (dto.getPhone() != null && !user.getPhone().equals(dto.getPhone())) {
+            if (userRepository.existsByPhone(dto.getPhone())) {
+                throw new AppException(StatusCode.PHONE_ALREADY_EXISTS);
+            }
+            user.setPhone(dto.getPhone());
         }
-        user.setPhone(dto.getPhone());
-        user.setAvatarUrl(dto.getAvatar() != null ? dto.getAvatar() : user.getAvatarUrl());
+
+        if(dto.getAvatar() != null) {
+            user.setAvatarUrl(dto.getAvatar());
+        }
+    }
+
+    private User findUserByIdOrThrow(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, id));
     }
 
     @Override
@@ -70,23 +77,23 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional(readOnly = true)
     public CustomerDTO getCustomerById(Long id) {
-        return userRepository.findById(id)
-                .map(this::toDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy khách hàng với ID: " + id));
+        User user = findUserByIdOrThrow(id);
+        return toDTO(user);
     }
 
     @Override
     @Transactional
     public CustomerDTO createCustomer(CustomerDTO dto) {
         if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new DuplicateEmailException("Username " + dto.getUsername() + " đã tồn tại.");
+            throw new AppException(StatusCode.USERNAME_ALREADY_EXISTS);
         }
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new DuplicateEmailException("Email " + dto.getEmail() + " đã tồn tại.");
+            throw new AppException(StatusCode.EMAIL_ALREADY_EXISTS);
         }
         if (userRepository.existsByPhone(dto.getPhone())) {
-            throw new DuplicatePhoneException("Số điện thoại " + dto.getPhone() + " đã tồn tại.");
+            throw new AppException(StatusCode.PHONE_ALREADY_EXISTS);
         }
+
         User newUser = toEntityForCreate(dto);
         User savedUser = userRepository.save(newUser);
         return toDTO(savedUser);
@@ -95,9 +102,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerDTO updateCustomer(Long id, CustomerDTO dto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy khách hàng với ID: " + id + " để cập nhật."));
-
+        User user = findUserByIdOrThrow(id);
         updateEntityFromDTO(user, dto);
         User updatedUser = userRepository.save(user);
         return toDTO(updatedUser);
@@ -106,17 +111,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public void deleteCustomer(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new EntityNotFoundException("Không thể xóa. Khách hàng với ID: " + id + " không tồn tại.");
-        }
-        userRepository.deleteById(id);
+        User user = findUserByIdOrThrow(id);
+        userRepository.delete(user);
     }
 
     @Override
     @Transactional
     public void changePassword(Long id, String newPassword) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng để đổi mật khẩu."));
+        User user = findUserByIdOrThrow(id);
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
@@ -124,9 +126,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerDTO updateProfile(Long id, CustomerDTO dto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng để cập nhật profile."));
-
+        User user = findUserByIdOrThrow(id);
         updateEntityFromDTO(user, dto);
         User updatedUser = userRepository.save(user);
         return toDTO(updatedUser);

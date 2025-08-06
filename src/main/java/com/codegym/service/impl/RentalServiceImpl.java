@@ -4,11 +4,13 @@ import com.codegym.dto.response.RentalDTO;
 import com.codegym.entity.House;
 import com.codegym.entity.Rental;
 import com.codegym.entity.User;
+import com.codegym.exception.AppException;
+import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HouseRepository;
 import com.codegym.repository.RentalRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.RentalService;
-import jakarta.persistence.EntityNotFoundException;
+import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,21 @@ public class RentalServiceImpl implements RentalService {
     private final RentalRepository rentalRepository;
     private final HouseRepository houseRepository;
     private final UserRepository userRepository;
+
+    private User findUserByIdOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
+    }
+
+    private House findHouseByIdOrThrow(Long houseId) {
+        return houseRepository.findById(houseId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOUSE_NOT_FOUND, houseId));
+    }
+
+    private Rental findRentalByIdOrThrow(Long rentalId) {
+        return rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.RENTAL_NOT_FOUND, rentalId));
+    }
 
     private RentalDTO convertToDTO(Rental rental) {
         return RentalDTO.builder()
@@ -49,26 +66,23 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional(readOnly = true)
     public RentalDTO findById(Long id) {
-        return rentalRepository.findById(id)
-                .map(this::convertToDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bản ghi thuê nhà với ID: " + id));
+        Rental rental = findRentalByIdOrThrow(id);
+        return convertToDTO(rental);
     }
 
     @Override
     @Transactional
     public RentalDTO create(RentalDTO dto) {
-        User renter = userRepository.findById(dto.getRenterId())
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người thuê với ID: " + dto.getRenterId()));
-        House house = houseRepository.findById(dto.getHouseId())
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy nhà với ID: " + dto.getHouseId()));
+        User renter = findUserByIdOrThrow(dto.getRenterId());
+        House house = findHouseByIdOrThrow(dto.getHouseId());
 
         if (house.getStatus() != House.Status.AVAILABLE) {
-            throw new IllegalStateException("Nhà này hiện không có sẵn để cho thuê.");
+            throw new AppException(StatusCode.HOUSE_NOT_AVAILABLE);
         }
         boolean isOverlapping = rentalRepository.existsOverlappingRental(
                 house.getId(), dto.getStartDate(), dto.getEndDate());
         if (isOverlapping) {
-            throw new IllegalArgumentException("Nhà đã được thuê trong khoảng thời gian này. Vui lòng chọn ngày khác.");
+            throw new AppException(StatusCode.RENTAL_PERIOD_OVERLAP);
         }
 
         Rental rental = Rental.builder()
@@ -76,7 +90,7 @@ public class RentalServiceImpl implements RentalService {
                 .renter(renter)
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
-                .status(Rental.Status.SCHEDULED) // Trạng thái ban đầu khi đặt lịch
+                .status(Rental.Status.SCHEDULED)
                 .build();
 
         return convertToDTO(rentalRepository.save(rental));
@@ -85,11 +99,10 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional
     public RentalDTO update(Long id, RentalDTO dto) {
-        Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bản ghi thuê nhà để cập nhật với ID: " + id));
+        Rental rental = findRentalByIdOrThrow(id);
 
         if(rental.getStatus() != Rental.Status.SCHEDULED) {
-            throw new IllegalStateException("Không thể cập nhật lịch thuê đã/đang diễn ra hoặc đã hoàn thành.");
+            throw new AppException(StatusCode.CANNOT_UPDATE_ACTIVE_RENTAL);
         }
 
         rental.setStartDate(dto.getStartDate());
@@ -101,20 +114,17 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional
     public void delete(Long id) {
-        if (!rentalRepository.existsById(id)) {
-            throw new EntityNotFoundException("Không thể hủy. Lịch thuê với ID " + id + " không tồn tại.");
-        }
-        rentalRepository.deleteById(id);
+        Rental rental = findRentalByIdOrThrow(id);
+        rentalRepository.delete(rental);
     }
 
     @Override
     @Transactional
     public RentalDTO checkin(Long id) {
-        Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy lịch thuê để check-in với ID: " + id));
+        Rental rental = findRentalByIdOrThrow(id);
 
         if (rental.getStatus() != Rental.Status.SCHEDULED) {
-            throw new IllegalStateException("Không thể check-in. Trạng thái hiện tại: " + rental.getStatus());
+            throw new AppException(StatusCode.INVALID_CHECKIN_STATUS);
         }
 
         rental.setStatus(Rental.Status.CHECKED_IN);
@@ -129,11 +139,10 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional
     public RentalDTO checkout(Long id) {
-        Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy lịch thuê để check-out với ID: " + id));
+        Rental rental = findRentalByIdOrThrow(id);
 
         if (rental.getStatus() != Rental.Status.CHECKED_IN) {
-            throw new IllegalStateException("Không thể check-out. Trạng thái hiện tại: " + rental.getStatus());
+            throw new AppException(StatusCode.INVALID_CHECKOUT_STATUS);
         }
 
         rental.setStatus(Rental.Status.CHECKED_OUT);
@@ -149,9 +158,7 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional(readOnly = true)
     public List<RentalDTO> getUserRentals(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new EntityNotFoundException("Không tìm thấy người dùng với ID: " + userId);
-        }
+        findUserByIdOrThrow(userId);
         return rentalRepository.findByRenterIdOrderByStartDateDesc(userId)
                 .stream().map(this::convertToDTO).collect(Collectors.toList());
     }
@@ -159,9 +166,7 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional(readOnly = true)
     public List<RentalDTO> getHouseRenterRentals(Long houseRenterId) {
-        if (!userRepository.existsById(houseRenterId)) {
-            throw new EntityNotFoundException("Không tìm thấy chủ nhà với ID: " + houseRenterId);
-        }
+        findUserByIdOrThrow(houseRenterId);
         return rentalRepository.findByHouse_HouseRenter_IdOrderByStartDateDesc(houseRenterId)
                 .stream().map(this::convertToDTO).collect(Collectors.toList());
     }
@@ -169,11 +174,12 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional(readOnly = true)
     public Map<String, Double> getHouseRenterIncome(Long houseRenterId) {
+        findUserByIdOrThrow(houseRenterId);
         List<Rental> rentals = rentalRepository.findByHouse_HouseRenter_IdAndStatus(houseRenterId, Rental.Status.CHECKED_OUT);
 
         return rentals.stream()
                 .collect(Collectors.groupingBy(
-                        rental -> YearMonth.from(rental.getEndDate()).toString(), // Nhóm theo "YYYY-MM"
+                        rental -> YearMonth.from(rental.getEndDate()).toString(),
                         Collectors.summingDouble(rental -> rental.getTotalPrice() != null ? rental.getTotalPrice() : 0)
                 ));
     }

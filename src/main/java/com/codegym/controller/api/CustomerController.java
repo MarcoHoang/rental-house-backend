@@ -4,99 +4,65 @@ import com.codegym.dto.ApiResponse;
 import com.codegym.dto.request.ChangePasswordRequest;
 import com.codegym.dto.response.CustomerDTO;
 import com.codegym.service.CustomerService;
-import com.codegym.utils.MessageUtil;
 import com.codegym.utils.StatusCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/customers")
 @CrossOrigin("*")
-@RequiredArgsConstructor // Sử dụng Lombok để tự động tạo constructor và inject dependency
+@RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final MessageUtil messageUtil; // Inject MessageUtil
+    private final MessageSource messageSource;
 
     @PutMapping("/{id}/change-password")
-    public ResponseEntity<ApiResponse<Void>> changePassword(@PathVariable Long id, @RequestBody @Valid ChangePasswordRequest request) {
+    public ResponseEntity<ApiResponse<Void>> changePassword(@PathVariable Long id, @RequestBody @Valid ChangePasswordRequest request, Locale locale) {
         customerService.changePassword(id, request.getNewPassword());
-
-        // Sử dụng StatusCode cụ thể và MessageUtil
-        StatusCode status = StatusCode.PASSWORD_CHANGED;
-        String message = messageUtil.getMessage(status.getMessageKey());
-        ApiResponse<Void> response = new ApiResponse<>(status.getCode(), message);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(StatusCode.PASSWORD_CHANGED, messageSource, locale));
     }
 
     @PutMapping("/{id}/profile")
-    public ResponseEntity<ApiResponse<CustomerDTO>> updateProfile(@PathVariable Long id, @RequestBody @Valid CustomerDTO dto) {
+    public ResponseEntity<ApiResponse<CustomerDTO>> updateProfile(@PathVariable Long id, @RequestBody @Valid CustomerDTO dto, Locale locale) {
         CustomerDTO updated = customerService.updateProfile(id, dto);
-
-        StatusCode status = StatusCode.PROFILE_UPDATED;
-        String message = messageUtil.getMessage(status.getMessageKey());
-        ApiResponse<CustomerDTO> response = new ApiResponse<>(status.getCode(), message, updated);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.PROFILE_UPDATED, messageSource, locale));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CustomerDTO>>> getAllCustomers() {
+    public ResponseEntity<ApiResponse<List<CustomerDTO>>> getAllCustomers(Locale locale) {
         List<CustomerDTO> customers = customerService.getAllCustomers();
-
-        StatusCode status = StatusCode.GET_LIST_SUCCESS; // Tái sử dụng StatusCode chung
-        String message = messageUtil.getMessage("customer.list.found"); // Hoặc lấy key trực tiếp
-        ApiResponse<List<CustomerDTO>> response = new ApiResponse<>(status.getCode(), message, customers);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(customers, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<CustomerDTO>> getCustomerById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<CustomerDTO>> getCustomerById(@PathVariable Long id, Locale locale) {
         CustomerDTO dto = customerService.getCustomerById(id);
-
-        String message = messageUtil.getMessage("customer.get.found");
-        ApiResponse<CustomerDTO> response = new ApiResponse<>(StatusCode.SUCCESS.getCode(), message, dto);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CustomerDTO>> createCustomer(@RequestBody @Valid CustomerDTO dto) {
+    public ResponseEntity<ApiResponse<CustomerDTO>> createCustomer(@RequestBody @Valid CustomerDTO dto, Locale locale) {
         CustomerDTO created = customerService.createCustomer(dto);
-
-        StatusCode status = StatusCode.CREATED_SUCCESS; // Tái sử dụng
-        String message = messageUtil.getMessage("customer.created");
-        ApiResponse<CustomerDTO> response = new ApiResponse<>(status.getCode(), message, created);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiResponse.success(created, StatusCode.CREATED_SUCCESS, messageSource, locale), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<CustomerDTO>> updateCustomer(@PathVariable Long id, @RequestBody @Valid CustomerDTO dto) {
+    public ResponseEntity<ApiResponse<CustomerDTO>> updateCustomer(@PathVariable Long id, @RequestBody @Valid CustomerDTO dto, Locale locale) {
         CustomerDTO updated = customerService.updateCustomer(id, dto);
-
-        StatusCode status = StatusCode.UPDATED_SUCCESS; // Tái sử dụng
-        String message = messageUtil.getMessage("customer.updated");
-        ApiResponse<CustomerDTO> response = new ApiResponse<>(status.getCode(), message, updated);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteCustomer(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCustomer(@PathVariable Long id, Locale locale) {
         customerService.deleteCustomer(id);
-
-        StatusCode status = StatusCode.DELETED_SUCCESS; // Tái sử dụng
-        String message = messageUtil.getMessage("customer.deleted");
-        ApiResponse<Void> response = new ApiResponse<>(status.getCode(), message);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
     }
 }

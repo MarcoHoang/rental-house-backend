@@ -28,7 +28,7 @@ public class HouseDTO {
     private Status status;
     private HouseType houseType;
 
-    private List<String> imageUrls; // Danh sách URL ảnh
+    private List<String> imageUrls;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

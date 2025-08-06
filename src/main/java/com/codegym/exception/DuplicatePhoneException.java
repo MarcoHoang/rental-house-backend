@@ -1,7 +1,9 @@
 package com.codegym.exception;
 
-public class DuplicatePhoneException extends RuntimeException {
-    public DuplicatePhoneException(String message) {
-        super(message);
+import com.codegym.utils.StatusCode;
+
+public class DuplicatePhoneException extends AppException {
+    public DuplicatePhoneException() {
+        super(StatusCode.PHONE_ALREADY_EXISTS);
     }
 }

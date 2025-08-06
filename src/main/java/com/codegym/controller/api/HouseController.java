@@ -3,15 +3,16 @@ package com.codegym.controller.api;
 import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.HouseDTO;
 import com.codegym.service.HouseService;
-import com.codegym.utils.MessageUtil;
 import com.codegym.utils.StatusCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/houses")
@@ -20,85 +21,65 @@ import java.util.List;
 public class HouseController {
 
     private final HouseService houseService;
-    private final MessageUtil messageUtil;
+    private final MessageSource messageSource;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<HouseDTO>>> getAllHouses() {
+    public ResponseEntity<ApiResponse<List<HouseDTO>>> getAllHouses(Locale locale) {
         List<HouseDTO> houses = houseService.getAllHouses();
-        String message = messageUtil.getMessage("house.list.found");
-        ApiResponse<List<HouseDTO>> response = new ApiResponse<>(StatusCode.GET_LIST_SUCCESS.getCode(), message, houses);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(houses, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<HouseDTO>>> searchHouses(@RequestParam(required = false) String keyword) {
+    public ResponseEntity<ApiResponse<List<HouseDTO>>> searchHouses(@RequestParam(required = false) String keyword, Locale locale) {
         List<HouseDTO> houses = houseService.searchHouses(keyword);
-        String message = messageUtil.getMessage("house.search.found");
-        ApiResponse<List<HouseDTO>> response = new ApiResponse<>(StatusCode.GET_LIST_SUCCESS.getCode(), message, houses);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(houses, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/top")
-    public ResponseEntity<ApiResponse<List<HouseDTO>>> getTopHouses() {
+    public ResponseEntity<ApiResponse<List<HouseDTO>>> getTopHouses(Locale locale) {
         List<HouseDTO> houses = houseService.getTopHouses();
-        String message = messageUtil.getMessage("house.top.found");
-        ApiResponse<List<HouseDTO>> response = new ApiResponse<>(StatusCode.GET_LIST_SUCCESS.getCode(), message, houses);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(houses, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<ApiResponse<HouseDTO>> updateHouseStatus(@PathVariable Long id, @RequestParam String status) {
+    public ResponseEntity<ApiResponse<HouseDTO>> updateHouseStatus(@PathVariable Long id, @RequestParam String status, Locale locale) {
         HouseDTO updated = houseService.updateHouseStatus(id, status);
-        String message = messageUtil.getMessage("house.status.updated");
-        ApiResponse<HouseDTO> response = new ApiResponse<>(StatusCode.UPDATED_SUCCESS.getCode(), message, updated);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/{id}/map")
-    public ResponseEntity<ApiResponse<HouseDTO>> getHouseMap(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<HouseDTO>> getHouseMap(@PathVariable Long id, Locale locale) {
         HouseDTO dto = houseService.getHouseById(id);
-        String message = messageUtil.getMessage("house.map.found");
-        ApiResponse<HouseDTO> response = new ApiResponse<>(StatusCode.SUCCESS.getCode(), message, dto);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/{id}/images")
-    public ResponseEntity<ApiResponse<List<String>>> getHouseImages(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<List<String>>> getHouseImages(@PathVariable Long id, Locale locale) {
         List<String> images = houseService.getHouseImages(id);
-        String message = messageUtil.getMessage("house.images.found");
-        ApiResponse<List<String>> response = new ApiResponse<>(StatusCode.SUCCESS.getCode(), message, images);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(images, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<HouseDTO>> getHouseById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<HouseDTO>> getHouseById(@PathVariable Long id, Locale locale) {
         HouseDTO dto = houseService.getHouseById(id);
-        String message = messageUtil.getMessage("house.get.found");
-        ApiResponse<HouseDTO> response = new ApiResponse<>(StatusCode.SUCCESS.getCode(), message, dto);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<HouseDTO>> createHouse(@RequestBody @Valid HouseDTO dto) {
+    public ResponseEntity<ApiResponse<HouseDTO>> createHouse(@RequestBody @Valid HouseDTO dto, Locale locale) {
         HouseDTO created = houseService.createHouse(dto);
-        String message = messageUtil.getMessage("house.created");
-        ApiResponse<HouseDTO> response = new ApiResponse<>(StatusCode.CREATED_SUCCESS.getCode(), message, created);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiResponse.success(created, StatusCode.CREATED_SUCCESS, messageSource, locale), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<HouseDTO>> updateHouse(@PathVariable Long id, @RequestBody @Valid HouseDTO dto) {
+    public ResponseEntity<ApiResponse<HouseDTO>> updateHouse(@PathVariable Long id, @RequestBody @Valid HouseDTO dto, Locale locale) {
         HouseDTO updated = houseService.updateHouse(id, dto);
-        String message = messageUtil.getMessage("house.updated");
-        ApiResponse<HouseDTO> response = new ApiResponse<>(StatusCode.UPDATED_SUCCESS.getCode(), message, updated);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteHouse(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteHouse(@PathVariable Long id, Locale locale) {
         houseService.deleteHouse(id);
-        String message = messageUtil.getMessage("house.deleted");
-        ApiResponse<Void> response = new ApiResponse<>(StatusCode.DELETED_SUCCESS.getCode(), message);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
     }
 }

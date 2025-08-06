@@ -5,12 +5,14 @@ import com.codegym.entity.House;
 import com.codegym.entity.Rental;
 import com.codegym.entity.Review;
 import com.codegym.entity.User;
+import com.codegym.exception.AppException;
+import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HouseRepository;
 import com.codegym.repository.RentalRepository;
 import com.codegym.repository.ReviewRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.ReviewService;
-import jakarta.persistence.EntityNotFoundException;
+import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,21 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserRepository userRepository;
     private final HouseRepository houseRepository;
     private final RentalRepository rentalRepository;
+
+    private User findUserByIdOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
+    }
+
+    private House findHouseByIdOrThrow(Long houseId) {
+        return houseRepository.findById(houseId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOUSE_NOT_FOUND, houseId));
+    }
+
+    private Review findReviewByIdOrThrow(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.REVIEW_NOT_FOUND, reviewId));
+    }
 
     private ReviewDTO toDTO(Review review) {
         return ReviewDTO.builder()
@@ -49,17 +66,14 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(readOnly = true)
     public ReviewDTO getReviewById(Long id) {
-        return reviewRepository.findById(id)
-                .map(this::toDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đánh giá với ID: " + id));
+        Review review = findReviewByIdOrThrow(id);
+        return toDTO(review);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ReviewDTO> getReviewsByHouseId(Long houseId) {
-        if (!houseRepository.existsById(houseId)) {
-            throw new EntityNotFoundException("Không tìm thấy nhà với ID: " + houseId);
-        }
+        findHouseByIdOrThrow(houseId);
         return reviewRepository.findByHouseIdAndIsVisibleTrueOrderByCreatedAtDesc(houseId)
                 .stream().map(this::toDTO).collect(Collectors.toList());
     }
@@ -67,18 +81,16 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public ReviewDTO createReview(ReviewDTO reviewDTO) {
-        User reviewer = userRepository.findById(reviewDTO.getReviewerId())
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng với ID: " + reviewDTO.getReviewerId()));
-        House house = houseRepository.findById(reviewDTO.getHouseId())
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy nhà với ID: " + reviewDTO.getHouseId()));
+        User reviewer = findUserByIdOrThrow(reviewDTO.getReviewerId());
+        House house = findHouseByIdOrThrow(reviewDTO.getHouseId());
 
-         boolean hasRentedAndCheckedOut = rentalRepository.existsByRenterIdAndHouseIdAndStatus(reviewer.getId(), house.getId(), Rental.Status.CHECKED_OUT);
-         if (!hasRentedAndCheckedOut) {
-             throw new IllegalStateException("Bạn chỉ có thể đánh giá nhà bạn đã thuê và đã trả phòng.");
-         }
+        boolean hasRentedAndCheckedOut = rentalRepository.existsByRenterIdAndHouseIdAndStatus(reviewer.getId(), house.getId(), Rental.Status.CHECKED_OUT);
+        if (!hasRentedAndCheckedOut) {
+            throw new AppException(StatusCode.CANNOT_REVIEW_NOT_RENTED);
+        }
 
         if (reviewRepository.existsByReviewerIdAndHouseId(reviewer.getId(), house.getId())) {
-            throw new IllegalArgumentException("Bạn đã đánh giá nhà này rồi.");
+            throw new AppException(StatusCode.REVIEW_ALREADY_EXISTS);
         }
 
         Review review = new Review();
@@ -94,13 +106,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO) {
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đánh giá để cập nhật với ID: " + id));
-
-        // Kiểm tra quyền: Chỉ người viết ra review mới được sửa
-        // if (!review.getReviewer().getId().equals(getCurrentUserId())) {
-        //     throw new AccessDeniedException("Bạn không có quyền sửa đánh giá này.");
-        // }
+        Review review = findReviewByIdOrThrow(id);
 
         review.setRating(reviewDTO.getRating());
         review.setComment(reviewDTO.getComment());
@@ -111,20 +117,15 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void deleteReview(Long id) {
-        if (!reviewRepository.existsById(id)) {
-            throw new EntityNotFoundException("Không thể xóa. Đánh giá với ID " + id + " không tồn tại.");
-        }
-        reviewRepository.deleteById(id);
+        Review review = findReviewByIdOrThrow(id);
+        reviewRepository.delete(review);
     }
 
     @Override
     @Transactional
     public ReviewDTO toggleVisibility(Long id) {
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đánh giá với ID: " + id));
-
+        Review review = findReviewByIdOrThrow(id);
         review.setIsVisible(!review.getIsVisible());
-
         return toDTO(reviewRepository.save(review));
     }
 }
