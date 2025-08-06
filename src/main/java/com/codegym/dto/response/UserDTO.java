@@ -5,7 +5,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerDTO {
+public class UserDTO {
     private Long id;                 // ID dùng chung với User
     private String fullName;         // Họ và tên
     private String address;          // Địa chỉ

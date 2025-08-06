@@ -1,12 +1,11 @@
 package com.codegym.service.impl;
 
-import com.codegym.dto.response.CustomerDTO;
+import com.codegym.dto.response.UserDTO;
 import com.codegym.entity.User;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
-import com.codegym.repository.CustomerRepository;
 import com.codegym.repository.UserRepository;
-import com.codegym.service.CustomerService;
+import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,14 +17,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerServiceImpl implements CustomerService {
+public class UserServiceImpl implements UserService {
 
-    private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private CustomerDTO toDTO(User user) {
-        CustomerDTO dto = new CustomerDTO();
+    private UserDTO toDTO(User user) {
+        UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setFullName(user.getFullName());
         dto.setAddress(user.getAddress());
@@ -36,7 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
         return dto;
     }
 
-    private User toEntityForCreate(CustomerDTO dto) {
+    private User toEntityForCreate(UserDTO dto) {
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
@@ -47,7 +45,7 @@ public class CustomerServiceImpl implements CustomerService {
         return user;
     }
 
-    private void updateEntityFromDTO(User user, CustomerDTO dto) {
+    private void updateEntityFromDTO(User user, UserDTO dto) {
         user.setFullName(dto.getFullName());
         user.setAddress(dto.getAddress());
 
@@ -70,20 +68,20 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CustomerDTO> getAllCustomers() {
-        return customerRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    public List<UserDTO> getAllCustomers() {
+        return userRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public CustomerDTO getCustomerById(Long id) {
+    public UserDTO getCustomerById(Long id) {
         User user = findUserByIdOrThrow(id);
         return toDTO(user);
     }
 
     @Override
     @Transactional
-    public CustomerDTO createCustomer(CustomerDTO dto) {
+    public UserDTO createCustomer(UserDTO dto) {
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new AppException(StatusCode.USERNAME_ALREADY_EXISTS);
         }
@@ -101,7 +99,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public CustomerDTO updateCustomer(Long id, CustomerDTO dto) {
+    public UserDTO updateCustomer(Long id, UserDTO dto) {
         User user = findUserByIdOrThrow(id);
         updateEntityFromDTO(user, dto);
         User updatedUser = userRepository.save(user);
@@ -125,7 +123,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public CustomerDTO updateProfile(Long id, CustomerDTO dto) {
+    public UserDTO updateProfile(Long id, UserDTO dto) {
         User user = findUserByIdOrThrow(id);
         updateEntityFromDTO(user, dto);
         User updatedUser = userRepository.save(user);
