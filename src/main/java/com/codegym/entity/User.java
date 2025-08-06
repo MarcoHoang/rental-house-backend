@@ -34,9 +34,6 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Transient
-    private String confirmPassword;
-
     @Column(name = "facebook_account_id")
     private String facebookAccountId;
 

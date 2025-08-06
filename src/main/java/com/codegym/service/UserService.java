@@ -5,17 +5,17 @@ import java.util.List;
 
 public interface UserService {
 
-    List<UserDTO> getAllCustomers();
+    List<UserDTO> getAllUsers();
 
-    UserDTO getCustomerById(Long id);
+    UserDTO getUserById(Long id);
 
-    UserDTO createCustomer(UserDTO dto);
+    UserDTO createUser(UserDTO dto);
 
-    UserDTO updateCustomer(Long id, UserDTO dto);
+    UserDTO updateUser(Long id, UserDTO dto);
 
-    void deleteCustomer(Long id);
+    void deleteUser(Long id);
 
-    void changePassword(Long id, String newPassword);
+    void changePassword(Long id, String oldPassword, String newPassword);
 
     UserDTO updateProfile(Long id, UserDTO dto);
 }

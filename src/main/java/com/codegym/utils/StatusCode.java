@@ -60,6 +60,7 @@ public enum StatusCode {
     // == SYSTEM & VALIDATION ERRORS (90-99) ==
     DATA_INTEGRITY_VIOLATION("90", "error.data.integrity"),
     ACCESS_DENIED("91", "error.access.denied"),
+    FORBIDDEN_ACTION("92", "error.forbidden"),
 
     VALIDATION_ERROR("98", "error.validation"),
     INTERNAL_ERROR("99", "error.internal");

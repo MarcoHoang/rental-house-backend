@@ -8,6 +8,7 @@ import com.codegym.repository.UserRepository;
 import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,20 +69,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDTO> getAllCustomers() {
+    public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public UserDTO getCustomerById(Long id) {
+    public UserDTO getUserById(Long id) {
         User user = findUserByIdOrThrow(id);
         return toDTO(user);
     }
 
     @Override
     @Transactional
-    public UserDTO createCustomer(UserDTO dto) {
+    public UserDTO createUser(UserDTO dto) {
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new AppException(StatusCode.USERNAME_ALREADY_EXISTS);
         }
@@ -99,7 +100,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO updateCustomer(Long id, UserDTO dto) {
+    public UserDTO updateUser(Long id, UserDTO dto) {
         User user = findUserByIdOrThrow(id);
         updateEntityFromDTO(user, dto);
         User updatedUser = userRepository.save(user);
@@ -108,17 +109,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteCustomer(Long id) {
+    public void deleteUser(Long id) {
         User user = findUserByIdOrThrow(id);
         userRepository.delete(user);
     }
 
     @Override
     @Transactional
-    public void changePassword(Long id, String newPassword) {
-        User user = findUserByIdOrThrow(id);
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+    public void changePassword(Long id, String oldPassword, String newPassword) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        if (!currentUser.getId().equals(id)) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION);
+        }
+
+        if (!passwordEncoder.matches(oldPassword, currentUser.getPassword())) {
+            throw new AppException(StatusCode.INVALID_PASSWORD);
+        }
+
+        if (passwordEncoder.matches(newPassword, currentUser.getPassword())) {
+            throw new AppException(StatusCode.DUPLICATE_OLD_PASSWORD);
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(currentUser);
     }
 
     @Override
