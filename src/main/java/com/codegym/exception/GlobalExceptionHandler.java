@@ -2,155 +2,118 @@ package com.codegym.exception;
 
 import com.codegym.dto.ApiResponse;
 import com.codegym.utils.MessageUtil;
+import com.codegym.utils.StatusCode;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
     private MessageUtil messageUtil;
 
-    /**
-     * Xử lý lỗi không tìm thấy Entity (ví dụ: khi gọi findById nhưng không tồn tại).
-     */
+    // Xử lý các lỗi do client cung cấp dữ liệu không tìm thấy trong DB.
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse<ApiError>> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
-        String path = extractPath(request);
-        ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage(), path);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ApiResponse<>(404, messageUtil.getMessage("Không tìm thấy dữ liệu"), error));
+        // Ghi chú: Bạn có thể muốn tạo một StatusCode.ENTITY_NOT_FOUND ("05", "Không tìm thấy tài nguyên")
+        // để dùng chung, thay vì USER_NOT_FOUND quá cụ thể.
+        ApiError error = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), extractPath(request));
+        return new ResponseEntity<>(new ApiResponse<>(StatusCode.USER_NOT_FOUND, error), HttpStatus.NOT_FOUND);
     }
 
-    /**
-     * Xử lý lỗi chung không xác định.
-     */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<ApiError>> handleAllExceptions(Exception ex, WebRequest request) {
-        ex.printStackTrace(); // log lỗi
-        String path = extractPath(request);
-        ApiError error = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), path);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponse<>(500, messageUtil.getMessage("Lỗi hệ thống. Vui lòng thử lại sau."), error));
-    }
-
-    /**
-     * Xử lý IllegalArgumentException (ví dụ: check logic trong code).
-     */
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<ApiError>> handleBadRequest(IllegalArgumentException ex, WebRequest request) {
-        String path = extractPath(request);
-        ApiError error = new ApiError(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), path);
-        return ResponseEntity.badRequest()
-                .body(new ApiResponse<>(400, messageUtil.getMessage("Yêu cầu không hợp lệ"), error));
-    }
-
-    /**
-     * Xử lý lỗi database (DataAccessException: lỗi SQL, truy vấn sai, constraint DB...).
-     */
-    @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<ApiResponse<ApiError>> handleDatabaseError(DataAccessException ex, WebRequest request) {
-        String path = extractPath(request);
-        ApiError error = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Database error: " + ex.getMessage(), path);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponse<>(500, messageUtil.getMessage("Lỗi truy vấn cơ sở dữ liệu"), error));
-    }
-
-    /**
-     * Xử lý lỗi truyền sai kiểu tham số (ví dụ: @PathVariable không phải int).
-     */
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ApiResponse<ApiError>> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
-        String path = extractPath(request);
-        String errorMsg = "Invalid parameter: " + ex.getName() + " must be of type " +
-                Objects.requireNonNull(ex.getRequiredType()).getSimpleName();
-        ApiError error = new ApiError(HttpStatus.BAD_REQUEST.value(), errorMsg, path);
-        return ResponseEntity.badRequest().body(new ApiResponse<>(400, messageUtil.getMessage("Yêu cầu không hợp lệ"), error));
-    }
-
-    /**
-     * Xử lý lỗi email đã tồn tại (ví dụ: đăng ký trùng email).
-     */
+    // Xử lý các lỗi nghiệp vụ được định nghĩa sẵn
     @ExceptionHandler(DuplicateEmailException.class)
     public ResponseEntity<ApiResponse<ApiError>> handleDuplicateEmail(DuplicateEmailException ex, WebRequest request) {
-        String path = request.getDescription(false).replace("uri=", "");
-        ApiError error = new ApiError(409, ex.getMessage(), path);
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ApiResponse<>(409, ex.getMessage(), error));
+        ApiError error = new ApiError(HttpStatus.CONFLICT, ex.getMessage(), extractPath(request));
+        return new ResponseEntity<>(new ApiResponse<>(StatusCode.EMAIL_ALREADY_EXISTS, error), HttpStatus.CONFLICT);
     }
 
-
-    /**
-     * Xử lý lỗi phone đã tồn tại (ví dụ: đăng ký trùng email).
-     */
     @ExceptionHandler(DuplicatePhoneException.class)
-    public ResponseEntity<ApiResponse<ApiError>> handleDuplicateEmail(DuplicatePhoneException ex, WebRequest request) {
-        String path = request.getDescription(false).replace("uri=", "");
-        ApiError error = new ApiError(409, ex.getMessage(), path);
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ApiResponse<>(409, ex.getMessage(), error));
+    public ResponseEntity<ApiResponse<ApiError>> handleDuplicatePhone(DuplicatePhoneException ex, WebRequest request) {
+        ApiError error = new ApiError(HttpStatus.CONFLICT, ex.getMessage(), extractPath(request));
+        return new ResponseEntity<>(new ApiResponse<>(StatusCode.PHONE_ALREADY_EXISTS, error), HttpStatus.CONFLICT);
     }
 
-
-    /**
-     * Xử lý lỗi nghiệp vụ tùy chỉnh (do lập trình viên ném ra).
-     */
+    // Xử lý các lỗi nghiệp vụ chung, sử dụng message từ properties file
     @ExceptionHandler(BaseAppException.class)
-    public ResponseEntity<ApiResponse<Object>> handleBaseAppException(BaseAppException ex) {
-        String msg = messageUtil.getMessage(ex.getMessage());
-        return ResponseEntity.badRequest().body(new ApiResponse<>(400, msg, null));
+    public ResponseEntity<ApiResponse<ApiError>> handleBaseAppException(BaseAppException ex, WebRequest request) {
+        String message = messageUtil.getMessage(ex.getMessage());
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, message, extractPath(request));
+
+        // Dựa vào message key để xác định StatusCode phù hợp
+        StatusCode statusCode = switch (ex.getMessage()) {
+            case "error.invalidPassword" -> StatusCode.INVALID_PASSWORD;
+            case "error.duplicateOldPassword" -> StatusCode.DUPLICATE_OLD_PASSWORD;
+            // Thêm các case khác tại đây
+            default -> StatusCode.VALIDATION_ERROR;
+        };
+
+        return new ResponseEntity<>(new ApiResponse<>(statusCode, error), HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * Xử lý lỗi @Valid với @RequestBody.
-     */
+    // Xử lý khi tham số đường dẫn (path variable) có kiểu dữ liệu không đúng
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<ApiError>> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
+        String requiredType = Objects.requireNonNull(ex.getRequiredType()).getSimpleName();
+        String message = String.format("Tham số '%s' phải là kiểu '%s'.", ex.getName(), requiredType);
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, message, extractPath(request));
+        return new ResponseEntity<>(new ApiResponse<>(StatusCode.VALIDATION_ERROR, error), HttpStatus.BAD_REQUEST);
+    }
+
+    // Xử lý các lỗi ràng buộc dữ liệu từ DB (VD: unique constraint)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<ApiError>> handleDatabaseError(DataIntegrityViolationException ex, WebRequest request) {
+        ApiError error = new ApiError(HttpStatus.CONFLICT, "Dữ liệu vi phạm ràng buộc. Có thể do trùng lặp thông tin.", extractPath(request));
+        // Bạn có thể phân tích sâu hơn `ex.getMostSpecificCause().getMessage()` để tìm ra StatusCode chính xác hơn
+        return new ResponseEntity<>(new ApiResponse<>(StatusCode.VALIDATION_ERROR, error), HttpStatus.CONFLICT);
+    }
+
+    // Xử lý các lỗi chung không lường trước được
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<ApiError>> handleAllUncaughtException(Exception ex, WebRequest request) {
+        // Luôn ghi log cho các lỗi không mong muốn để debug
+        logger.error("An unexpected error occurred", ex);
+        ApiError error = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Có lỗi xảy ra trong hệ thống, vui lòng thử lại sau.", extractPath(request));
+        return new ResponseEntity<>(new ApiResponse<>(StatusCode.INTERNAL_ERROR, error), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // Ghi đè phương thức xử lý lỗi @Valid
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
-            org.springframework.http.HttpHeaders headers,
-            org.springframework.http.HttpStatusCode status,
+            HttpHeaders headers,
+            HttpStatusCode status,
             WebRequest request) {
-        String path = extractPath(request);
-        StringBuilder sb = new StringBuilder();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            sb.append(error.getDefaultMessage()).append("; ");
-        }
-        ApiError apiError = new ApiError(400, sb.toString(), path);
-        return ResponseEntity.badRequest().body(new ApiResponse<>(400, sb.toString(), null));
+
+        List<String> validationErrors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.toList());
+
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "Dữ liệu không hợp lệ.", extractPath(request), validationErrors);
+        ApiResponse<ApiError> response = new ApiResponse<>(StatusCode.VALIDATION_ERROR, error);
+
+        return new ResponseEntity<>(response, headers, status);
     }
 
-    /**
-     * Xử lý lỗi validate @RequestParam, @PathVariable với @Validated.
-     */
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiResponse<Object>> handleConstraintViolation(ConstraintViolationException ex) {
-        String message = ex.getConstraintViolations().stream()
-                .map(violation -> messageUtil.getMessage(violation.getMessage()))
-                .findFirst()
-                .orElse(messageUtil.getMessage("Dữ liệu không hợp lệ"));
-        return ResponseEntity.badRequest().body(new ApiResponse<>(400, message, null));
-    }
-
-    /**
-     * Trích xuất path từ WebRequest (uri=/api/...).
-     */
     private String extractPath(WebRequest request) {
         return request.getDescription(false).replace("uri=", "");
     }
 }
-
-
