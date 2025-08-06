@@ -15,6 +15,7 @@ public enum StatusCode {
     PROFILE_UPDATED("06", "success.profile.updated"),
     LOGIN_SUCCESS("07", "success.auth.login"),
     REGISTER_SUCCESS("08", "success.auth.register"),
+    SEND_SUCCESS("09", "success.password.reset.requested"),
 
     // == BUSINESS LOGIC ERRORS (10-89) ==
 

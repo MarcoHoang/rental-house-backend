@@ -18,4 +18,8 @@ public interface UserService {
     void changePassword(Long id, String oldPassword, String newPassword);
 
     UserDTO updateProfile(Long id, UserDTO dto);
+
+    void resetPassword(String token, String newPassword);
+
+    void requestPasswordReset(String email);
 }

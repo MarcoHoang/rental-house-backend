@@ -1,10 +1,14 @@
 package com.codegym.service.impl;
 
+import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.UserDTO;
+import com.codegym.entity.PasswordResetToken;
 import com.codegym.entity.User;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
+import com.codegym.repository.PasswordResetTokenRepository;
 import com.codegym.repository.UserRepository;
+import com.codegym.service.EmailService;
 import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +29,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final EmailService emailService;
 
     private UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
@@ -146,4 +155,51 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.save(user);
         return toDTO(updatedUser);
     }
+
+    @Override
+    @Transactional
+    public void requestPasswordReset(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+
+        if (userOpt.isEmpty()) {
+            return;
+        }
+
+        User user = userOpt.get();
+
+        passwordResetTokenRepository.deleteByUser(user);
+
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setToken(token);
+        resetToken.setUser(user);
+        resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
+        passwordResetTokenRepository.save(resetToken);
+
+        emailService.sendResetPasswordEmail(email, token);
+    }
+
+
+    @Override
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new AppException(StatusCode.TOKEN_INVALID));
+
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            passwordResetTokenRepository.delete(resetToken);
+            throw new AppException(StatusCode.TOKEN_INVALID);
+        }
+
+        User user = resetToken.getUser();
+
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new AppException(StatusCode.DUPLICATE_OLD_PASSWORD);
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        passwordResetTokenRepository.delete(resetToken);
+    }
+
 }

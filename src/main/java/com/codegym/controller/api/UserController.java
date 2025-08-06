@@ -65,4 +65,18 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
     }
+
+    @PostMapping("/password-reset/request")
+    public ResponseEntity<ApiResponse<Void>> requestPasswordReset(@RequestParam String email, Locale locale) {
+        userService.requestPasswordReset(email);
+        return ResponseEntity.ok(
+                ApiResponse.success(StatusCode.SEND_SUCCESS, messageSource, locale));
+    }
+
+    @PostMapping("/password-reset/confirm")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(@RequestParam String token, @RequestParam String newPassword, Locale locale) {
+        userService.resetPassword(token, newPassword);
+        return ResponseEntity.ok(ApiResponse.success(StatusCode.PASSWORD_CHANGED, messageSource, locale));
+    }
+
 }
