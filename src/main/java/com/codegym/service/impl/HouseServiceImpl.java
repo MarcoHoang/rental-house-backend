@@ -13,6 +13,7 @@ import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.codegym.service.GeocodingService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,7 @@ public class HouseServiceImpl implements HouseService {
 
     private final HouseRepository houseRepository;
     private final UserRepository userRepository;
+    private final GeocodingService geocodingService;
 
     private House findHouseByIdOrThrow(Long id) {
         return houseRepository.findById(id)
@@ -91,8 +93,15 @@ public class HouseServiceImpl implements HouseService {
 
         House house = new House();
         updateEntityFromDTO(house, dto, houseRenter);
-        house.setId(null);
 
+        // 🟡 Nếu latitude/longitude bị null → gọi Geocoding để lấy tọa độ
+        if (house.getLatitude() == null || house.getLongitude() == null) {
+            double[] latLng = geocodingService.getLatLngFromAddress(house.getAddress());
+            house.setLatitude(latLng[0]);
+            house.setLongitude(latLng[1]);
+        }
+
+        house.setId(null);
         House savedHouse = houseRepository.save(house);
         return toDTO(savedHouse);
     }
@@ -103,7 +112,16 @@ public class HouseServiceImpl implements HouseService {
         House existingHouse = findHouseByIdOrThrow(id);
         User houseRenter = findHouseRenterByIdOrThrow(dto.getHouseRenterId());
 
+        boolean addressChanged = !existingHouse.getAddress().equals(dto.getAddress());
+
         updateEntityFromDTO(existingHouse, dto, houseRenter);
+
+        // 🟡 Nếu người dùng đổi địa chỉ hoặc xóa lat/lng → cập nhật lại
+        if (addressChanged || existingHouse.getLatitude() == null || existingHouse.getLongitude() == null) {
+            double[] latLng = geocodingService.getLatLngFromAddress(existingHouse.getAddress());
+            existingHouse.setLatitude(latLng[0]);
+            existingHouse.setLongitude(latLng[1]);
+        }
 
         House updatedHouse = houseRepository.save(existingHouse);
         return toDTO(updatedHouse);

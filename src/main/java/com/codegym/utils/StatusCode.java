@@ -46,6 +46,7 @@ public enum StatusCode {
     // --- House Management (40-49) ---
     HOUSE_NOT_AVAILABLE("40", "error.house.notAvailable"),
     INVALID_HOUSE_STATUS("41", "error.house.invalidStatus"),
+    GEOCODING_FAILED("42", "error.geogcoding"),
 
     // --- Rental Management (50-59) ---
     RENTAL_PERIOD_OVERLAP("50", "error.rental.periodOverlap"),
