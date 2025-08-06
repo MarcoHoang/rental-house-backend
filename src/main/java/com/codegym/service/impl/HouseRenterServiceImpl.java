@@ -28,9 +28,7 @@ public class HouseRenterServiceImpl implements HouseRenterService {
     private UserRepository userRepository;
 
     @Autowired
-    private HouseRepository houseRepository; // Thêm để lấy danh sách nhà
-
-    // ---- CÁC PHƯƠNG THỨC MAPPER ----
+    private HouseRepository houseRepository;
 
     private HouseRenterDTO toDTO(HouseRenter houseRenter) {
         HouseRenterDTO dto = new HouseRenterDTO();
@@ -53,7 +51,6 @@ public class HouseRenterServiceImpl implements HouseRenterService {
         return dto;
     }
 
-    // Helper để cập nhật entity đã tồn tại từ DTO, tránh tạo mới không cần thiết
     private void updateEntityFromDTO(HouseRenter houseRenter, HouseRenterDTO dto, User user) {
         houseRenter.setUser(user);
         houseRenter.setNationalId(dto.getNationalId());
@@ -61,8 +58,6 @@ public class HouseRenterServiceImpl implements HouseRenterService {
         houseRenter.setAddress(dto.getAddress());
         houseRenter.setApprovedDate(dto.getApprovedDate());
     }
-
-    // ---- TRIỂN KHAI SERVICE ----
 
     @Override
     @Transactional(readOnly = true)
@@ -81,16 +76,13 @@ public class HouseRenterServiceImpl implements HouseRenterService {
     @Override
     @Transactional
     public HouseRenterDTO createHouseRenter(HouseRenterDTO dto) {
-        // 1. Kiểm tra xem User có tồn tại không
         User user = userRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng với ID: " + dto.getId() + " để đăng ký làm chủ nhà."));
 
-        // 2. Kiểm tra xem người dùng này đã là chủ nhà chưa
         if (houseRenterRepository.existsById(dto.getId())) {
             throw new IllegalArgumentException("Người dùng với ID " + dto.getId() + " đã được đăng ký làm chủ nhà.");
         }
 
-        // 3. Tạo mới HouseRenter và liên kết
         HouseRenter houseRenter = new HouseRenter();
         houseRenter.setId(user.getId()); // ID của HouseRenter phải trùng với ID của User
         updateEntityFromDTO(houseRenter, dto, user);
@@ -102,11 +94,9 @@ public class HouseRenterServiceImpl implements HouseRenterService {
     @Override
     @Transactional
     public HouseRenterDTO updateHouseRenter(Long id, HouseRenterDTO dto) {
-        // 1. Lấy HouseRenter đã tồn tại từ DB
         HouseRenter existingHouseRenter = houseRenterRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy chủ nhà với ID: " + id + " để cập nhật."));
 
-        // 2. Cập nhật các trường từ DTO vào entity đã tồn tại
         updateEntityFromDTO(existingHouseRenter, dto, existingHouseRenter.getUser());
 
         HouseRenter updatedHouseRenter = houseRenterRepository.save(existingHouseRenter);
@@ -119,7 +109,6 @@ public class HouseRenterServiceImpl implements HouseRenterService {
         if (!houseRenterRepository.existsById(id)) {
             throw new EntityNotFoundException("Không thể xóa. Chủ nhà với ID: " + id + " không tồn tại.");
         }
-        // Cân nhắc: Khi xóa chủ nhà, có nên xóa cả các nhà của họ? (Logic nghiệp vụ)
         houseRenterRepository.deleteById(id);
     }
 
@@ -128,7 +117,7 @@ public class HouseRenterServiceImpl implements HouseRenterService {
     public void lockHouseRenter(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng với ID: " + id + " để khóa."));
-        user.setActive(false); // Giả sử bạn có trường `isActive` trên User entity
+        user.setActive(false);
         userRepository.save(user);
     }
 
@@ -144,20 +133,15 @@ public class HouseRenterServiceImpl implements HouseRenterService {
     @Override
     @Transactional(readOnly = true)
     public List<HouseDTO> getHouseRenterHouses(Long id) {
-        // 1. Kiểm tra chủ nhà có tồn tại không
         if (!houseRenterRepository.existsById(id)) {
             throw new EntityNotFoundException("Không tìm thấy chủ nhà với ID: " + id);
         }
 
-        // 2. Lấy danh sách nhà theo ID chủ nhà
-        // (Yêu cầu phải có phương thức này trong HouseRepository)
         List<House> houses = houseRepository.findByHouseRenterId(id);
 
-        // 3. Chuyển đổi List<House> sang List<HouseDTO>
         return houses.stream().map(this::toHouseDTO).collect(Collectors.toList());
     }
 
-    // Phương thức helper để map House sang HouseDTO (tốt nhất nên có một class Mapper riêng)
     private HouseDTO toHouseDTO(House house) {
         return HouseDTO.builder()
                 .id(house.getId())
@@ -169,7 +153,6 @@ public class HouseRenterServiceImpl implements HouseRenterService {
                 .imageUrls(house.getImages() != null ?
                         house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList())
                         : List.of())
-                //... các trường khác của HouseDTO
                 .build();
     }
 }

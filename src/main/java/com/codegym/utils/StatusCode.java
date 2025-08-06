@@ -5,33 +5,56 @@ import lombok.Getter;
 @Getter
 public enum StatusCode {
 
-    // ✅ Success
-    SUCCESS("00", "Thành công"),
+    // ====================================================================
+    // == SUCCESS CODES (00-09) ==
+    // ====================================================================
+    SUCCESS("00", "success.general"),
+    CREATED_SUCCESS("00", "success.created"),
+    UPDATED_SUCCESS("00", "success.updated"),
+    DELETED_SUCCESS("00", "success.deleted"),
+    GET_LIST_SUCCESS("00", "success.list.found"),
+    PASSWORD_CHANGED("00", "success.password.changed"),
+    PROFILE_UPDATED("00", "success.profile.updated"),
 
-    // ✅ Business logic errors
-    EMAIL_ALREADY_EXISTS("01", "Email đã tồn tại"),
-    PHONE_ALREADY_EXISTS("02", "Số điện thoại đã tồn tại"),
-    INVALID_PASSWORD("03", "Mật khẩu không hợp lệ"),
-    DUPLICATE_OLD_PASSWORD("04", "Mật khẩu mới không được trùng với mật khẩu cũ"),
-    USER_NOT_FOUND("05", "Không tìm thấy người dùng"),
-    TOKEN_INVALID("06", "Token không hợp lệ"),
-    ROLE_NOT_FOUND("07", "Không tìm thấy vai trò"),
-    EMAIL_EMPTY("10", "Email không được để trống"),
-    EMAIL_NOT_REGISTERED("11", "Email chưa được đăng ký"),
 
-    // ✅ System & validation
-    VALIDATION_ERROR("98", "Lỗi xác thực"),
-    INTERNAL_ERROR("99", "Lỗi hệ thống");
+    // ====================================================================
+    // == BUSINESS LOGIC ERRORS (10-89) ==
+    // ====================================================================
+    EMAIL_ALREADY_EXISTS("10", "error.email.exists"),
+    PHONE_ALREADY_EXISTS("11", "error.phone.exists"),
+    INVALID_PASSWORD("12", "error.password.invalid"),
+    DUPLICATE_OLD_PASSWORD("13", "error.password.duplicateOld"),
+    USER_NOT_FOUND("14", "error.user.notFound"),
+    TOKEN_INVALID("15", "error.token.invalid"),
+    ROLE_NOT_FOUND("16", "error.role.notFound"),
+    EMAIL_NOT_REGISTERED("17", "error.email.notRegistered"),
+
+    // -- Data & Resource Errors --
+    RESOURCE_NOT_FOUND("20", "error.resource.notFound"),
+    DATA_INTEGRITY_VIOLATION("21", "error.data.integrity"),
+
+
+    // ====================================================================
+    // == SYSTEM & VALIDATION ERRORS (90-99) ==
+    // ====================================================================
+    VALIDATION_ERROR("98", "error.validation"),
+    INTERNAL_ERROR("99", "error.internal");
+
 
     private final String code;
-    private final String message;
+    private final String messageKey; // Đổi tên từ 'message' thành 'messageKey' cho rõ ràng
 
-    StatusCode(String code, String message) {
+    StatusCode(String code, String messageKey) {
         this.code = code;
-        this.message = message;
+        this.messageKey = messageKey;
     }
 
-    // ✅ Optional: Tìm theo mã
+    /**
+     * Optional: Tìm StatusCode dựa trên mã code.
+     * Hữu ích trong một số trường hợp cần chuyển đổi ngược.
+     * @param code Mã lỗi (ví dụ: "10")
+     * @return StatusCode tương ứng
+     */
     public static StatusCode fromCode(String code) {
         for (StatusCode sc : values()) {
             if (sc.code.equals(code)) {

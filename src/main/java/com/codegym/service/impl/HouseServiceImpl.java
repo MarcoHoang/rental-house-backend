@@ -40,7 +40,7 @@ public class HouseServiceImpl implements HouseService {
                 .houseType(house.getHouseType())
                 .imageUrls(house.getImages() != null
                         ? house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList())
-                        : List.of()) // Trả về list rỗng thay vì null
+                        : List.of())
                 .createdAt(house.getCreatedAt())
                 .updatedAt(house.getUpdatedAt())
                 .build();
@@ -57,7 +57,6 @@ public class HouseServiceImpl implements HouseService {
         house.setLongitude(dto.getLongitude());
         house.setStatus(dto.getStatus());
         house.setHouseType(dto.getHouseType());
-        // Logic cập nhật ảnh có thể phức tạp hơn, cần xử lý riêng
     }
 
 
@@ -82,9 +81,7 @@ public class HouseServiceImpl implements HouseService {
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy chủ nhà với ID: " + dto.getHouseRenterId()));
 
         House house = new House();
-        // Dùng phương thức helper để gán giá trị, đảm bảo logic nhất quán
         updateEntityFromDTO(house, dto, landlord);
-        // Khi tạo mới, id phải là null để JPA biết đây là INSERT
         house.setId(null);
 
         House savedHouse = houseRepository.save(house);
@@ -94,15 +91,12 @@ public class HouseServiceImpl implements HouseService {
     @Override
     @Transactional
     public HouseDTO updateHouse(Long id, HouseDTO dto) {
-        // 1. Tìm nhà cần cập nhật
         House existingHouse = houseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy nhà với ID: " + id + " để cập nhật."));
 
-        // 2. Tìm chủ nhà (nếu có thay đổi)
         User landlord = userRepository.findById(dto.getHouseRenterId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy chủ nhà với ID: " + dto.getHouseRenterId()));
 
-        // 3. Cập nhật các trường từ DTO vào entity đã tồn tại
         updateEntityFromDTO(existingHouse, dto, landlord);
 
         House updatedHouse = houseRepository.save(existingHouse);
@@ -121,8 +115,6 @@ public class HouseServiceImpl implements HouseService {
     @Override
     @Transactional(readOnly = true)
     public List<HouseDTO> searchHouses(String keyword) {
-        // GỢI Ý: Để tối ưu hiệu năng, nên viết một query riêng trong HouseRepository
-        // thay vì tải tất cả record lên rồi filter trong bộ nhớ.
         // Ví dụ: @Query("SELECT h FROM House h WHERE lower(h.title) LIKE lower(concat('%', :keyword, '%'))")
         return houseRepository.findAll().stream()
                 .filter(h -> keyword == null || h.getTitle().toLowerCase().contains(keyword.toLowerCase()))
@@ -133,8 +125,6 @@ public class HouseServiceImpl implements HouseService {
     @Override
     @Transactional(readOnly = true)
     public List<HouseDTO> getTopHouses() {
-        // GỢI Ý: Logic này nên được xử lý ở tầng Repository với Pageable hoặc query native
-        // để đạt hiệu suất tốt nhất, thay vì lấy tất cả rồi giới hạn.
         // Ví dụ: Pageable pageable = PageRequest.of(0, 5, Sort.by("rentalCount").descending());
         // houseRepository.findAll(pageable).getContent();
         return houseRepository.findAll().stream().limit(5).map(this::toDTO).collect(Collectors.toList());
@@ -149,7 +139,6 @@ public class HouseServiceImpl implements HouseService {
         try {
             house.setStatus(House.Status.valueOf(status.toUpperCase()));
         } catch (IllegalArgumentException e) {
-            // Ném lỗi này sẽ được GlobalExceptionHandler bắt và trả về 400 BAD REQUEST
             throw new IllegalArgumentException("Trạng thái '" + status + "' không hợp lệ.");
         }
 

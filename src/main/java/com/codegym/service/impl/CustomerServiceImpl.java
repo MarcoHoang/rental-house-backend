@@ -9,7 +9,7 @@ import com.codegym.repository.UserRepository;
 import com.codegym.service.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder; // Giả sử bạn dùng Spring Security
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Quan trọng cho việc mã hóa mật khẩu
+    private PasswordEncoder passwordEncoder;
 
     private CustomerDTO toDTO(User user) {
         CustomerDTO dto = new CustomerDTO();

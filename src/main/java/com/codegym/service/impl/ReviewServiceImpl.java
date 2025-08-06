@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor // Thay thế @Autowired bằng constructor injection
+@RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -30,8 +30,8 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewDTO toDTO(Review review) {
         return ReviewDTO.builder()
                 .id(review.getId())
-                .reviewerId(review.getReviewer().getId()) // Đổi tên cho nhất quán
-                .reviewerName(review.getReviewer().getUsername()) // Thêm thông tin hữu ích
+                .reviewerId(review.getReviewer().getId())
+                .reviewerName(review.getReviewer().getUsername())
                 .houseId(review.getHouse().getId())
                 .rating(review.getRating())
                 .comment(review.getComment())
@@ -72,13 +72,11 @@ public class ReviewServiceImpl implements ReviewService {
         House house = houseRepository.findById(reviewDTO.getHouseId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy nhà với ID: " + reviewDTO.getHouseId()));
 
-        // 1. (QUAN TRỌNG) Người dùng chỉ có thể đánh giá nhà họ đã thuê và đã trả phòng
          boolean hasRentedAndCheckedOut = rentalRepository.existsByRenterIdAndHouseIdAndStatus(reviewer.getId(), house.getId(), Rental.Status.CHECKED_OUT);
          if (!hasRentedAndCheckedOut) {
              throw new IllegalStateException("Bạn chỉ có thể đánh giá nhà bạn đã thuê và đã trả phòng.");
          }
 
-        // 2. Mỗi người dùng chỉ được đánh giá một nhà một lần
         if (reviewRepository.existsByReviewerIdAndHouseId(reviewer.getId(), house.getId())) {
             throw new IllegalArgumentException("Bạn đã đánh giá nhà này rồi.");
         }
@@ -88,7 +86,7 @@ public class ReviewServiceImpl implements ReviewService {
         review.setHouse(house);
         review.setRating(reviewDTO.getRating());
         review.setComment(reviewDTO.getComment());
-        review.setIsVisible(true); // Mặc định khi tạo là hiển thị
+        review.setIsVisible(true);
 
         return toDTO(reviewRepository.save(review));
     }
@@ -96,20 +94,17 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO) {
-        // 1. Lấy ra review đã tồn tại
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đánh giá để cập nhật với ID: " + id));
 
-        // 2. (Tùy chọn) Kiểm tra quyền: Chỉ người viết ra review mới được sửa
+        // Kiểm tra quyền: Chỉ người viết ra review mới được sửa
         // if (!review.getReviewer().getId().equals(getCurrentUserId())) {
         //     throw new AccessDeniedException("Bạn không có quyền sửa đánh giá này.");
         // }
 
-        // 3. Chỉ cập nhật các trường được phép thay đổi
         review.setRating(reviewDTO.getRating());
         review.setComment(reviewDTO.getComment());
 
-        // 4. Lưu lại entity đã được cập nhật
         return toDTO(reviewRepository.save(review));
     }
 
@@ -124,11 +119,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public ReviewDTO toggleVisibility(Long id) { // Đổi tên từ hideReview
+    public ReviewDTO toggleVisibility(Long id) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đánh giá với ID: " + id));
 
-        review.setIsVisible(!review.getIsVisible()); // Đảo ngược trạng thái
+        review.setIsVisible(!review.getIsVisible());
 
         return toDTO(reviewRepository.save(review));
     }

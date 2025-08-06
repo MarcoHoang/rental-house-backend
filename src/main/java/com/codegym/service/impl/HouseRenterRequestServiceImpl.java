@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 public class HouseRenterRequestServiceImpl implements HouseRenterRequestService {
 
     private final HouseRenterRequestRepository houseRenterRequestRepository;
-    private final HouseRenterRepository houseRenterRepository; // Cần để tạo chủ nhà mới
-    private final UserRepository userRepository;             // Cần để tìm người dùng
+    private final HouseRenterRepository houseRenterRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,7 +48,6 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng với ID: " + userId + " để tạo yêu cầu."));
 
-        // ----- KIỂM TRA LOGIC NGHIỆP VỤ -----
         if (houseRenterRepository.existsById(userId)) {
             throw new IllegalArgumentException("Người dùng này đã là một chủ nhà.");
         }
@@ -56,14 +55,10 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
             throw new IllegalArgumentException("Bạn đã có một yêu cầu đang chờ xử lý. Vui lòng đợi quản trị viên phê duyệt.");
         }
 
-        // ----- TẠO MỚI YÊU CẦU -----
         HouseRenterRequest entity = new HouseRenterRequest();
         entity.setUser(user);
         entity.setRequestDate(LocalDateTime.now());
         entity.setStatus(HouseRenterRequest.Status.PENDING);
-        // Map các thông tin khác từ DTO nếu có, ví dụ:
-        // entity.setNationalId(dto.getNationalId());
-        // entity.setProofOfOwnershipUrl(dto.getProofOfOwnershipUrl());
 
         HouseRenterRequest savedEntity = houseRenterRequestRepository.save(entity);
         return mapToDTO(savedEntity);
@@ -72,35 +67,30 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
     @Override
     @Transactional
     public HouseRenterRequestDTO approveRequest(Long id) {
-        // 1. Lấy yêu cầu từ DB
         HouseRenterRequest request = houseRenterRequestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy yêu cầu với ID: " + id));
 
-        // 2. Kiểm tra trạng thái yêu cầu
         if (request.getStatus() != HouseRenterRequest.Status.PENDING) {
             throw new IllegalStateException("Chỉ có thể duyệt các yêu cầu đang ở trạng thái PENDING.");
         }
 
-        // 3. Cập nhật trạng thái yêu cầu
         request.setStatus(HouseRenterRequest.Status.APPROVED);
         request.setProcessedDate(LocalDateTime.now());
         houseRenterRequestRepository.save(request);
 
-        // 4. Logic cốt lõi: Tạo mới một bản ghi HouseRenter
         User user = request.getUser();
         if (!houseRenterRepository.existsById(user.getId())) {
             HouseRenter newHouseRenter = new HouseRenter();
             newHouseRenter.setId(user.getId());
             newHouseRenter.setUser(user);
             newHouseRenter.setApprovedDate(LocalDateTime.now());
-            // Lấy thêm thông tin từ request nếu cần
             // newHouseRenter.setNationalId(request.getNationalId());
             houseRenterRepository.save(newHouseRenter);
         }
 
         // 5. (Tùy chọn) Cập nhật Role cho User nếu hệ thống của bạn có phân quyền
-        // Role landlordRole = roleRepository.findByName("ROLE_LANDLORD").orElseThrow(...);
-        // user.getRoles().add(landlordRole);
+        // Role houseRenterRole = roleRepository.findByName("ROLE_HOUSE_RENTER").orElseThrow(...);
+        // user.getRoles().add(houseRenterRole);
         // userRepository.save(user);
 
         return mapToDTO(request);
@@ -123,7 +113,6 @@ public class HouseRenterRequestServiceImpl implements HouseRenterRequestService 
         return mapToDTO(houseRenterRequestRepository.save(request));
     }
 
-    // Phương thức mapper giữ nguyên
     private HouseRenterRequestDTO mapToDTO(HouseRenterRequest entity) {
         return HouseRenterRequestDTO.builder()
                 .id(entity.getId())

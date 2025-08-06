@@ -30,7 +30,7 @@ public class RentalServiceImpl implements RentalService {
         return RentalDTO.builder()
                 .id(rental.getId())
                 .houseId(rental.getHouse().getId())
-                .houseTitle(rental.getHouse().getTitle()) // Thêm thông tin cho DTO
+                .houseTitle(rental.getHouse().getTitle())
                 .renterId(rental.getRenter().getId())
                 .startDate(rental.getStartDate())
                 .endDate(rental.getEndDate())
@@ -88,7 +88,6 @@ public class RentalServiceImpl implements RentalService {
         Rental rental = rentalRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bản ghi thuê nhà để cập nhật với ID: " + id));
 
-        // Chỉ cho phép cập nhật khi lịch chưa diễn ra
         if(rental.getStatus() != Rental.Status.SCHEDULED) {
             throw new IllegalStateException("Không thể cập nhật lịch thuê đã/đang diễn ra hoặc đã hoàn thành.");
         }
@@ -120,7 +119,6 @@ public class RentalServiceImpl implements RentalService {
 
         rental.setStatus(Rental.Status.CHECKED_IN);
 
-        // Cập nhật trạng thái của nhà thành ĐÃ THUÊ
         House house = rental.getHouse();
         house.setStatus(House.Status.RENTED);
         houseRepository.save(house);
