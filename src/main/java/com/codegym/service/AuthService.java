@@ -3,6 +3,7 @@ package com.codegym.service;
 import com.codegym.components.JwtTokenUtil;
 import com.codegym.dto.request.LoginRequest;
 import com.codegym.dto.request.RegisterRequest;
+import com.codegym.dto.response.LoginResponse;
 import com.codegym.entity.Role;
 import com.codegym.entity.RoleName;
 import com.codegym.entity.User;
@@ -29,7 +30,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
-    public String login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(StatusCode.INVALID_CREDENTIALS));
 
@@ -38,12 +39,35 @@ public class AuthService {
         }
 
         try {
-            return jwtTokenUtil.generateToken(user);
+            String token = jwtTokenUtil.generateToken(user);
+            return new LoginResponse(token);
         } catch (Exception e) {
             log.error("Cannot create JWT Token", e);
             throw new AppException(StatusCode.INTERNAL_ERROR);
         }
     }
+
+    public LoginResponse adminLogin(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(StatusCode.INVALID_CREDENTIALS));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new AppException(StatusCode.INVALID_CREDENTIALS);
+        }
+
+        if (!user.getRole().getName().equals(RoleName.ADMIN)) {
+            throw new AppException(StatusCode.UNAUTHORIZED);
+        }
+
+        try {
+            String token = jwtTokenUtil.generateToken(user);
+            return new LoginResponse(token);
+        } catch (Exception e) {
+            log.error("Cannot create JWT Token", e);
+            throw new AppException(StatusCode.INTERNAL_ERROR);
+        }
+    }
+
 
     @Transactional
     public void register(RegisterRequest request) {

@@ -56,13 +56,14 @@ public class WebSecurityConfig {
 
                         // Quản trị viên (ROLE_ADMIN)
                         .requestMatchers(
-                                String.format("%s/customers", apiPrefix),
-                                String.format("%s/customers/*", apiPrefix),
+                                String.format("%s/users", apiPrefix),
+                                String.format("%s/users/*", apiPrefix),
                                 String.format("%s/renters", apiPrefix),
                                 String.format("%s/renters/*", apiPrefix),
                                 String.format("%s/renter-requests", apiPrefix),
                                 String.format("%s/dashboard/**", apiPrefix),
-                                String.format("%s/banners", apiPrefix)
+                                String.format("%s/banners", apiPrefix),
+                                String.format("%s/admin/login", apiPrefix)
                         ).hasRole("ADMIN")
 
 

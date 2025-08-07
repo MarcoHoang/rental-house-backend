@@ -26,10 +26,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request, Locale locale) {
-        String token = authService.login(request);
-        LoginResponse loginResponse = new LoginResponse(token);
+        LoginResponse loginResponse = authService.login(request);
 
-        // Sử dụng static factory method
         return ResponseEntity.ok(
                 ApiResponse.success(loginResponse, StatusCode.LOGIN_SUCCESS, messageSource, locale)
         );

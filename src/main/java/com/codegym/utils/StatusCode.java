@@ -28,6 +28,7 @@ public enum StatusCode {
     TOKEN_INVALID("15", "error.token.invalid"),
     ROLE_NOT_FOUND("16", "error.role.notFound"),
     INVALID_CREDENTIALS("17", "error.auth.invalidCredentials"),
+    UNAUTHORIZED("18", "error.auth.unauthorized"),
 
     // --- Resource Not Found (20-29) ---
     USER_NOT_FOUND("21", "error.user.notFound"),
