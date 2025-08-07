@@ -42,7 +42,6 @@ public class AuthService {
             String token = jwtTokenUtil.generateToken(user);
             return new LoginResponse(token);
         } catch (Exception e) {
-            log.error("Cannot create JWT Token", e);
             throw new AppException(StatusCode.INTERNAL_ERROR);
         }
     }
@@ -63,7 +62,6 @@ public class AuthService {
             String token = jwtTokenUtil.generateToken(user);
             return new LoginResponse(token);
         } catch (Exception e) {
-            log.error("Cannot create JWT Token", e);
             throw new AppException(StatusCode.INTERNAL_ERROR);
         }
     }
