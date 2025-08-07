@@ -65,6 +65,9 @@ public enum StatusCode {
     INTERNAL_ERROR("99", "error.internal");
 
 
+
+
+
     private final String code;
     private final String messageKey;
 

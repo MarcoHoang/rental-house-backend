@@ -1,15 +1,15 @@
+// src/main/java/com/codegym/infrastructure/JwtTokenFilter.java
+
 package com.codegym.infrastructure;
 
 import com.codegym.components.JwtTokenUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.util.Pair;
+import org.springframework.lang.NonNull; // Sử dụng @NonNull của Spring
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,79 +19,56 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
-
-    @Value("${api.prefix}")
-    private String apiPrefix;
 
     private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
 
     @Override
-    protected void doFilterInternal(@NotNull HttpServletRequest request,
-                                    @NotNull HttpServletResponse response,
-                                    @NotNull FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+
+        final String authHeader = request.getHeader("Authorization");
+
+        // Nếu không có header Authorization hoặc không phải là Bearer token,
+        // hoặc nếu đã có thông tin xác thực rồi thì bỏ qua và chuyển cho filter tiếp theo.
+        if (authHeader == null || !authHeader.startsWith("Bearer ") || SecurityContextHolder.getContext().getAuthentication() != null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
-            if (isBypassToken(request)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            final String authorizationHeader = request.getHeader("Authorization");
-
-            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-                if (!response.isCommitted()) {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                }
-                return;
-            }
-
-            final String token = authorizationHeader.substring(7);
+            final String token = authHeader.substring(7);
             final String email = jwtTokenUtil.extractUsername(token);
 
+            // Mặc dù đã có check ở trên, nhưng check lại email và context để đảm bảo an toàn
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
                 if (jwtTokenUtil.validateToken(token, userDetails)) {
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, userDetails.getAuthorities());
-
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null, // không cần credentials
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-
+            // Luôn gọi filter tiếp theo dù có xác thực thành công hay không
             filterChain.doFilter(request, response);
 
+        } catch (ExpiredJwtException e) {
+            logger.warn("JWT Token has expired", e);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has expired");
         } catch (Exception e) {
-            if (!response.isCommitted()) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-            } else {
-                logger.error("Response was already committed. Cannot send error.", e);
-            }
+            logger.error("Error during JWT token processing", e);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Token");
         }
-    }
-
-    private boolean isBypassToken(@NotNull HttpServletRequest request) {
-        final List<Pair<String, String>> bypassTokens = Arrays.asList(
-                Pair.of(String.format("%s/auth/register", apiPrefix), "POST"),
-                Pair.of(String.format("%s/auth/login", apiPrefix), "POST")
-        );
-
-        for (Pair<String, String> bypassToken : bypassTokens) {
-            if (request.getServletPath().contains(bypassToken.getFirst()) &&
-                    request.getMethod().equalsIgnoreCase(bypassToken.getSecond())) {
-                return true;
-            }
-        }
-        return false;
     }
 }
-

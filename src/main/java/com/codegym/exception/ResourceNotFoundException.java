@@ -2,6 +2,7 @@ package com.codegym.exception;
 
 import com.codegym.utils.StatusCode;
 
+
 /**
  * Exception chuyên dùng cho các trường hợp không tìm thấy tài nguyên.
  * Kế thừa trực tiếp từ AppException và được xử lý riêng trong GlobalExceptionHandler

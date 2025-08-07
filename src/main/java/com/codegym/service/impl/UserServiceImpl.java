@@ -1,6 +1,7 @@
 package com.codegym.service.impl;
 
 import com.codegym.dto.response.UserDTO;
+import com.codegym.dto.response.UserResponse;
 import com.codegym.entity.User;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
@@ -8,6 +9,8 @@ import com.codegym.repository.UserRepository;
 import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -128,5 +131,34 @@ public class UserServiceImpl implements UserService {
         updateEntityFromDTO(user, dto);
         User updatedUser = userRepository.save(user);
         return toDTO(updatedUser);
+    }
+
+    @Override
+    public Page<UserResponse> findAllUsers(Pageable pageable) {
+        // Lấy page<User> từ repository
+        Page<User> userPage = userRepository.findAll(pageable);
+        // Ánh xạ Page<User> sang Page<UserResponse>
+        return userPage.map(this::convertToUserResponse);
+    }
+
+    @Override
+    @Transactional
+    public void updateUserStatus(Long userId, boolean active) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
+        user.setActive(active);
+        userRepository.save(user);
+    }
+
+    // Phương thức private để chuyển đổi User -> UserResponse
+    private UserResponse convertToUserResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .active(user.isActive())
+                .role(user.getRole().getName().name())
+                .build();
     }
 }

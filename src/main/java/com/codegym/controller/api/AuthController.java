@@ -26,15 +26,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request, Locale locale) {
-        String token = authService.login(request);
-        LoginResponse loginResponse = new LoginResponse(token);
+        // Bước 1: Gọi service. Service sẽ trả về một đối tượng LoginResponse hoàn chỉnh.
+        LoginResponse loginResponse = authService.login(request);
 
-        // Sử dụng static factory method
+        // Bước 2: Dòng code "new LoginResponse(token)" đã được xóa bỏ vì không cần thiết nữa.
+
+        // Bước 3: Trả về response thành công với đối tượng đã nhận được.
         return ResponseEntity.ok(
                 ApiResponse.success(loginResponse, StatusCode.LOGIN_SUCCESS, messageSource, locale)
         );
     }
-
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody RegisterRequest request, Locale locale) {
         authService.register(request);
