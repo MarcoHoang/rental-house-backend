@@ -15,6 +15,7 @@ public enum StatusCode {
     PROFILE_UPDATED("06", "success.profile.updated"),
     LOGIN_SUCCESS("07", "success.auth.login"),
     REGISTER_SUCCESS("08", "success.auth.register"),
+    SEND_SUCCESS("09", "success.password.reset.requested"),
 
     // == BUSINESS LOGIC ERRORS (10-89) ==
 
@@ -27,6 +28,8 @@ public enum StatusCode {
     TOKEN_INVALID("15", "error.token.invalid"),
     ROLE_NOT_FOUND("16", "error.role.notFound"),
     INVALID_CREDENTIALS("17", "error.auth.invalidCredentials"),
+    UNAUTHORIZED("18", "error.auth.unauthorized"),
+    ACCOUNT_LOCKED("19", "error.account.locked"),
 
     // --- Resource Not Found (20-29) ---
     USER_NOT_FOUND("21", "error.user.notFound"),
@@ -45,6 +48,7 @@ public enum StatusCode {
     // --- House Management (40-49) ---
     HOUSE_NOT_AVAILABLE("40", "error.house.notAvailable"),
     INVALID_HOUSE_STATUS("41", "error.house.invalidStatus"),
+    GEOCODING_FAILED("42", "error.geogcoding"),
 
     // --- Rental Management (50-59) ---
     RENTAL_PERIOD_OVERLAP("50", "error.rental.periodOverlap"),
@@ -57,15 +61,14 @@ public enum StatusCode {
     REVIEW_ALREADY_EXISTS("61", "error.review.alreadyExists"),
 
 
+
     // == SYSTEM & VALIDATION ERRORS (90-99) ==
     DATA_INTEGRITY_VIOLATION("90", "error.data.integrity"),
     ACCESS_DENIED("91", "error.access.denied"),
+    FORBIDDEN_ACTION("92", "error.forbidden"),
 
     VALIDATION_ERROR("98", "error.validation"),
     INTERNAL_ERROR("99", "error.internal");
-
-
-
 
 
     private final String code;

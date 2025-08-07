@@ -1,21 +1,29 @@
 package com.codegym.service.impl;
 
+import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.UserDTO;
-import com.codegym.dto.response.UserResponse;
+import com.codegym.entity.PasswordResetToken;
+import com.codegym.entity.RoleName;
 import com.codegym.entity.User;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
+import com.codegym.repository.PasswordResetTokenRepository;
 import com.codegym.repository.UserRepository;
+import com.codegym.service.EmailService;
 import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +32,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final EmailService emailService;
 
     private UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
@@ -34,6 +44,7 @@ public class UserServiceImpl implements UserService {
         dto.setAvatar(user.getAvatarUrl());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
+        dto.setActive(user.isActive());
         return dto;
     }
 
@@ -71,20 +82,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDTO> getAllCustomers() {
-        return userRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
+        // 1. Gọi phương thức mới trong repository với Enum RoleName.ADMIN
+        Page<User> userPage = userRepository.findByRole_NameNot(RoleName.ADMIN, pageable);
+
+        // 2. Sử dụng hàm .map() có sẵn của Page để chuyển đổi hiệu quả
+        return userPage.map(this::toDTO);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public UserDTO getCustomerById(Long id) {
+    public UserDTO getUserById(Long id) {
         User user = findUserByIdOrThrow(id);
         return toDTO(user);
     }
 
     @Override
     @Transactional
-    public UserDTO createCustomer(UserDTO dto) {
+    public UserDTO createUser(UserDTO dto) {
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new AppException(StatusCode.USERNAME_ALREADY_EXISTS);
         }
@@ -102,7 +117,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO updateCustomer(Long id, UserDTO dto) {
+    public UserDTO updateUser(Long id, UserDTO dto) {
         User user = findUserByIdOrThrow(id);
         updateEntityFromDTO(user, dto);
         User updatedUser = userRepository.save(user);
@@ -111,17 +126,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteCustomer(Long id) {
+    public void deleteUser(Long id) {
         User user = findUserByIdOrThrow(id);
         userRepository.delete(user);
     }
 
     @Override
     @Transactional
-    public void changePassword(Long id, String newPassword) {
-        User user = findUserByIdOrThrow(id);
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+    public void changePassword(Long id, String oldPassword, String newPassword) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        if (!currentUser.getId().equals(id)) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION);
+        }
+
+        if (!passwordEncoder.matches(oldPassword, currentUser.getPassword())) {
+            throw new AppException(StatusCode.INVALID_PASSWORD);
+        }
+
+        if (passwordEncoder.matches(newPassword, currentUser.getPassword())) {
+            throw new AppException(StatusCode.DUPLICATE_OLD_PASSWORD);
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(currentUser);
     }
 
     @Override
@@ -134,11 +165,49 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserResponse> findAllUsers(Pageable pageable) {
-        // Lấy page<User> từ repository
-        Page<User> userPage = userRepository.findAll(pageable);
-        // Ánh xạ Page<User> sang Page<UserResponse>
-        return userPage.map(this::convertToUserResponse);
+    @Transactional
+    public void requestPasswordReset(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+
+        if (userOpt.isEmpty()) {
+            return;
+        }
+
+        User user = userOpt.get();
+
+        passwordResetTokenRepository.deleteByUser(user);
+
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setToken(token);
+        resetToken.setUser(user);
+        resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
+        passwordResetTokenRepository.save(resetToken);
+
+        emailService.sendResetPasswordEmail(email, token);
+    }
+
+
+    @Override
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new AppException(StatusCode.TOKEN_INVALID));
+
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            passwordResetTokenRepository.delete(resetToken);
+            throw new AppException(StatusCode.TOKEN_INVALID);
+        }
+
+        User user = resetToken.getUser();
+
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new AppException(StatusCode.DUPLICATE_OLD_PASSWORD);
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        passwordResetTokenRepository.delete(resetToken);
     }
 
     @Override
@@ -146,19 +215,13 @@ public class UserServiceImpl implements UserService {
     public void updateUserStatus(Long userId, boolean active) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
+
+        if (user.getRole().getName().equals(RoleName.ADMIN)) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of an admin account.");
+        }
+
         user.setActive(active);
         userRepository.save(user);
     }
 
-    // Phương thức private để chuyển đổi User -> UserResponse
-    private UserResponse convertToUserResponse(User user) {
-        return UserResponse.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .active(user.isActive())
-                .role(user.getRole().getName().name())
-                .build();
-    }
 }
