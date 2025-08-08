@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("${api.prefix}/admin/users") // Sử dụng lại ${api.prefix} cho nhất quán
+@RequestMapping("${api.prefix}/admin/users")
 @CrossOrigin("*")
 @RequiredArgsConstructor
 public class UserAdminController {

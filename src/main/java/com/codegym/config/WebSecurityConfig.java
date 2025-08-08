@@ -82,7 +82,7 @@ public class WebSecurityConfig {
                                 String.format("%s/renters/*/checkin", apiPrefix),
                                 String.format("%s/renters/*/checkout", apiPrefix),
                                 String.format("%s/renters/*/statistics", apiPrefix)
-                        ).hasRole("HOUSE_RENTER")
+                        ).hasRole("HOST")
 
 
                         // Người dùng (ROLE_USER)
@@ -103,7 +103,7 @@ public class WebSecurityConfig {
                                 String.format("%s/houses/*/status", apiPrefix),
                                 String.format("%s/house-images", apiPrefix),
                                 String.format("%s/house-images/*", apiPrefix)
-                        ).hasAnyRole("USER", "HOUSE_RENTER")
+                        ).hasAnyRole("USER", "HOST")
 
                         // Bắt buộc xác thực với các request còn lại
                         .anyRequest().authenticated()

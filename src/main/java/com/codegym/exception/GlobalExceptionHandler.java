@@ -68,7 +68,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
         String requiredType = Objects.requireNonNull(ex.getRequiredType()).getSimpleName();
         StatusCode statusCode = StatusCode.VALIDATION_ERROR;
-        // Giả sử bạn có key 'error.param.typeMismatch' trong messages.properties
         String message = messageUtil.getMessage("error.param.typeMismatch", ex.getName(), requiredType);
         return buildErrorResponse(message, statusCode, HttpStatus.BAD_REQUEST, request);
     }
