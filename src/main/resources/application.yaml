@@ -32,12 +32,9 @@ jwt:
   expiration: 36000
   secretKey: ${JWT_SECRET_KEY}
 
-  logging:
-    level:
-      org.springframework.security: DEBUG
-      org.springframework.security.web: DEBUG
-      org.springframework.security.authentication: DEBUG
-      org.springframework.security.oauth2: DEBUG # (nếu bạn dùng OAuth2
-
-
-
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.web: DEBUG
+    org.springframework.security.authentication: DEBUG
+    org.springframework.security.oauth2: DEBUG
