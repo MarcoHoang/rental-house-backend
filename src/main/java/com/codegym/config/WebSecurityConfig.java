@@ -63,7 +63,8 @@ public class WebSecurityConfig {
                                 String.format("%s/renters/*", apiPrefix),
                                 String.format("%s/renter-requests", apiPrefix),
                                 String.format("%s/dashboard/**", apiPrefix),
-                                String.format("%s/banners", apiPrefix)
+                                String.format("%s/banners", apiPrefix),
+                                String.format("%s/admin/dashboards", apiPrefix)
                         ).hasRole("ADMIN")
 
 
