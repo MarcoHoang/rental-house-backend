@@ -12,5 +12,6 @@ public class UserDTO {
     private String phone;            // Số điện thoại
     private String avatar;           // Đường dẫn ảnh đại diện
     private String username;         // Tên đăng nhập của user
-    private String email;            // Email của user
+    private String email;
+    private boolean active; // Email của user
 }

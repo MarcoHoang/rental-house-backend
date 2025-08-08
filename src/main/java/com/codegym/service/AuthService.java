@@ -38,12 +38,17 @@ public class AuthService {
             throw new AppException(StatusCode.INVALID_CREDENTIALS);
         }
 
+        if (!user.isEnabled()) {
+            throw new AppException(StatusCode.ACCOUNT_LOCKED);
+        }
+
         try {
             String token = jwtTokenUtil.generateToken(user);
             return new LoginResponse(token);
         } catch (Exception e) {
             throw new AppException(StatusCode.INTERNAL_ERROR);
         }
+
     }
 
     public LoginResponse adminLogin(LoginRequest request) {
@@ -83,4 +88,6 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
     }
+
+
 }

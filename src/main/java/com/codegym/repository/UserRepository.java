@@ -1,6 +1,9 @@
 package com.codegym.repository;
 
+import com.codegym.entity.RoleName;
 import com.codegym.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,4 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
 
     boolean existsByPhone(String phone);
+
+    Page<User> findByRole_NameNot(RoleName roleName, Pageable pageable);
+
 }

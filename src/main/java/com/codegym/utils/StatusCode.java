@@ -29,6 +29,7 @@ public enum StatusCode {
     ROLE_NOT_FOUND("16", "error.role.notFound"),
     INVALID_CREDENTIALS("17", "error.auth.invalidCredentials"),
     UNAUTHORIZED("18", "error.auth.unauthorized"),
+    ACCOUNT_LOCKED("19", "error.account.locked"),
 
     // --- Resource Not Found (20-29) ---
     USER_NOT_FOUND("21", "error.user.notFound"),
@@ -58,6 +59,7 @@ public enum StatusCode {
     // --- Review Management (60-69) ---
     CANNOT_REVIEW_NOT_RENTED("60", "error.review.notRented"),
     REVIEW_ALREADY_EXISTS("61", "error.review.alreadyExists"),
+
 
 
     // == SYSTEM & VALIDATION ERRORS (90-99) ==

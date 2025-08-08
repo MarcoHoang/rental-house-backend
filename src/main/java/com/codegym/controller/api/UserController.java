@@ -8,6 +8,8 @@ import com.codegym.utils.StatusCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +39,9 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserDTO>>> getAllUsers(Locale locale) {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(ApiResponse.success(users, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    public ResponseEntity<ApiResponse<Page<UserDTO>>> getAllUsers(Pageable pageable, Locale locale) {
+        Page<UserDTO> usersPage = userService.getAllUsers(pageable);
+        return ResponseEntity.ok(ApiResponse.success(usersPage, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/{id}")

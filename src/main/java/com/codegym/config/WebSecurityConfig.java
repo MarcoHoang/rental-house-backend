@@ -46,13 +46,11 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 String.format("%s/auth/register", apiPrefix),
                                 String.format("%s/auth/login", apiPrefix),
+                                String.format("%s/admin/login", apiPrefix), // Admin login
+                                String.format("%s/users/password-reset/**", apiPrefix),
                                 String.format("%s/houses", apiPrefix),
                                 String.format("%s/houses/top", apiPrefix),
-                                String.format("%s/houses/*", apiPrefix),
-                                String.format("%s/houses/*/map", apiPrefix),
-                                String.format("%s/houses/*/images", apiPrefix),
-                                String.format("%s/houses/*/reviews", apiPrefix),
-                                String.format("%s/admin/login", apiPrefix)
+                                String.format("%s/houses/**", apiPrefix)
                         ).permitAll()
 
                         // Quản trị viên (ROLE_ADMIN)
@@ -64,7 +62,10 @@ public class WebSecurityConfig {
                                 String.format("%s/renter-requests", apiPrefix),
                                 String.format("%s/dashboard/**", apiPrefix),
                                 String.format("%s/banners", apiPrefix),
-                                String.format("%s/admin/dashboards", apiPrefix)
+                                String.format("%s/admin/dashboard", apiPrefix),
+
+                                // ----- THÊM DÒNG NÀY VÀO ĐỂ CẤP QUYỀN -----
+                                String.format("%s/admin/users/**", apiPrefix)
                         ).hasRole("ADMIN")
 
 

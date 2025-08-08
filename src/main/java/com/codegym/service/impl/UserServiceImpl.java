@@ -3,6 +3,7 @@ package com.codegym.service.impl;
 import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.UserDTO;
 import com.codegym.entity.PasswordResetToken;
+import com.codegym.entity.RoleName;
 import com.codegym.entity.User;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
@@ -12,6 +13,8 @@ import com.codegym.service.EmailService;
 import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,6 +44,7 @@ public class UserServiceImpl implements UserService {
         dto.setAvatar(user.getAvatarUrl());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
+        dto.setActive(user.isActive());
         return dto;
     }
 
@@ -78,8 +82,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
+        // 1. Gọi phương thức mới trong repository với Enum RoleName.ADMIN
+        Page<User> userPage = userRepository.findByRole_NameNot(RoleName.ADMIN, pageable);
+
+        // 2. Sử dụng hàm .map() có sẵn của Page để chuyển đổi hiệu quả
+        return userPage.map(this::toDTO);
     }
 
     @Override
@@ -200,6 +208,20 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         passwordResetTokenRepository.delete(resetToken);
+    }
+
+    @Override
+    @Transactional
+    public void updateUserStatus(Long userId, boolean active) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
+
+        if (user.getRole().getName().equals(RoleName.ADMIN)) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of an admin account.");
+        }
+
+        user.setActive(active);
+        userRepository.save(user);
     }
 
 }
