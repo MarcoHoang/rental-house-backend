@@ -55,7 +55,6 @@ public class User extends BaseEntity implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    // Nếu giữ HouseRenter, ánh xạ liên kết 1-1
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private HouseRenter houseRenter;
 

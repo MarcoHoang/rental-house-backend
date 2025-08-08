@@ -33,7 +33,6 @@ public class HouseServiceImpl implements HouseService {
     }
 
     private User findHouseRenterByIdOrThrow(Long id) {
-        // Assuming a house renter is a user, we check for user existence
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOUSE_RENTER_NOT_FOUND, id));
     }
@@ -94,7 +93,6 @@ public class HouseServiceImpl implements HouseService {
         House house = new House();
         updateEntityFromDTO(house, dto, houseRenter);
 
-        // 🟡 Nếu latitude/longitude bị null → gọi Geocoding để lấy tọa độ
         if (house.getLatitude() == null || house.getLongitude() == null) {
             double[] latLng = geocodingService.getLatLngFromAddress(house.getAddress());
             house.setLatitude(latLng[0]);
@@ -116,7 +114,6 @@ public class HouseServiceImpl implements HouseService {
 
         updateEntityFromDTO(existingHouse, dto, houseRenter);
 
-        // 🟡 Nếu người dùng đổi địa chỉ hoặc xóa lat/lng → cập nhật lại
         if (addressChanged || existingHouse.getLatitude() == null || existingHouse.getLongitude() == null) {
             double[] latLng = geocodingService.getLatLngFromAddress(existingHouse.getAddress());
             existingHouse.setLatitude(latLng[0]);

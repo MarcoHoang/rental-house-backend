@@ -23,9 +23,9 @@ public class HouseRenterRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status; // PENDING, APPROVED, REJECTED
+    private Status status;
 
-    private String reason; // Lý do từ chối (nếu có)
+    private String reason;
 
     private LocalDateTime requestDate;
     private LocalDateTime processedDate;

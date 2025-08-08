@@ -24,7 +24,7 @@ public class Notification {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Type type; // RENTAL_CREATED, RENTAL_CANCELED, REVIEW_RECEIVED, etc.
+    private Type type;
 
     @Column(nullable = false)
     private String content;

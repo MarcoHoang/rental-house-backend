@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class RejectRequestPayload {
-    @NotBlank(message = "{validation.reject.reason.notblank}")
+    @NotBlank(message = "{validation.reject.reason.notBlank}")
     private String reason;
 }

@@ -17,6 +17,5 @@ public interface ReviewService {
 
     void deleteReview(Long id);
 
-    // Đổi tên cho bao hàm cả chức năng ẩn/hiện
     ReviewDTO toggleVisibility(Long id);
 }

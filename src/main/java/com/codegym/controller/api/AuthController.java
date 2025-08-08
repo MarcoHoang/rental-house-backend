@@ -22,7 +22,7 @@ import java.util.Locale;
 public class AuthController {
 
     private final AuthService authService;
-    private final MessageSource messageSource; // Vẫn inject để truyền vào factory method
+    private final MessageSource messageSource;
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request, Locale locale) {
@@ -37,7 +37,6 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody RegisterRequest request, Locale locale) {
         authService.register(request);
 
-        // Sử dụng static factory method
         return new ResponseEntity<>(
                 ApiResponse.success(StatusCode.REGISTER_SUCCESS, messageSource, locale),
                 HttpStatus.CREATED

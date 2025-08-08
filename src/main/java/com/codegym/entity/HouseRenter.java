@@ -21,9 +21,9 @@ public class HouseRenter {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    private String nationalId; // CCCD/CMND
-    private String proofOfOwnershipUrl; // link ảnh/sao y sổ hồng, giấy tờ
-    private String address; // địa chỉ chính thức
+    private String nationalId;
+    private String proofOfOwnershipUrl;
+    private String address;
     private LocalDateTime approvedDate;
 
     @PrePersist

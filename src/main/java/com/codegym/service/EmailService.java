@@ -14,7 +14,7 @@ public class EmailService {
     public void sendResetPasswordEmail(String to, String token) {
         String resetLink = "http://localhost:8080/api/users/password-reset/confirm?token=" + token;
 
-        String subject = "Rental House- Đặt lại mật khẩu";
+        String subject = "Rental House - Đặt lại mật khẩu";
         String text = "Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản Rental House.\n\n"
                 + "Nhấn vào liên kết sau để thiết lập mật khẩu mới:\n"
                 + resetLink + "\n\n"

@@ -12,7 +12,7 @@ import java.util.Locale;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL) // Chỉ serialize các trường có giá trị, bỏ qua các trường null
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
     private String code;

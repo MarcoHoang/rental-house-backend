@@ -24,6 +24,5 @@ public interface RentalService {
 
     List<RentalDTO> getHouseRenterRentals(Long landlordId);
 
-    // Trả về Map<String, Double> để thống kê theo tháng
     Map<String, Double> getHouseRenterIncome(Long landlordId);
 }

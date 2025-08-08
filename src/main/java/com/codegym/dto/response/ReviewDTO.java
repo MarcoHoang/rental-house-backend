@@ -10,16 +10,11 @@ import java.time.LocalDateTime;
 @Builder
 public class ReviewDTO {
     private Long id;
-
     private Long reviewerId;
     private String reviewerName;
-
     private Long houseId;
-
     private Integer rating;
     private String comment;
-
     private Boolean isVisible;
-
     private LocalDateTime createdAt;
 }

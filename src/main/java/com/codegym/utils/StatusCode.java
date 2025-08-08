@@ -32,22 +32,22 @@ public enum StatusCode {
     ACCOUNT_LOCKED("19", "error.account.locked"),
 
     // --- Resource Not Found (20-29) ---
-    USER_NOT_FOUND("21", "error.user.notFound"),
-    HOUSE_RENTER_NOT_FOUND("22", "error.houserenter.notFound"), // Sửa ở đây
-    HOUSE_NOT_FOUND("23", "error.house.notFound"),
-    REQUEST_NOT_FOUND("24", "error.request.notFound"),
-    RENTAL_NOT_FOUND("25", "error.rental.notFound"),
-    REVIEW_NOT_FOUND("26", "error.review.notFound"),
-    NOTIFICATION_NOT_FOUND("27", "error.notification.notFound"),
+    USER_NOT_FOUND("21", "error.user.notFound"), // {0} = userId
+    HOUSE_RENTER_NOT_FOUND("22", "error.houserenter.notFound"), // {0} = renterId
+    HOUSE_NOT_FOUND("23", "error.house.notFound"), // {0} = houseId
+    REQUEST_NOT_FOUND("24", "error.request.notFound"), // {0} = requestId
+    RENTAL_NOT_FOUND("25", "error.rental.notFound"), // {0} = rentalId
+    REVIEW_NOT_FOUND("26", "error.review.notFound"), // {0} = reviewId
+    NOTIFICATION_NOT_FOUND("27", "error.notification.notFound"), // {0} = notificationId
 
     // --- House Renter Request (30-39) ---
-    USER_ALREADY_HOUSE_RENTER("30", "error.request.userAlreadyHouseRenter"), // Sửa ở đây
+    USER_ALREADY_HOUSE_RENTER("30", "error.request.userAlreadyHouseRenter"),
     PENDING_REQUEST_EXISTS("31", "error.request.pendingExists"),
     INVALID_REQUEST_STATUS("32", "error.request.invalidStatus"),
 
     // --- House Management (40-49) ---
     HOUSE_NOT_AVAILABLE("40", "error.house.notAvailable"),
-    INVALID_HOUSE_STATUS("41", "error.house.invalidStatus"),
+    INVALID_HOUSE_STATUS("41", "error.house.invalidStatus"), // {0} = status
     GEOCODING_FAILED("42", "error.geogcoding"),
 
     // --- Rental Management (50-59) ---
@@ -60,16 +60,26 @@ public enum StatusCode {
     CANNOT_REVIEW_NOT_RENTED("60", "error.review.notRented"),
     REVIEW_ALREADY_EXISTS("61", "error.review.alreadyExists"),
 
-
-
     // == SYSTEM & VALIDATION ERRORS (90-99) ==
     DATA_INTEGRITY_VIOLATION("90", "error.data.integrity"),
     ACCESS_DENIED("91", "error.access.denied"),
     FORBIDDEN_ACTION("92", "error.forbidden"),
 
+    // Validation & Internal
+    PARAM_TYPE_MISMATCH("97", "error.param.typeMismatch"), // {0} = paramName, {1} = expectedType
     VALIDATION_ERROR("98", "error.validation"),
-    INTERNAL_ERROR("99", "error.internal");
+    INTERNAL_ERROR("99", "error.internal"),
 
+    // == FIELD VALIDATION MESSAGES (Dùng cho @Valid) ==
+    VALIDATION_USERNAME_NOT_BLANK("V01", "validation.username.notBlank"),
+    VALIDATION_USERNAME_SIZE("V02", "validation.username.size"),
+    VALIDATION_PHONE_NOT_BLANK("V03", "validation.phone.notBlank"),
+    VALIDATION_PHONE_PATTERN("V04", "validation.phone.pattern"),
+    VALIDATION_EMAIL_NOT_BLANK("V05", "validation.email.notBlank"),
+    VALIDATION_EMAIL_INVALID("V06", "validation.email.invalid"),
+    VALIDATION_PASSWORD_NOT_BLANK("V07", "validation.password.notBlank"),
+    VALIDATION_PASSWORD_SIZE("V08", "validation.password.size"),
+    VALIDATION_REJECT_REASON_NOT_BLANK("V09", "validation.reject.reason.notBlank");
 
     private final String code;
     private final String messageKey;

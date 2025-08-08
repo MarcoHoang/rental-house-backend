@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "password", ignore = true) // Không encode password ở đây
+    @Mapping(target = "password", ignore = true)
     @Mapping(target = "role", source = "role")
     @Mapping(target = "avatarUrl", constant = "default.png")
     @Mapping(target = "active", constant = "true")

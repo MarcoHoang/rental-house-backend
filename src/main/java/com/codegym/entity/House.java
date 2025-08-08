@@ -18,7 +18,7 @@ public class House {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Một chủ nhà có thể có nhiều căn
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_renter_id", nullable = false)
     private User houseRenter;
 
@@ -35,12 +35,12 @@ public class House {
 
     private double area;
 
-    private Double latitude;   // để hiển thị trên bản đồ
+    private Double latitude;
     private Double longitude;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Status status; // AVAILABLE, RENTED, INACTIVE
+    private Status status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "house_type", nullable = false)

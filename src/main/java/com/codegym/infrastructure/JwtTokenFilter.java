@@ -41,7 +41,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
-            // Bypass các đường dẫn không yêu cầu token
             if (isBypassToken(request)) {
                 filterChain.doFilter(request, response);
                 return;
@@ -54,7 +53,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 return;
             }
 
-            final String token = authHeader.substring(7); // Bỏ "Bearer "
+            final String token = authHeader.substring(7);
             final String email = jwtTokenUtil.extractUsername(token);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -62,7 +61,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 if (jwtTokenUtil.validateToken(token, userDetails)) {
                     Claims claims = jwtTokenUtil.extractClaims(token);
-                    String role = claims.get("role", String.class); // VD: "ROLE_ADMIN"
+                    String role = claims.get("role", String.class);
 
                     List<SimpleGrantedAuthority> authorities = Collections.emptyList();
                     if (role != null && !role.isEmpty()) {

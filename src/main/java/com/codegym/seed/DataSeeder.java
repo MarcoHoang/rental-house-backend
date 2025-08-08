@@ -33,7 +33,7 @@ public class DataSeeder {
                 User admin = User.builder()
                         .username("admin")
                         .email("admin@rentalhouse.com")
-                        .phone("0000000000")
+                        .phone("1234567890")
                         .password(passwordEncoder.encode("admin123"))
                         .role(adminRole)
                         .active(true)
@@ -41,7 +41,7 @@ public class DataSeeder {
                         .facebookAccountId(null)
                         .googleAccountId(null)
                         .fullName("Administrator")
-                        .address("System Address")
+                        .address("Viet Nam")
                         .build();
 
                 userRepository.save(admin);

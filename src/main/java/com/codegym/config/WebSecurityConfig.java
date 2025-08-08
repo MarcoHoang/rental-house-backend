@@ -63,13 +63,11 @@ public class WebSecurityConfig {
                                 String.format("%s/dashboard/**", apiPrefix),
                                 String.format("%s/banners", apiPrefix),
                                 String.format("%s/admin/dashboard", apiPrefix),
-
-                                // ----- THÊM DÒNG NÀY VÀO ĐỂ CẤP QUYỀN -----
                                 String.format("%s/admin/users/**", apiPrefix)
                         ).hasRole("ADMIN")
 
 
-                        // Chủ nhà (ROLE_HOUSE_RENTER)
+                        // Chủ nhà (ROLE_HOST)
                         .requestMatchers(
                                 String.format("%s/renters/*/houses", apiPrefix),
                                 String.format("%s/renters/*/rentals", apiPrefix),
@@ -105,7 +103,6 @@ public class WebSecurityConfig {
                                 String.format("%s/house-images/*", apiPrefix)
                         ).hasAnyRole("USER", "HOST")
 
-                        // Bắt buộc xác thực với các request còn lại
                         .anyRequest().authenticated()
                 );
 

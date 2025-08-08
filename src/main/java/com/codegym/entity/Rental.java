@@ -33,7 +33,7 @@ public class Rental {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status; // PENDING, APPROVED, CHECKED_IN, CHECKED_OUT, CANCELED
+    private Status status;
 
     private LocalDateTime createdAt;
 
@@ -43,11 +43,11 @@ public class Rental {
 
     public enum Status {
         SCHEDULED,
-        PENDING,      // Người dùng vừa đặt
-        APPROVED,     // Chủ nhà xác nhận
-        CHECKED_IN,   // Khách đã nhận phòng
-        CHECKED_OUT,  // Khách đã trả phòng
-        CANCELED      // Hủy đặt phòng
+        PENDING,
+        APPROVED,
+        CHECKED_IN,
+        CHECKED_OUT,
+        CANCELED
     }
 
     @PrePersist

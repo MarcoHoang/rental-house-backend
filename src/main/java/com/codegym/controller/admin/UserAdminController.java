@@ -57,7 +57,6 @@ public class UserAdminController {
             @RequestBody StatusUpdateRequest request, // <-- THAY ĐỔI Ở ĐÂY: An toàn hơn
             Locale locale) {
 
-        // Lấy giá trị 'active' từ đối tượng request
         userService.updateUserStatus(userId, request.isActive());
 
         return ResponseEntity.ok(ApiResponse.success(StatusCode.UPDATED_SUCCESS, messageSource, locale));
