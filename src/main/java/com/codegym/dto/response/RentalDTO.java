@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class RentalDTO {
     private Long id;
     private Long houseId;
+    private String houseTitle;
     private Long renterId;
     private LocalDateTime startDate;
     private LocalDateTime endDate;

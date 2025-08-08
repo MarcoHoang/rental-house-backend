@@ -13,8 +13,8 @@ import java.util.List;
 @Builder
 public class HouseDTO {
     private Long id;
-    private Long landlordId;
-    private String landlordName;
+    private Long houseRenterId;
+    private String houseRenterName;
 
     private String title;
     private String description;
@@ -28,7 +28,7 @@ public class HouseDTO {
     private Status status;
     private HouseType houseType;
 
-    private List<String> imageUrls; // Danh sách URL ảnh
+    private List<String> imageUrls;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

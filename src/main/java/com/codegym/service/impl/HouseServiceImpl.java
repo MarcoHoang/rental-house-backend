@@ -4,29 +4,45 @@ import com.codegym.dto.response.HouseDTO;
 import com.codegym.entity.House;
 import com.codegym.entity.HouseImage;
 import com.codegym.entity.User;
+import com.codegym.exception.AppException;
+import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HouseRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.HouseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.codegym.utils.StatusCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.codegym.service.GeocodingService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class HouseServiceImpl implements HouseService {
 
-    @Autowired
-    private HouseRepository houseRepository;
+    private final HouseRepository houseRepository;
+    private final UserRepository userRepository;
+    private final GeocodingService geocodingService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private House findHouseByIdOrThrow(Long id) {
+        return houseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOUSE_NOT_FOUND, id));
+    }
+
+    private User findHouseRenterByIdOrThrow(Long id) {
+        // Assuming a house renter is a user, we check for user existence
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOUSE_RENTER_NOT_FOUND, id));
+    }
 
     private HouseDTO toDTO(House house) {
         return HouseDTO.builder()
                 .id(house.getId())
-                .landlordId(house.getLandlord().getId())
-                .landlordName(house.getLandlord().getUsername())
+                .houseRenterId(house.getHouseRenter().getId())
+                .houseRenterName(house.getHouseRenter().getUsername())
                 .title(house.getTitle())
                 .description(house.getDescription())
                 .address(house.getAddress())
@@ -37,17 +53,15 @@ public class HouseServiceImpl implements HouseService {
                 .status(house.getStatus())
                 .houseType(house.getHouseType())
                 .imageUrls(house.getImages() != null
-                        ? house.getImages().stream().map(HouseImage::getUrl).collect(Collectors.toList())
-                        : null)
+                        ? house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList())
+                        : List.of())
                 .createdAt(house.getCreatedAt())
                 .updatedAt(house.getUpdatedAt())
                 .build();
     }
 
-    private House toEntity(HouseDTO dto, User landlord) {
-        House house = new House();
-        house.setId(dto.getId());
-        house.setLandlord(landlord);
+    private void updateEntityFromDTO(House house, HouseDTO dto, User houseRenter) {
+        house.setHouseRenter(houseRenter);
         house.setTitle(dto.getTitle());
         house.setDescription(dto.getDescription());
         house.setAddress(dto.getAddress());
@@ -57,39 +71,106 @@ public class HouseServiceImpl implements HouseService {
         house.setLongitude(dto.getLongitude());
         house.setStatus(dto.getStatus());
         house.setHouseType(dto.getHouseType());
-        return house;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<HouseDTO> getAllHouses() {
         return houseRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public HouseDTO getHouseById(Long id) {
-        return houseRepository.findById(id).map(this::toDTO).orElse(null);
+        House house = findHouseByIdOrThrow(id);
+        return toDTO(house);
     }
 
     @Override
+    @Transactional
     public HouseDTO createHouse(HouseDTO dto) {
-        User landlord = userRepository.findById(dto.getLandlordId())
-                .orElseThrow(() -> new RuntimeException("Landlord not found"));
-        House house = toEntity(dto, landlord);
-        house.setId(null); // tạo mới
-        return toDTO(houseRepository.save(house));
+        User houseRenter = findHouseRenterByIdOrThrow(dto.getHouseRenterId());
+
+        House house = new House();
+        updateEntityFromDTO(house, dto, houseRenter);
+
+        // 🟡 Nếu latitude/longitude bị null → gọi Geocoding để lấy tọa độ
+        if (house.getLatitude() == null || house.getLongitude() == null) {
+            double[] latLng = geocodingService.getLatLngFromAddress(house.getAddress());
+            house.setLatitude(latLng[0]);
+            house.setLongitude(latLng[1]);
+        }
+
+        house.setId(null);
+        House savedHouse = houseRepository.save(house);
+        return toDTO(savedHouse);
     }
 
     @Override
+    @Transactional
     public HouseDTO updateHouse(Long id, HouseDTO dto) {
-        User landlord = userRepository.findById(dto.getLandlordId())
-                .orElseThrow(() -> new RuntimeException("Landlord not found"));
-        House house = toEntity(dto, landlord);
-        house.setId(id); // cập nhật
+        House existingHouse = findHouseByIdOrThrow(id);
+        User houseRenter = findHouseRenterByIdOrThrow(dto.getHouseRenterId());
+
+        boolean addressChanged = !existingHouse.getAddress().equals(dto.getAddress());
+
+        updateEntityFromDTO(existingHouse, dto, houseRenter);
+
+        // 🟡 Nếu người dùng đổi địa chỉ hoặc xóa lat/lng → cập nhật lại
+        if (addressChanged || existingHouse.getLatitude() == null || existingHouse.getLongitude() == null) {
+            double[] latLng = geocodingService.getLatLngFromAddress(existingHouse.getAddress());
+            existingHouse.setLatitude(latLng[0]);
+            existingHouse.setLongitude(latLng[1]);
+        }
+
+        House updatedHouse = houseRepository.save(existingHouse);
+        return toDTO(updatedHouse);
+    }
+
+    @Override
+    @Transactional
+    public void deleteHouse(Long id) {
+        House house = findHouseByIdOrThrow(id);
+        houseRepository.delete(house);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HouseDTO> searchHouses(String keyword) {
+        return houseRepository.findAll().stream()
+                .filter(h -> keyword == null || h.getTitle().toLowerCase().contains(keyword.toLowerCase()))
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HouseDTO> getTopHouses() {
+        return houseRepository.findAll().stream().limit(5).map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public HouseDTO updateHouseStatus(Long id, String status) {
+        House house = findHouseByIdOrThrow(id);
+
+        boolean isValidStatus = Arrays.stream(House.Status.values())
+                .anyMatch(s -> s.name().equalsIgnoreCase(status));
+
+        if (!isValidStatus) {
+            throw new AppException(StatusCode.INVALID_HOUSE_STATUS, status);
+        }
+
+        house.setStatus(House.Status.valueOf(status.toUpperCase()));
         return toDTO(houseRepository.save(house));
     }
 
     @Override
-    public void deleteHouse(Long id) {
-        houseRepository.deleteById(id);
+    @Transactional(readOnly = true)
+    public List<String> getHouseImages(Long id) {
+        House house = findHouseByIdOrThrow(id);
+        return house.getImages() != null
+                ? house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList())
+                : List.of();
     }
 }

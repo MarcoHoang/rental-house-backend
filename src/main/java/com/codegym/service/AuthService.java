@@ -1,72 +1,86 @@
 package com.codegym.service;
 
 import com.codegym.components.JwtTokenUtil;
-import com.codegym.dto.ApiResponse;
 import com.codegym.dto.request.LoginRequest;
 import com.codegym.dto.request.RegisterRequest;
+import com.codegym.dto.response.LoginResponse;
 import com.codegym.entity.Role;
+import com.codegym.entity.RoleName;
 import com.codegym.entity.User;
+import com.codegym.exception.AppException;
+import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.mapper.UserMapper;
 import com.codegym.repository.RoleRepository;
 import com.codegym.repository.UserRepository;
-import com.codegym.utils.MessageCode;
 import com.codegym.utils.StatusCode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
-    @Autowired private UserMapper userMapper;
-    @Autowired private JwtTokenUtil jwtTokenUtil;
-    @Autowired private PasswordEncoder passwordEncoder;
-    @Autowired private RoleRepository roleRepository;
-
-
-    public ApiResponse<String> login(LoginRequest request) throws Exception {
+    public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException(MessageCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(StatusCode.INVALID_CREDENTIALS));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return ApiResponse.error(StatusCode.INVALID_PASSWORD, MessageCode.INVALID_PASSWORD);
+            throw new AppException(StatusCode.INVALID_CREDENTIALS);
         }
-        String token = jwtTokenUtil.generateToken(user);
-        return ApiResponse.success(StatusCode.SUCCESS, MessageCode.LOGIN_SUCCESS, token);
+
+        try {
+            String token = jwtTokenUtil.generateToken(user);
+            return new LoginResponse(token);
+        } catch (Exception e) {
+            throw new AppException(StatusCode.INTERNAL_ERROR);
+        }
+    }
+
+    public LoginResponse adminLogin(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(StatusCode.INVALID_CREDENTIALS));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new AppException(StatusCode.INVALID_CREDENTIALS);
+        }
+
+        if (!user.getRole().getName().equals(RoleName.ADMIN)) {
+            throw new AppException(StatusCode.UNAUTHORIZED);
+        }
+
+        try {
+            String token = jwtTokenUtil.generateToken(user);
+            return new LoginResponse(token);
+        } catch (Exception e) {
+            throw new AppException(StatusCode.INTERNAL_ERROR);
+        }
     }
 
 
     @Transactional
-    public ApiResponse<String> register(RegisterRequest request) {
-        boolean isEmailAlreadyRegistered = userRepository.existsByEmail(request.getEmail());
-        if (isEmailAlreadyRegistered) {
-            return ApiResponse.error(StatusCode.EMAIL_ALREADY_EXISTS, MessageCode.EMAIL_ALREADY_EXISTS);
+    public void register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(StatusCode.EMAIL_ALREADY_EXISTS);
         }
-        boolean isPhoneAlreadyRegistered = userRepository.findByPhone(request.getPhone()).isPresent();
-        if (isPhoneAlreadyRegistered) {
-            return ApiResponse.error(StatusCode.PHONE_ALREADY_EXISTS, MessageCode.PHONE_ALREADY_EXISTS);
+        if (userRepository.existsByPhone(request.getPhone())) {
+            throw new AppException(StatusCode.PHONE_ALREADY_EXISTS);
         }
 
-        Role role = Optional.ofNullable(request.getRoleId())
-                .flatMap(roleRepository::findById)
-                .or(() -> roleRepository.findByName("USER"))
-                .orElse(null);
-        if (role == null) {
-            return ApiResponse.error(StatusCode.ROLE_NOT_FOUND, MessageCode.ROLE_NOT_FOUND);
-        }
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.ROLE_NOT_FOUND));
 
         User user = userMapper.toEntity(request, role);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
-
-        return ApiResponse.success(StatusCode.SUCCESS, MessageCode.REGISTER_SUCCESS, null);
     }
-
 }

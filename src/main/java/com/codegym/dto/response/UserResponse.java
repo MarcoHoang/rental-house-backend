@@ -9,12 +9,12 @@ import lombok.*;
 @Getter
 @Builder
 public class UserResponse {
-    private String id;
-    private String name;
+    private Long id;
+    private String username;
     private String email;
     private String address;
     private String phone;
     private boolean active;
-    private long role;
+    private String role;
 }
 

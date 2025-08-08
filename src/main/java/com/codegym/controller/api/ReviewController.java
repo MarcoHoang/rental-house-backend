@@ -1,53 +1,67 @@
 package com.codegym.controller.api;
 
+import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.ReviewDTO;
 import com.codegym.service.ReviewService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.codegym.utils.StatusCode;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/reviews")
-@CrossOrigin("*") // Cho phép frontend gọi từ domain khác, nếu cần
+@RequiredArgsConstructor
+@CrossOrigin("*")
 public class ReviewController {
 
-    @Autowired
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
+    private final MessageSource messageSource;
 
-    // Lấy tất cả đánh giá
     @GetMapping
-    public ResponseEntity<List<ReviewDTO>> getAllReviews() {
-        return ResponseEntity.ok(reviewService.getAllReviews());
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getAllReviews(Locale locale) {
+        List<ReviewDTO> reviews = reviewService.getAllReviews();
+        return ResponseEntity.ok(ApiResponse.success(reviews, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
-    // Lấy đánh giá theo ID
+    @GetMapping("/house/{houseId}")
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getReviewsByHouseId(@PathVariable Long houseId, Locale locale) {
+        List<ReviewDTO> reviews = reviewService.getReviewsByHouseId(houseId);
+        return ResponseEntity.ok(ApiResponse.success(reviews, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    }
+
+    @PutMapping("/{id}/toggle-visibility")
+    public ResponseEntity<ApiResponse<ReviewDTO>> toggleReviewVisibility(@PathVariable Long id, Locale locale) {
+        ReviewDTO dto = reviewService.toggleVisibility(id);
+        return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.UPDATED_SUCCESS, messageSource, locale));
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewDTO> getReviewById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ReviewDTO>> getReviewById(@PathVariable Long id, Locale locale) {
         ReviewDTO review = reviewService.getReviewById(id);
-        if (review == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(review);
+        return ResponseEntity.ok(ApiResponse.success(review, StatusCode.SUCCESS, messageSource, locale));
     }
 
-    // Tạo mới đánh giá
     @PostMapping
-    public ResponseEntity<ReviewDTO> createReview(@RequestBody ReviewDTO reviewDTO) {
-        return ResponseEntity.ok(reviewService.createReview(reviewDTO));
+    public ResponseEntity<ApiResponse<ReviewDTO>> createReview(@Valid @RequestBody ReviewDTO reviewDTO, Locale locale) {
+        ReviewDTO created = reviewService.createReview(reviewDTO);
+        return new ResponseEntity<>(ApiResponse.success(created, StatusCode.CREATED_SUCCESS, messageSource, locale), HttpStatus.CREATED);
     }
 
-    // Cập nhật đánh giá
     @PutMapping("/{id}")
-    public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
-        return ResponseEntity.ok(reviewService.updateReview(id, reviewDTO));
+    public ResponseEntity<ApiResponse<ReviewDTO>> updateReview(@PathVariable Long id, @Valid @RequestBody ReviewDTO reviewDTO, Locale locale) {
+        ReviewDTO updated = reviewService.updateReview(id, reviewDTO);
+        return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
-    // Xóa đánh giá
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long id, Locale locale) {
         reviewService.deleteReview(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
     }
 }
