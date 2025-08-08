@@ -29,5 +29,5 @@ public class RegisterRequest {
     @Size(min = 6, message = "{validation.password.size}")
     private String password;
 
-    private Long roleId;
+    private String address;
 }

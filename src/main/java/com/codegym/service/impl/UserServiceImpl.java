@@ -45,7 +45,6 @@ public class UserServiceImpl implements UserService {
                 .address(user.getAddress())
                 .phone(user.getPhone())
                 .avatarUrl(user.getAvatarUrl())
-                .username(user.getUsername())
                 .email(user.getEmail())
                 .active(user.isActive())
                 .roleName(user.getRole() != null ? user.getRole().getName() : null)
@@ -56,7 +55,6 @@ public class UserServiceImpl implements UserService {
         if (dto == null) return null;
 
         User user = new User();
-        user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
         user.setFullName(dto.getFullName());
         user.setAddress(dto.getAddress());
@@ -114,9 +112,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO createUser(UserDTO dto) {
-        if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new AppException(StatusCode.USERNAME_ALREADY_EXISTS);
-        }
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new AppException(StatusCode.EMAIL_ALREADY_EXISTS);
         }

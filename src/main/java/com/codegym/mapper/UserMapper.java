@@ -14,7 +14,7 @@ public interface UserMapper {
     @Mapping(target = "role", source = "role")
     @Mapping(target = "avatarUrl", constant = "default.png")
     @Mapping(target = "active", constant = "true")
-    @Mapping(target = "username", source = "request.username")
+    @Mapping(target = "fullName", source = "request.username")
     User toEntity(RegisterRequest request, Role role);
 
     default UserDTO toResponse(User user) {
@@ -23,7 +23,6 @@ public interface UserMapper {
         }
         return UserDTO.builder()
                 .id(user.getId())
-                .username(user.getUsername())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .fullName(user.getFullName())

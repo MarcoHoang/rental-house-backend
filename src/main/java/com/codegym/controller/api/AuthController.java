@@ -4,6 +4,7 @@ import com.codegym.dto.ApiResponse;
 import com.codegym.dto.request.LoginRequest;
 import com.codegym.dto.request.RegisterRequest;
 import com.codegym.dto.response.LoginResponse;
+import com.codegym.dto.response.UserDTO;
 import com.codegym.service.AuthService;
 import com.codegym.utils.StatusCode;
 import jakarta.validation.Valid;
@@ -34,12 +35,16 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody RegisterRequest request, Locale locale) {
-        authService.register(request);
+    public ResponseEntity<ApiResponse<UserDTO>> register(
+            @Valid @RequestBody RegisterRequest request,
+            Locale locale
+    ) {
+        UserDTO newUser = authService.register(request);
 
         return new ResponseEntity<>(
-                ApiResponse.success(StatusCode.REGISTER_SUCCESS, messageSource, locale),
+                ApiResponse.success(newUser, StatusCode.REGISTER_SUCCESS, messageSource, locale),
                 HttpStatus.CREATED
         );
     }
+
 }

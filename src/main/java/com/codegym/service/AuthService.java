@@ -4,6 +4,7 @@ import com.codegym.components.JwtTokenUtil;
 import com.codegym.dto.request.LoginRequest;
 import com.codegym.dto.request.RegisterRequest;
 import com.codegym.dto.response.LoginResponse;
+import com.codegym.dto.response.UserDTO;
 import com.codegym.entity.Role;
 import com.codegym.entity.RoleName;
 import com.codegym.entity.User;
@@ -71,9 +72,8 @@ public class AuthService {
         }
     }
 
-
     @Transactional
-    public void register(RegisterRequest request) {
+    public UserDTO register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(StatusCode.EMAIL_ALREADY_EXISTS);
         }
@@ -85,9 +85,12 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.ROLE_NOT_FOUND));
 
         User user = userMapper.toEntity(request, role);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        userRepository.save(user);
-    }
 
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        userRepository.save(user);
+
+        return userMapper.toResponse(user);
+    }
 
 }
