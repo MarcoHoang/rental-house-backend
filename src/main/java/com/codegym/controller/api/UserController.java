@@ -38,6 +38,13 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.PROFILE_UPDATED, messageSource, locale));
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<UserDTO>> getProfile(Locale locale) {
+        UserDTO dto = userService.getCurrentUserProfile();
+        return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
+    }
+
+
     @GetMapping
     public ResponseEntity<ApiResponse<Page<UserDTO>>> getAllUsers(Pageable pageable, Locale locale) {
         Page<UserDTO> usersPage = userService.getAllUsers(pageable);

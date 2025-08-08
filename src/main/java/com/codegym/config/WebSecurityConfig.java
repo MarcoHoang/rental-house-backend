@@ -53,6 +53,18 @@ public class WebSecurityConfig {
                                 String.format("%s/houses/**", apiPrefix)
                         ).permitAll()
 
+                        // Người dùng (ROLE_USER)
+                        .requestMatchers(
+                                String.format("%s/users/*/profile", apiPrefix),
+                                String.format("%s/users/profile", apiPrefix),
+                                String.format("%s/users/*/change-password", apiPrefix),
+                                String.format("%s/rentals", apiPrefix),
+                                String.format("%s/rentals/*", apiPrefix),
+                                String.format("%s/reviews", apiPrefix),
+                                String.format("%s/notifications", apiPrefix),
+                                String.format("%s/chat/**", apiPrefix)
+                        ).hasRole("USER")
+
                         // Quản trị viên (ROLE_ADMIN)
                         .requestMatchers(
                                 String.format("%s/users", apiPrefix),
@@ -81,18 +93,6 @@ public class WebSecurityConfig {
                                 String.format("%s/renters/*/checkout", apiPrefix),
                                 String.format("%s/renters/*/statistics", apiPrefix)
                         ).hasRole("HOST")
-
-
-                        // Người dùng (ROLE_USER)
-                        .requestMatchers(
-                                String.format("%s/users/*/profile", apiPrefix),
-                                String.format("%s/users/*/change-password", apiPrefix),
-                                String.format("%s/rentals", apiPrefix),
-                                String.format("%s/rentals/*", apiPrefix),
-                                String.format("%s/reviews", apiPrefix),
-                                String.format("%s/notifications", apiPrefix),
-                                String.format("%s/chat/**", apiPrefix)
-                        ).hasRole("USER")
 
                         // Các hành động chung cho cả chủ nhà và người dùng
                         .requestMatchers(

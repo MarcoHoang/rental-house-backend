@@ -174,6 +174,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public UserDTO getCurrentUserProfile() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        return toDTO(currentUser);
+    }
+
+
+    @Override
     @Transactional
     public void requestPasswordReset(String email) {
         Optional<User> userOpt = userRepository.findByEmail(email);

@@ -27,4 +27,6 @@ public interface UserService {
     void requestPasswordReset(String email);
 
     void updateUserStatus(Long userId, boolean active);
+
+    UserDTO getCurrentUserProfile();
 }
