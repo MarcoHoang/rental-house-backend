@@ -1,7 +1,7 @@
 package com.codegym.controller.admin;
 
 import com.codegym.dto.ApiResponse;
-import com.codegym.dto.response.UserResponse;
+import com.codegym.dto.response.UserDTO;
 import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
@@ -14,26 +14,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Locale;
-import java.util.Map;
 
 @RestController
-@RequestMapping("${api.prefix}/admin/users")
-@CrossOrigin("*") // Thêm để đồng nhất với UserController
+@RequestMapping("${api.prefix}/admin/users") // Sử dụng lại ${api.prefix} cho nhất quán
+@CrossOrigin("*")
 @RequiredArgsConstructor
 public class UserAdminController {
 
     private final UserService userService;
-    private final MessageSource messageSource; // Thêm MessageSource để xử lý thông điệp
+    private final MessageSource messageSource;
 
     /**
      * Lấy danh sách tất cả người dùng với phân trang và sắp xếp.
+     * Phương thức này đã được viết tốt.
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<UserResponse>>> getAllUsers(
+    public ResponseEntity<ApiResponse<Page<UserDTO>>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id,desc") String[] sort,
-            Locale locale) { // Thêm Locale để lấy message đúng ngôn ngữ
+            Locale locale) {
 
         String sortField = sort[0];
         String sortDirection = sort.length > 1 ? sort[1] : "asc";
@@ -42,27 +42,33 @@ public class UserAdminController {
         Sort.Order order = new Sort.Order(direction, sortField);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(order));
-        Page<UserResponse> userPage = userService.findAllUsers(pageable);
+        Page<UserDTO> userPage = userService.getAllUsers(pageable);
 
-        // Đóng gói response bằng ApiResponse
         return ResponseEntity.ok(ApiResponse.success(userPage, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     /**
      * Cập nhật trạng thái active/locked cho một người dùng.
+     * Cải tiến bằng cách sử dụng một DTO chuyên dụng thay vì Map.
      */
     @PatchMapping("/{userId}/status")
     public ResponseEntity<ApiResponse<Void>> updateUserStatus(
             @PathVariable Long userId,
-            @RequestBody Map<String, Boolean> statusUpdate,
-            Locale locale) { // Thêm Locale
+            @RequestBody StatusUpdateRequest request, // <-- THAY ĐỔI Ở ĐÂY: An toàn hơn
+            Locale locale) {
 
-        // Lấy giá trị 'active' từ request body, nếu không có thì mặc định là false
-        boolean isActive = statusUpdate.getOrDefault("active", false);
+        // Lấy giá trị 'active' từ đối tượng request
+        userService.updateUserStatus(userId, request.isActive());
 
-        userService.updateUserStatus(userId, isActive);
-
-        // Đóng gói response bằng ApiResponse
         return ResponseEntity.ok(ApiResponse.success(StatusCode.UPDATED_SUCCESS, messageSource, locale));
+    }
+
+    /**
+     * Lớp DTO nội bộ để nhận request body.
+     * Cách làm này giúp code rõ ràng và an toàn hơn về kiểu dữ liệu.
+     */
+    @lombok.Data
+    static class StatusUpdateRequest {
+        private boolean active;
     }
 }

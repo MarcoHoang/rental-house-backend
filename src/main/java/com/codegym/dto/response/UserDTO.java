@@ -1,17 +1,20 @@
 package com.codegym.dto.response;
 
+import com.codegym.entity.RoleName;
 import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserDTO {
-    private Long id;                 // ID dùng chung với User
-    private String fullName;         // Họ và tên
-    private String address;          // Địa chỉ
-    private String phone;            // Số điện thoại
-    private String avatar;           // Đường dẫn ảnh đại diện
-    private String username;         // Tên đăng nhập của user
+    private Long id;
+    private String fullName;
+    private String address;
+    private String phone;
+    private String avatarUrl;
+    private String username;
     private String email;
-    private boolean active; // Email của user
+    private boolean active;
+    private RoleName roleName;
 }

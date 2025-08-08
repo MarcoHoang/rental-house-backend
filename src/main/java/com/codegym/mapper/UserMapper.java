@@ -1,7 +1,7 @@
 package com.codegym.mapper;
 
 import com.codegym.dto.request.RegisterRequest;
-import com.codegym.dto.response.UserResponse;
+import com.codegym.dto.response.UserDTO;
 import com.codegym.entity.Role;
 import com.codegym.entity.User;
 import org.mapstruct.Mapper;
@@ -17,13 +17,20 @@ public interface UserMapper {
     @Mapping(target = "username", source = "request.username")
     User toEntity(RegisterRequest request, Role role);
 
-    default UserResponse toResponse(User user) {
-        return UserResponse.builder()
+    default UserDTO toResponse(User user) {
+        if (user == null) {
+            return null;
+        }
+        return UserDTO.builder()
                 .id(user.getId())
-                .email(user.getEmail())
                 .username(user.getUsername())
+                .email(user.getEmail())
                 .phone(user.getPhone())
-                .role(user.getRole().getName().name())
+                .fullName(user.getFullName())
+                .address(user.getAddress())
+                .avatarUrl(user.getAvatarUrl())
+                .active(user.isActive())
+                .roleName(user.getRole() != null ? user.getRole().getName() : null)
                 .build();
     }
 }

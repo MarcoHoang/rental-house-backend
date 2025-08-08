@@ -3,6 +3,7 @@ package com.codegym.service.impl;
 import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.UserDTO;
 import com.codegym.entity.PasswordResetToken;
+import com.codegym.entity.Role;
 import com.codegym.entity.RoleName;
 import com.codegym.entity.User;
 import com.codegym.exception.AppException;
@@ -36,26 +37,39 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
 
     private UserDTO toDTO(User user) {
-        UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
-        dto.setFullName(user.getFullName());
-        dto.setAddress(user.getAddress());
-        dto.setPhone(user.getPhone());
-        dto.setAvatar(user.getAvatarUrl());
-        dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());
-        dto.setActive(user.isActive());
-        return dto;
+        if (user == null) return null;
+
+        return UserDTO.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .address(user.getAddress())
+                .phone(user.getPhone())
+                .avatarUrl(user.getAvatarUrl())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .active(user.isActive())
+                .roleName(user.getRole() != null ? user.getRole().getName() : null)
+                .build();
     }
 
     private User toEntityForCreate(UserDTO dto) {
+        if (dto == null) return null;
+
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
         user.setFullName(dto.getFullName());
         user.setAddress(dto.getAddress());
         user.setPhone(dto.getPhone());
-        user.setAvatarUrl(dto.getAvatar() != null ? dto.getAvatar() : "/images/default-avatar.png");
+        user.setAvatarUrl(dto.getAvatarUrl() != null ? dto.getAvatarUrl() : "/images/default-avatar.png");
+        user.setActive(dto.isActive());
+
+        if (dto.getRoleName() != null) {
+            Role role = new Role();
+            role.setName(dto.getRoleName());
+            user.setRole(role);
+        }
+
         return user;
     }
 
@@ -70,8 +84,8 @@ public class UserServiceImpl implements UserService {
             user.setPhone(dto.getPhone());
         }
 
-        if(dto.getAvatar() != null) {
-            user.setAvatarUrl(dto.getAvatar());
+        if(dto.getAvatarUrl() != null) {
+            user.setAvatarUrl(dto.getAvatarUrl());
         }
     }
 
