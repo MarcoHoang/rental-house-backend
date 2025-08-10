@@ -3,15 +3,14 @@ package com.codegym.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "notifications")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Notification {
+public class Notification extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +30,6 @@ public class Notification {
 
     private Boolean isRead = false;
 
-    private LocalDateTime createdAt;
-
     public enum Type {
         RENTAL_CREATED,
         RENTAL_CANCELED,
@@ -40,10 +37,5 @@ public class Notification {
         LANDLORD_REQUEST_APPROVED,
         LANDLORD_REQUEST_REJECTED,
         GENERAL
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
     }
 }

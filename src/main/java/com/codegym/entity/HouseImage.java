@@ -5,11 +5,12 @@ import lombok.*;
 
 @Entity
 @Table(name = "house_images")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HouseImage {
+public class HouseImage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

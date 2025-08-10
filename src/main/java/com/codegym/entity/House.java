@@ -3,16 +3,16 @@ package com.codegym.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "houses")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class House {
+public class House extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,9 +49,6 @@ public class House {
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HouseImage> images;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
     public enum Status {
         AVAILABLE,
         RENTED,
@@ -64,15 +61,5 @@ public class House {
         TOWNHOUSE,
         BOARDING_HOUSE,
         WHOLE_HOUSE
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
     }
 }

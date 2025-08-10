@@ -7,11 +7,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "house_renter_requests")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HouseRenterRequest {
+public class HouseRenterRequest extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +39,7 @@ public class HouseRenterRequest {
 
     @PrePersist
     protected void onCreate() {
+        super.onCreate();
         this.requestDate = LocalDateTime.now();
     }
 }

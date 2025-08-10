@@ -20,6 +20,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service for handling user authentication and registration operations.
+ * 
+ * This service provides methods for user login, admin login, and user registration.
+ * It handles password encryption, JWT token generation, and user validation.
+ * 
+ * @author CodeGym Team
+ * @version 1.0
+ * @since 2024
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,6 +41,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
+    /**
+     * Authenticates a user with email and password, returning a JWT token.
+     * 
+     * This method validates user credentials, checks if the account is active,
+     * and generates a JWT token for successful authentication.
+     * 
+     * @param request The login request containing email and password
+     * @return LoginResponse containing the JWT token
+     * @throws AppException if credentials are invalid or account is locked
+     */
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(StatusCode.INVALID_CREDENTIALS));
@@ -47,11 +67,20 @@ public class AuthService {
             String token = jwtTokenUtil.generateToken(user);
             return new LoginResponse(token);
         } catch (Exception e) {
+            log.error("Error generating JWT token for user: {}", user.getEmail(), e);
             throw new AppException(StatusCode.INTERNAL_ERROR);
         }
-
     }
 
+    /**
+     * Authenticates an admin user with email and password, returning a JWT token.
+     * 
+     * This method validates admin credentials and ensures the user has ADMIN role.
+     * 
+     * @param request The login request containing email and password
+     * @return LoginResponse containing the JWT token
+     * @throws AppException if credentials are invalid or user is not an admin
+     */
     public LoginResponse adminLogin(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(StatusCode.INVALID_CREDENTIALS));
@@ -68,10 +97,22 @@ public class AuthService {
             String token = jwtTokenUtil.generateToken(user);
             return new LoginResponse(token);
         } catch (Exception e) {
+            log.error("Error generating JWT token for admin: {}", user.getEmail(), e);
             throw new AppException(StatusCode.INTERNAL_ERROR);
         }
     }
 
+    /**
+     * Registers a new user with the provided information.
+     * 
+     * This method validates that the email and phone are unique, creates a new user
+     * with USER role, encrypts the password, and saves the user to the database.
+     * 
+     * @param request The registration request containing user information
+     * @return UserDTO containing the created user's information
+     * @throws AppException if email or phone already exists
+     * @throws ResourceNotFoundException if USER role is not found
+     */
     @Transactional
     public UserDTO register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -85,12 +126,11 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.ROLE_NOT_FOUND));
 
         User user = userMapper.toEntity(request, role);
-
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        log.info("New user registered: {}", savedUser.getEmail());
 
-        return userMapper.toResponse(user);
+        return userMapper.toResponse(savedUser);
     }
-
 }

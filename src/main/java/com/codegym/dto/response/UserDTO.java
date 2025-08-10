@@ -3,6 +3,8 @@ package com.codegym.dto.response;
 import com.codegym.entity.RoleName;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,6 +16,7 @@ public class UserDTO {
     private String phone;
     private String avatarUrl;
     private String email;
+    private LocalDate birthDate;
     private boolean active;
     private RoleName roleName;
 }

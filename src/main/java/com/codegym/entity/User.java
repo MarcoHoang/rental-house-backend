@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,6 +51,10 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "address")
     private String address;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")

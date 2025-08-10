@@ -7,11 +7,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rentals")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Rental {
+public class Rental extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,10 +36,6 @@ public class Rental {
     @Column(nullable = false)
     private Status status;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
     private Double totalPrice;
 
     public enum Status {
@@ -48,15 +45,5 @@ public class Rental {
         CHECKED_IN,
         CHECKED_OUT,
         CANCELED
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
     }
 }

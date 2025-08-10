@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
                 .phone(user.getPhone())
                 .avatarUrl(user.getAvatarUrl())
                 .email(user.getEmail())
+                .birthDate(user.getBirthDate())
                 .active(user.isActive())
                 .roleName(user.getRole() != null ? user.getRole().getName() : null)
                 .build();
@@ -59,6 +60,7 @@ public class UserServiceImpl implements UserService {
         user.setFullName(dto.getFullName());
         user.setAddress(dto.getAddress());
         user.setPhone(dto.getPhone());
+        user.setBirthDate(dto.getBirthDate());
         user.setAvatarUrl(dto.getAvatarUrl() != null ? dto.getAvatarUrl() : "/images/default-avatar.png");
         user.setActive(dto.isActive());
 
@@ -80,6 +82,10 @@ public class UserServiceImpl implements UserService {
                 throw new AppException(StatusCode.PHONE_ALREADY_EXISTS);
             }
             user.setPhone(dto.getPhone());
+        }
+
+        if (dto.getBirthDate() != null) {
+            user.setBirthDate(dto.getBirthDate());
         }
 
         if(dto.getAvatarUrl() != null) {

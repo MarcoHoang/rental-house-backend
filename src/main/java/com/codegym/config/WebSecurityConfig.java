@@ -50,7 +50,8 @@ public class WebSecurityConfig {
                                 String.format("%s/users/password-reset/**", apiPrefix),
                                 String.format("%s/houses", apiPrefix),
                                 String.format("%s/houses/top", apiPrefix),
-                                String.format("%s/houses/**", apiPrefix)
+                                String.format("%s/houses/**", apiPrefix),
+                                String.format("%s/files/**", apiPrefix) // File access
                         ).permitAll()
 
                         // Người dùng (ROLE_USER)

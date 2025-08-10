@@ -16,6 +16,8 @@ public enum StatusCode {
     LOGIN_SUCCESS("07", "success.auth.login"),
     REGISTER_SUCCESS("08", "success.auth.register"),
     SEND_SUCCESS("09", "success.password.reset.requested"),
+    FILE_UPLOAD_SUCCESS("10", "success.file.upload"),
+    FILE_DELETE_SUCCESS("11", "success.file.delete"),
 
     // == BUSINESS LOGIC ERRORS (10-89) ==
 
@@ -49,6 +51,13 @@ public enum StatusCode {
     HOUSE_NOT_AVAILABLE("40", "error.house.notAvailable"),
     INVALID_HOUSE_STATUS("41", "error.house.invalidStatus"), // {0} = status
     GEOCODING_FAILED("42", "error.geogcoding"),
+
+    // --- File Upload (43-49) ---
+    FILE_UPLOAD_ERROR("43", "error.file.upload"),
+    INVALID_FILE_TYPE("44", "error.file.invalidType"),
+    FILE_TOO_LARGE("45", "error.file.tooLarge"),
+    FILE_NOT_FOUND("46", "error.file.notFound"),
+    FILE_DELETE_ERROR("47", "error.file.delete"),
 
     // --- Rental Management (50-59) ---
     RENTAL_PERIOD_OVERLAP("50", "error.rental.periodOverlap"),
