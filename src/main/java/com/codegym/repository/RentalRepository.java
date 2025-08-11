@@ -1,6 +1,7 @@
 package com.codegym.repository;
 
 import com.codegym.entity.Rental;
+import com.codegym.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,5 +41,8 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
     List<Rental> findByHouse_HouseRenter_IdAndStatus(Long houseRenterId, Rental.Status status);
 
     boolean existsByRenterIdAndHouseIdAndStatus(Long renterId, Long houseId, Rental.Status status);
+
+    List<Rental> findByUser(User user);
+
 
 }

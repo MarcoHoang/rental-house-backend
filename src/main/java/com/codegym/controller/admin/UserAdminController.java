@@ -2,6 +2,7 @@ package com.codegym.controller.admin;
 
 import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.UserDTO;
+import com.codegym.dto.response.UserDetailDTO;
 import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,17 @@ public class UserAdminController {
         userService.updateUserStatus(userId, request.isActive());
 
         return ResponseEntity.ok(ApiResponse.success(StatusCode.UPDATED_SUCCESS, messageSource, locale));
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponse<UserDetailDTO>> getUserById(
+            @PathVariable Long userId,
+            Locale locale) {
+
+        // Giả sử userService có một phương thức mới là `getUserDetailsById`
+        UserDetailDTO userDetail = userService.getUserDetailsById(userId);
+
+        return ResponseEntity.ok(ApiResponse.success(userDetail, StatusCode.SUCCESS, messageSource, locale));
     }
 
     /**

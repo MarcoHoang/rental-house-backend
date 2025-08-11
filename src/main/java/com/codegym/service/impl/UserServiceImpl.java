@@ -1,11 +1,10 @@
 package com.codegym.service.impl;
 
 import com.codegym.dto.ApiResponse;
+import com.codegym.dto.response.RentalHistoryDTO;
 import com.codegym.dto.response.UserDTO;
-import com.codegym.entity.PasswordResetToken;
-import com.codegym.entity.Role;
-import com.codegym.entity.RoleName;
-import com.codegym.entity.User;
+import com.codegym.dto.response.UserDetailDTO;
+import com.codegym.entity.*;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.PasswordResetTokenRepository;
@@ -21,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -249,6 +249,46 @@ public class UserServiceImpl implements UserService {
 
         user.setActive(active);
         userRepository.save(user);
+    }
+
+    @Override
+    public UserDetailDTO getUserDetailsById(Long userId) {
+        // 1. Tìm User trong DB, nếu không có thì báo lỗi
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
+
+        // 2. Lấy toàn bộ lịch sử thuê nhà của user này
+        List<Rental> userRentals = rentalRepository.findByUser(user);
+
+        // 3. Tính tổng số tiền đã chi tiêu
+        BigDecimal totalSpent = userRentals.stream()
+                .map(Rental::getTotalPrice) // Lấy ra tổng tiền từ mỗi lần thuê
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Cộng dồn chúng lại
+
+        // 4. Chuyển đổi lịch sử thuê nhà từ Entity sang DTO
+        List<RentalHistoryDTO> rentalHistory = userRentals.stream()
+                .map(rental -> RentalHistoryDTO.builder()
+                        .houseId(rental.getHouse().getId())
+                        .houseTitle(rental.getHouse().getTitle())
+                        .startDate(rental.getStartDate())
+                        .endDate(rental.getEndDate())
+                        .totalPrice(rental.getTotalPrice())
+                        .build())
+                .collect(Collectors.toList());
+
+        // 5. Xây dựng và trả về đối tượng UserDetailDTO hoàn chỉnh
+        return UserDetailDTO.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .address(user.getAddress())
+                .phone(user.getPhone())
+                .avatarUrl(user.getAvatarUrl())
+                .email(user.getEmail())
+                .birthDate(user.getBirthDate())
+                .active(user.isActive())
+                .totalSpent(totalSpent) // Gán tổng tiền đã tính
+                .rentalHistory(rentalHistory) // Gán lịch sử đã chuyển đổi
+                .build();
     }
 
 }
