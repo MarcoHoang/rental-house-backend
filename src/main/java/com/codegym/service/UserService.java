@@ -1,6 +1,7 @@
 package com.codegym.service;
 
 import com.codegym.dto.response.UserDTO;
+import com.codegym.dto.response.UserDetailAdminDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -29,4 +30,7 @@ public interface UserService {
     void updateUserStatus(Long userId, boolean active);
 
     UserDTO getCurrentUserProfile();
+
+    UserDetailAdminDTO findUserDetailById(Long userId);
+
 }

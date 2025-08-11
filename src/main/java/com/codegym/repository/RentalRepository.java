@@ -41,4 +41,7 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
 
     boolean existsByRenterIdAndHouseIdAndStatus(Long renterId, Long houseId, Rental.Status status);
 
+    @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.renter.id = :renterId")
+    Double sumTotalPriceByRenterId(@Param("renterId") Long renterId);
+
 }

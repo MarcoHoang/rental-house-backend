@@ -2,6 +2,7 @@ package com.codegym.controller.admin;
 
 import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.UserDTO;
+import com.codegym.dto.response.UserDetailAdminDTO;
 import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,17 @@ public class UserAdminController {
         return ResponseEntity.ok(ApiResponse.success(userPage, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponse<UserDetailAdminDTO>> getUserDetails(
+            @PathVariable Long userId,
+            Locale locale) {
+
+        UserDetailAdminDTO userDetail = userService.findUserDetailById(userId);
+        // Giả sử bạn có mã StatusCode cho việc lấy chi tiết thành công
+        // Nếu chưa có, bạn có thể tạo mới trong enum StatusCode, ví dụ: GET_DETAIL_SUCCESS
+        return ResponseEntity.ok(ApiResponse.success(userDetail, StatusCode.SUCCESS, messageSource, locale));
+    }
+
     /**
      * Cập nhật trạng thái active/locked cho một người dùng.
      * Cải tiến bằng cách sử dụng một DTO chuyên dụng thay vì Map.
@@ -54,7 +66,7 @@ public class UserAdminController {
     @PatchMapping("/{userId}/status")
     public ResponseEntity<ApiResponse<Void>> updateUserStatus(
             @PathVariable Long userId,
-            @RequestBody StatusUpdateRequest request, // <-- THAY ĐỔI Ở ĐÂY: An toàn hơn
+            @RequestBody StatusUpdateRequest request,
             Locale locale) {
 
         userService.updateUserStatus(userId, request.isActive());
