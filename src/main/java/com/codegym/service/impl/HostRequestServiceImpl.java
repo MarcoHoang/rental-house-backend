@@ -11,6 +11,8 @@ import com.codegym.repository.UserRepository;
 import com.codegym.service.HostRequestService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,10 +32,15 @@ public class HostRequestServiceImpl implements HostRequestService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HostRequestDTO> findAll() {
-        return hostRequestRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public Page<HostRequestDTO> findAll(Pageable pageable) {
+        return hostRequestRepository.findAll(pageable).map(this::mapToDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<HostRequestDTO> findPending(Pageable pageable) {
+        return hostRequestRepository.findByStatus(HostRequest.Status.PENDING, pageable)
+                .map(this::mapToDTO);
     }
 
     @Override

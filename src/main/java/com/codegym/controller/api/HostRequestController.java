@@ -23,11 +23,7 @@ public class HostRequestController {
     private final HostRequestService hostRequestService;
     private final MessageSource messageSource;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<HostRequestDTO>>> getAllRequests(Locale locale) {
-        List<HostRequestDTO> requests = hostRequestService.findAll();
-        return ResponseEntity.ok(ApiResponse.success(requests, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
-    }
+
 
     @PostMapping
     public ResponseEntity<ApiResponse<HostRequestDTO>> createRequest(@RequestBody @Valid HostRequestDTO dto, Locale locale) {
