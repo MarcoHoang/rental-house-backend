@@ -27,11 +27,6 @@ public class HostController {
     private final RentalService rentalService;
     private final MessageSource messageSource;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<HostDTO>>> getAllHosts(Locale locale) {
-        List<HostDTO> hosts = hostService.getAllHosts();
-        return ResponseEntity.ok(ApiResponse.success(hosts, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<HostDTO>> getHostById(@PathVariable Long id, Locale locale) {

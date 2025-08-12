@@ -2,11 +2,15 @@ package com.codegym.service;
 
 import com.codegym.dto.response.HostDTO;
 import com.codegym.dto.response.HouseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 public interface HostService {
 
-    List<HostDTO> getAllHosts();
+    Page<HostDTO> getAllHosts(Pageable pageable);
+
 
     HostDTO getHostById(Long id);
 
