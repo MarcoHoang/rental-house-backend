@@ -35,9 +35,9 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
 
     List<Rental> findByRenterIdOrderByStartDateDesc(Long renterId);
 
-    List<Rental> findByHouse_HouseRenter_IdOrderByStartDateDesc(Long houseRenterId);
+    List<Rental> findByHouse_Host_IdOrderByStartDateDesc(Long hostId);
 
-    List<Rental> findByHouse_HouseRenter_IdAndStatus(Long houseRenterId, Rental.Status status);
+    List<Rental> findByHouse_Host_IdAndStatus(Long hostId, Rental.Status status);
 
     boolean existsByRenterIdAndHouseIdAndStatus(Long renterId, Long houseId, Rental.Status status);
 
