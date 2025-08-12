@@ -1,14 +1,14 @@
 package com.codegym.service.impl;
 
 import com.codegym.dto.ApiResponse;
+import com.codegym.dto.response.RentalHistoryDTO;
 import com.codegym.dto.response.UserDTO;
-import com.codegym.entity.PasswordResetToken;
-import com.codegym.entity.Role;
-import com.codegym.entity.RoleName;
-import com.codegym.entity.User;
+import com.codegym.dto.response.UserDetailAdminDTO;
+import com.codegym.entity.*;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.PasswordResetTokenRepository;
+import com.codegym.repository.RentalRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.EmailService;
 import com.codegym.service.UserService;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final EmailService emailService;
+    private final RentalRepository rentalRepository;
+
 
     private UserDTO toDTO(User user) {
         if (user == null) return null;
@@ -249,6 +252,53 @@ public class UserServiceImpl implements UserService {
 
         user.setActive(active);
         userRepository.save(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetailAdminDTO findUserDetailById(Long userId) {
+        // 1. Tìm user
+        User user = findUserByIdOrThrow(userId);
+
+        // 2. Lấy lịch sử thuê nhà bằng phương thức có sẵn
+        List<Rental> rentalRecords = rentalRepository.findByRenterIdOrderByStartDateDesc(user.getId());
+
+        // 3. Tính tổng số tiền đã chi tiêu bằng phương thức mới thêm vào
+        Double totalSpent = rentalRepository.sumTotalPriceByRenterId(user.getId());
+        if (totalSpent == null) {
+            totalSpent = 0.0;
+        }
+
+        // 4. Chuyển đổi danh sách Rental sang DTO (giữ nguyên logic này)
+        List<RentalHistoryDTO> rentalHistory;
+        if (rentalRecords != null && !rentalRecords.isEmpty()) {
+            rentalHistory = rentalRecords.stream()
+                    .map(rental -> RentalHistoryDTO.builder()
+                            .houseId(rental.getHouse().getId())
+                            .houseName(rental.getHouse().getTitle())
+                            .checkinDate(rental.getStartDate().toLocalDate())
+                            .checkoutDate(rental.getEndDate().toLocalDate())
+                            .price(rental.getTotalPrice())
+                            .build())
+                    .collect(Collectors.toList());
+        } else {
+            rentalHistory = Collections.emptyList();
+        }
+
+        // 5. Xây dựng và trả về DTO chi tiết (giữ nguyên logic này)
+        return UserDetailAdminDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .avatarUrl(user.getAvatarUrl())
+                .active(user.isActive())
+                .birthDate(user.getBirthDate())
+                .address(user.getAddress())
+                .totalSpent(totalSpent)
+                .rentalHistory(rentalHistory)
+                .build();
     }
 
 }

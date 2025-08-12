@@ -66,7 +66,7 @@ public class WebSecurityConfig {
                                 String.format("%s/chat/**", apiPrefix)
                         ).hasRole("USER")
 
-                        // Quản trị viên (ROLE_ADMIN)
+//                         Quản trị viên (ROLE_ADMIN)
                         .requestMatchers(
                                 String.format("%s/users", apiPrefix),
                                 String.format("%s/users/*", apiPrefix),
@@ -80,7 +80,8 @@ public class WebSecurityConfig {
                         ).hasRole("ADMIN")
 
 
-                        // Chủ nhà (ROLE_HOST)
+
+                                // Chủ nhà (ROLE_HOST)
                         .requestMatchers(
                                 String.format("%s/renters/*/houses", apiPrefix),
                                 String.format("%s/renters/*/rentals", apiPrefix),
