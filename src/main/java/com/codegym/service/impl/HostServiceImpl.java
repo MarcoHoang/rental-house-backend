@@ -6,6 +6,7 @@ import com.codegym.entity.Host;
 import com.codegym.entity.House;
 import com.codegym.entity.HouseImage;
 import com.codegym.entity.User;
+import com.codegym.entity.RoleName;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HostRepository;
@@ -14,12 +15,13 @@ import com.codegym.repository.UserRepository;
 import com.codegym.service.HostService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,8 +87,8 @@ public class HostServiceImpl implements HostService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<HostDTO> getAllHosts(Pageable pageable) {
-        return hostRepository.findAll(pageable).map(this::toDTO);
+    public List<HostDTO> getAllHosts() {
+        return hostRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -152,4 +154,28 @@ public class HostServiceImpl implements HostService {
         List<House> houses = houseRepository.findByHostId(host.getId());
         return houses.stream().map(this::toHouseDTO).collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getCurrentHostStats() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        if (!currentUser.getRole().getName().equals(RoleName.HOST)) {
+            throw new AppException(StatusCode.UNAUTHORIZED, "Người dùng không phải là chủ nhà");
+        }
+
+        List<House> houses = houseRepository.findByHost(currentUser);
+        
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalHouses", houses.size());
+        stats.put("activeHouses", houses.stream().filter(h -> "ACTIVE".equals(h.getStatus().name())).count());
+        stats.put("inactiveHouses", houses.stream().filter(h -> "INACTIVE".equals(h.getStatus().name())).count());
+        stats.put("totalRevenue", houses.stream().mapToDouble(House::getPrice).sum());
+        
+        return stats;
+    }
 }
+

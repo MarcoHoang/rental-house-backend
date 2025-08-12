@@ -35,6 +35,12 @@ public class HostController {
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
     }
 
+    @GetMapping("/my-stats")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getMyStats(Locale locale) {
+        Map<String, Object> stats = hostService.getCurrentHostStats();
+        return ResponseEntity.ok(ApiResponse.success(stats, StatusCode.SUCCESS, messageSource, locale));
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<HostDTO>> createHost(@RequestBody @Valid HostDTO dto, Locale locale) {
         HostDTO created = hostService.createHost(dto);

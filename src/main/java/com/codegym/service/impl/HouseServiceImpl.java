@@ -4,6 +4,7 @@ import com.codegym.dto.response.HouseDTO;
 import com.codegym.entity.House;
 import com.codegym.entity.HouseImage;
 import com.codegym.entity.User;
+import com.codegym.entity.RoleName;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HouseRepository;
@@ -11,6 +12,7 @@ import com.codegym.repository.UserRepository;
 import com.codegym.service.HouseService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.codegym.service.GeocodingService;
@@ -169,5 +171,22 @@ public class HouseServiceImpl implements HouseService {
         return house.getImages() != null
                 ? house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList())
                 : List.of();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HouseDTO> getHousesByCurrentHost() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        if (!currentUser.getRole().getName().equals(RoleName.HOST)) {
+            throw new AppException(StatusCode.UNAUTHORIZED, "Người dùng không phải là chủ nhà");
+        }
+
+        return houseRepository.findByHost(currentUser).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 }

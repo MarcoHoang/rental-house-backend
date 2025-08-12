@@ -65,7 +65,12 @@ public class AuthService {
 
         try {
             String token = jwtTokenUtil.generateToken(user);
-            return new LoginResponse(token);
+            UserDTO userDTO = userMapper.toResponse(user);
+            return LoginResponse.builder()
+                    .token(token)
+                    .role(user.getRole().getName())
+                    .user(userDTO)
+                    .build();
         } catch (Exception e) {
             log.error("Error generating JWT token for user: {}", user.getEmail(), e);
             throw new AppException(StatusCode.INTERNAL_ERROR);
@@ -95,7 +100,12 @@ public class AuthService {
 
         try {
             String token = jwtTokenUtil.generateToken(user);
-            return new LoginResponse(token);
+            UserDTO userDTO = userMapper.toResponse(user);
+            return LoginResponse.builder()
+                    .token(token)
+                    .role(user.getRole().getName())
+                    .user(userDTO)
+                    .build();
         } catch (Exception e) {
             log.error("Error generating JWT token for admin: {}", user.getEmail(), e);
             throw new AppException(StatusCode.INTERNAL_ERROR);

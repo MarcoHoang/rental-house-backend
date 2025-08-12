@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface HostService {
 
@@ -25,4 +26,8 @@ public interface HostService {
     void unlockHost(Long id);
 
     List<HouseDTO> getHostHouses(Long id);
+
+    Map<String, Object> getCurrentHostStats();
+
 }
+

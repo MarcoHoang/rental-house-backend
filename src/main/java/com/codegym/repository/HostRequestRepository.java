@@ -15,3 +15,4 @@ public interface HostRequestRepository extends JpaRepository<HostRequest, Long> 
     Page<HostRequest> findByStatus(HostRequest.Status status, Pageable pageable);
 
 }
+
