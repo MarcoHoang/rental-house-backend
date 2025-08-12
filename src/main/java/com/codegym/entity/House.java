@@ -3,24 +3,24 @@ package com.codegym.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "houses")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class House {
+public class House extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Một chủ nhà có thể có nhiều căn
-    @JoinColumn(name = "landlord_id", nullable = false)
-    private User landlord;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "house_renter_id", nullable = false)
+    private User houseRenter;
 
     @Column(nullable = false)
     private String title;
@@ -33,17 +33,21 @@ public class House {
 
     private Double price;
 
-    private Double latitude;   // để hiển thị trên bản đồ
+    private double area;
+
+    private Double latitude;
     private Double longitude;
 
     @Enumerated(EnumType.STRING)
-    private Status status; // AVAILABLE, RENTED, INACTIVE
+    @Column(name = "status", nullable = false)
+    private Status status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "house_type", nullable = false)
+    private HouseType houseType;
 
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HouseImage> images;
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     public enum Status {
         AVAILABLE,
@@ -51,13 +55,11 @@ public class House {
         INACTIVE
     }
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+    public enum HouseType {
+        APARTMENT,
+        VILLA,
+        TOWNHOUSE,
+        BOARDING_HOUSE,
+        WHOLE_HOUSE
     }
 }

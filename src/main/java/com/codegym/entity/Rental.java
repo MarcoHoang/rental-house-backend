@@ -7,11 +7,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rentals")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Rental {
+public class Rental extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,27 +34,16 @@ public class Rental {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status; // PENDING, APPROVED, CHECKED_IN, CHECKED_OUT, CANCELED
+    private Status status;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+    private Double totalPrice;
 
     public enum Status {
-        PENDING,      // Người dùng vừa đặt
-        APPROVED,     // Chủ nhà xác nhận
-        CHECKED_IN,   // Khách đã nhận phòng
-        CHECKED_OUT,  // Khách đã trả phòng
-        CANCELED      // Hủy đặt phòng
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        SCHEDULED,
+        PENDING,
+        APPROVED,
+        CHECKED_IN,
+        CHECKED_OUT,
+        CANCELED
     }
 }

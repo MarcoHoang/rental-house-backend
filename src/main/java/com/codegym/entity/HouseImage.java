@@ -5,23 +5,23 @@ import lombok.*;
 
 @Entity
 @Table(name = "house_images")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HouseImage {
+public class HouseImage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Mỗi ảnh thuộc về một căn nhà
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_id", nullable = false)
     private House house;
 
     @Column(nullable = false)
-    private String imageUrl; // Đường dẫn ảnh
+    private String imageUrl;
 
-    private Integer sortOrder; // Để sắp xếp thứ tự hiển thị ảnh (nếu cần)
+    private Integer sortOrder;
 }

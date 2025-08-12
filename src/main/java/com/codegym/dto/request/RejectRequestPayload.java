@@ -1,0 +1,10 @@
+package com.codegym.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
+public class RejectRequestPayload {
+    @NotBlank(message = "{validation.reject.reason.notBlank}")
+    private String reason;
+}

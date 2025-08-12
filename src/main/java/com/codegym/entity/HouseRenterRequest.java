@@ -1,0 +1,43 @@
+package com.codegym.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "house_renter_requests")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class HouseRenterRequest {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+
+    private String reason;
+
+    private LocalDateTime requestDate;
+    private LocalDateTime processedDate;
+
+    public enum Status {
+        PENDING,
+        APPROVED,
+        REJECTED
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.requestDate = LocalDateTime.now();
+    }
+}
