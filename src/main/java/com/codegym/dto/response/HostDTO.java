@@ -21,3 +21,4 @@ public class HostDTO {
     private LocalDateTime approvedDate;
     private boolean approved;
 }
+

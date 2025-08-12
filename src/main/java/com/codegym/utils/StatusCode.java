@@ -41,6 +41,7 @@ public enum StatusCode {
     RENTAL_NOT_FOUND("25", "error.rental.notFound"), // {0} = rentalId
     REVIEW_NOT_FOUND("26", "error.review.notFound"), // {0} = reviewId
     NOTIFICATION_NOT_FOUND("27", "error.notification.notFound"), // {0} = notificationId
+    RESOURCE_NOT_FOUND("28", "error.resource.notFound"), // {0} = resourceName
 
     // --- Host Request (30-39) ---
     USER_ALREADY_HOST("30", "error.request.userAlreadyHost"),

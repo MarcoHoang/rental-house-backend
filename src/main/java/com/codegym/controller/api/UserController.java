@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Locale;
+import com.codegym.dto.response.HostDTO;
 
 @RestController
 @RequestMapping("/api/users")
@@ -42,6 +43,18 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserDTO>> getProfile(Locale locale) {
         UserDTO dto = userService.getCurrentUserProfile();
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
+    }
+
+    @GetMapping("/is-host")
+    public ResponseEntity<ApiResponse<Boolean>> isHost(Locale locale) {
+        boolean isHost = userService.isCurrentUserHost();
+        return ResponseEntity.ok(ApiResponse.success(isHost, StatusCode.SUCCESS, messageSource, locale));
+    }
+
+    @GetMapping("/host-info")
+    public ResponseEntity<ApiResponse<HostDTO>> getHostInfo(Locale locale) {
+        HostDTO hostInfo = userService.getCurrentUserHostInfo();
+        return ResponseEntity.ok(ApiResponse.success(hostInfo, StatusCode.SUCCESS, messageSource, locale));
     }
 
 

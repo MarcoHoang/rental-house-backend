@@ -4,6 +4,7 @@ import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.RentalHistoryDTO;
 import com.codegym.dto.response.UserDTO;
 import com.codegym.dto.response.UserDetailAdminDTO;
+import com.codegym.dto.response.HostDTO;
 import com.codegym.entity.*;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
@@ -197,6 +198,49 @@ public class UserServiceImpl implements UserService {
         return toDTO(currentUser);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isCurrentUserHost() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        return currentUser.getRole().getName().equals(RoleName.HOST);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HostDTO getCurrentUserHostInfo() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        if (!currentUser.getRole().getName().equals(RoleName.HOST)) {
+            throw new AppException(StatusCode.UNAUTHORIZED, "Người dùng không phải là chủ nhà");
+        }
+
+        if (currentUser.getHost() == null) {
+            throw new AppException(StatusCode.RESOURCE_NOT_FOUND, "thông tin chủ nhà");
+        }
+
+        Host host = currentUser.getHost();
+        return HostDTO.builder()
+                .id(host.getId())
+                .fullName(currentUser.getFullName())
+                .username(currentUser.getUsername())
+                .email(currentUser.getEmail())
+                .phone(currentUser.getPhone())
+                .avatar(currentUser.getAvatarUrl())
+                .nationalId(host.getNationalId())
+                .proofOfOwnershipUrl(host.getProofOfOwnershipUrl())
+                .address(host.getAddress())
+                .approvedDate(host.getApprovedDate())
+                .approved(true) // Nếu đã có host record thì đã được approved
+                .build();
+    }
+
 
     @Override
     @Transactional
@@ -251,7 +295,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
 
         if (user.getRole().getName().equals(RoleName.ADMIN)) {
-            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of an admin account.");
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Không thể thay đổi trạng thái tài khoản admin.");
         }
 
         user.setActive(active);

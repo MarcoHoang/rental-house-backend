@@ -17,3 +17,4 @@ public interface HostRequestService {
 
     HostRequestDTO rejectRequest(Long id, String reason);
 }
+

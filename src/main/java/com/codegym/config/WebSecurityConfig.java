@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,55 +42,75 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        // ================== ENDPOINTS CÔNG KHAI ==================
-                        .requestMatchers(
-                                String.format("%s/auth/**", apiPrefix),
-                                String.format("%s/admin/login", apiPrefix)
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.GET,
-                                String.format("%s/houses", apiPrefix),
-                                String.format("%s/houses/**", apiPrefix),
-                                String.format("%s/files/**", apiPrefix)
-                        ).permitAll()
+                                // Cho phép không cần login
+                                .requestMatchers(
+                                        String.format("%s/auth/register", apiPrefix),
+                                        String.format("%s/auth/login", apiPrefix),
+                                        String.format("%s/admin/login", apiPrefix), // Admin login
+                                        String.format("%s/users/password-reset/**", apiPrefix),
+                                        String.format("%s/houses", apiPrefix),
+                                        String.format("%s/houses/top", apiPrefix),
+                                        String.format("%s/houses/**", apiPrefix),
+                                        String.format("%s/files/**", apiPrefix) // File access
+                                ).permitAll()
 
-                        .requestMatchers(HttpMethod.GET,
-                                String.format("%s/host-requests", apiPrefix),
-                                String.format("%s/hosts", apiPrefix),
-                                String.format("%s/users", apiPrefix)
-                        ).hasRole("ADMIN")
-                        .requestMatchers(
-                                String.format("%s/host-requests/*/approve", apiPrefix),
-                                String.format("%s/host-requests/*/reject", apiPrefix),
-                                String.format("%s/hosts/**", apiPrefix), // Bao gồm cả lock/unlock, delete,...
-                                String.format("%s/users/**", apiPrefix),
-                                String.format("%s/dashboard/**", apiPrefix),
-                                String.format("%s/banners/**", apiPrefix)
-                        ).hasRole("ADMIN")
+                                // Người dùng (ROLE_USER)
+                                .requestMatchers(
+                                        String.format("%s/users/*/profile", apiPrefix),
+                                        String.format("%s/users/profile", apiPrefix),
+                                        String.format("%s/users/*/change-password", apiPrefix),
+                                        String.format("%s/rentals", apiPrefix),
+                                        String.format("%s/rentals/*", apiPrefix),
+                                        String.format("%s/reviews", apiPrefix),
+                                        String.format("%s/notifications", apiPrefix),
+                                        String.format("%s/chat/**", apiPrefix)
+                                ).hasRole("USER")
 
-                        .requestMatchers(HttpMethod.POST, String.format("%s/host-requests", apiPrefix)).hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, String.format("%s/host-requests/my-request", apiPrefix)).hasRole("USER")
-                        .requestMatchers(
-                                String.format("%s/users/profile", apiPrefix),
-                                String.format("%s/users/*/change-password", apiPrefix),
-                                String.format("%s/rentals", apiPrefix),
-                                String.format("%s/reviews", apiPrefix)
-                        ).hasRole("USER")
+//                         Quản trị viên (ROLE_ADMIN)
+                                .requestMatchers(
+                                        String.format("%s/users", apiPrefix),
+                                        String.format("%s/users/*", apiPrefix),
+                                        String.format("%s/renters", apiPrefix),
+                                        String.format("%s/renters/*", apiPrefix),
+                                        String.format("%s/renter-requests", apiPrefix),
+                                        String.format("%s/dashboard/**", apiPrefix),
+                                        String.format("%s/banners", apiPrefix),
+                                        String.format("%s/admin/dashboard", apiPrefix),
+                                        String.format("%s/admin/users/**", apiPrefix)
+                                ).hasRole("ADMIN")
 
 
-                        .requestMatchers(
-                                String.format("%s/rentals/host/**", apiPrefix),
-                                String.format("%s/reviews/*/hide", apiPrefix),
-                                String.format("%s/house-images/**", apiPrefix),
-                                String.format("%s/houses/*/status", apiPrefix),
-                                String.format("%s/rentals/*/checkin", apiPrefix),
-                                String.format("%s/rentals/*/checkout", apiPrefix)
-                        ).hasRole("HOST")
 
-                        .requestMatchers(HttpMethod.POST, String.format("%s/houses", apiPrefix)).hasAnyRole("USER", "HOST")
-                        .requestMatchers(HttpMethod.PUT, String.format("%s/houses/*", apiPrefix)).hasAnyRole("USER", "HOST")
-                        .requestMatchers(HttpMethod.DELETE, String.format("%s/houses/*", apiPrefix)).hasAnyRole("USER", "HOST")
+                                // Chủ nhà (ROLE_HOST)
+                                .requestMatchers(
+                                        String.format("%s/users/*/change-password", apiPrefix),
+                                        String.format("%s/users/is-host", apiPrefix),
+                                        String.format("%s/users/host-info", apiPrefix),
+                                        String.format("%s/houses/my-houses", apiPrefix),
+                                        String.format("%s/hosts/my-stats", apiPrefix),
+                                        String.format("%s/renters/*/houses", apiPrefix),
+                                        String.format("%s/renters/*/rentals", apiPrefix),
+                                        String.format("%s/renters/*/income", apiPrefix),
+                                        String.format("%s/reviews/*/hide", apiPrefix),
+                                        String.format("%s/house-images", apiPrefix),
+                                        String.format("%s/houses/*/status", apiPrefix),
+                                        String.format("%s/renter-requests", apiPrefix),
+                                        String.format("%s/notifications", apiPrefix),
+                                        String.format("%s/renters/*/checkin", apiPrefix),
+                                        String.format("%s/renters/*/checkout", apiPrefix),
+                                        String.format("%s/renters/*/statistics", apiPrefix)
+                                ).hasRole("HOST")
 
-                        .anyRequest().authenticated()
+                                // Các hành động chung cho cả chủ nhà và người dùng
+                                .requestMatchers(
+                                        String.format("%s/houses", apiPrefix),
+                                        String.format("%s/houses/*", apiPrefix),
+                                        String.format("%s/houses/*/status", apiPrefix),
+                                        String.format("%s/house-images", apiPrefix),
+                                        String.format("%s/house-images/*", apiPrefix)
+                                ).hasAnyRole("USER", "HOST")
+
+                                .anyRequest().authenticated()
                 );
 
         return http.build();
@@ -128,4 +147,3 @@ public class WebSecurityConfig {
         };
     }
 }
-

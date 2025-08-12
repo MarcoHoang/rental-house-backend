@@ -33,3 +33,4 @@ public class Host extends BaseEntity {
         this.approvedDate = LocalDateTime.now();
     }
 }
+

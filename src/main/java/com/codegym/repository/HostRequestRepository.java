@@ -10,3 +10,4 @@ public interface HostRequestRepository extends JpaRepository<HostRequest, Long> 
 
     boolean existsByUserIdAndStatus(Long userId, HostRequest.Status status);
 }
+
