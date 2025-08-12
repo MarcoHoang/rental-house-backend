@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HouseRenterDTO {
+public class HostDTO {
     private Long id;
     private String fullName;
     private String username;

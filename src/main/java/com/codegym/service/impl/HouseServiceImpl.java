@@ -32,16 +32,16 @@ public class HouseServiceImpl implements HouseService {
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOUSE_NOT_FOUND, id));
     }
 
-    private User findHouseRenterByIdOrThrow(Long id) {
+    private User findHostByIdOrThrow(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOUSE_RENTER_NOT_FOUND, id));
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, id));
     }
 
     private HouseDTO toDTO(House house) {
         return HouseDTO.builder()
                 .id(house.getId())
-                .houseRenterId(house.getHouseRenter().getId())
-                .houseRenterName(house.getHouseRenter().getUsername())
+                .hostId(house.getHost().getId())
+                .hostName(house.getHost().getUsername())
                 .title(house.getTitle())
                 .description(house.getDescription())
                 .address(house.getAddress())
@@ -59,8 +59,8 @@ public class HouseServiceImpl implements HouseService {
                 .build();
     }
 
-    private void updateEntityFromDTO(House house, HouseDTO dto, User houseRenter) {
-        house.setHouseRenter(houseRenter);
+    private void updateEntityFromDTO(House house, HouseDTO dto, User host) {
+        house.setHost(host);
         house.setTitle(dto.getTitle());
         house.setDescription(dto.getDescription());
         house.setAddress(dto.getAddress());
@@ -88,10 +88,10 @@ public class HouseServiceImpl implements HouseService {
     @Override
     @Transactional
     public HouseDTO createHouse(HouseDTO dto) {
-        User houseRenter = findHouseRenterByIdOrThrow(dto.getHouseRenterId());
+        User host = findHostByIdOrThrow(dto.getHostId());
 
         House house = new House();
-        updateEntityFromDTO(house, dto, houseRenter);
+        updateEntityFromDTO(house, dto, host);
 
         if (house.getLatitude() == null || house.getLongitude() == null) {
             double[] latLng = geocodingService.getLatLngFromAddress(house.getAddress());
@@ -108,11 +108,11 @@ public class HouseServiceImpl implements HouseService {
     @Transactional
     public HouseDTO updateHouse(Long id, HouseDTO dto) {
         House existingHouse = findHouseByIdOrThrow(id);
-        User houseRenter = findHouseRenterByIdOrThrow(dto.getHouseRenterId());
+        User host = findHostByIdOrThrow(dto.getHostId());
 
         boolean addressChanged = !existingHouse.getAddress().equals(dto.getAddress());
 
-        updateEntityFromDTO(existingHouse, dto, houseRenter);
+        updateEntityFromDTO(existingHouse, dto, host);
 
         if (addressChanged || existingHouse.getLatitude() == null || existingHouse.getLongitude() == null) {
             double[] latLng = geocodingService.getLatLngFromAddress(existingHouse.getAddress());

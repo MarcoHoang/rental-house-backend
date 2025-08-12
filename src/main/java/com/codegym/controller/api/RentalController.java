@@ -60,9 +60,9 @@ public class RentalController {
         return ResponseEntity.ok(ApiResponse.success(rentals, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
-    @GetMapping("/landlord/{landlordId}")
-    public ResponseEntity<ApiResponse<List<RentalDTO>>> getHouseRenterRentals(@PathVariable Long landlordId, Locale locale) {
-        List<RentalDTO> rentals = rentalService.getHouseRenterRentals(landlordId);
+    @GetMapping("/host/{hostId}")
+    public ResponseEntity<ApiResponse<List<RentalDTO>>> getHostRentals(@PathVariable Long hostId, Locale locale) {
+        List<RentalDTO> rentals = rentalService.getHostRentals(hostId);
         return ResponseEntity.ok(ApiResponse.success(rentals, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
@@ -78,9 +78,9 @@ public class RentalController {
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
-    @GetMapping("/landlord/{landlordId}/income")
-    public ResponseEntity<ApiResponse<Map<String, Double>>> getHouseRenterIncome(@PathVariable Long landlordId, Locale locale) {
-        Map<String, Double> incomeData = rentalService.getHouseRenterIncome(landlordId);
+    @GetMapping("/host/{hostId}/income")
+    public ResponseEntity<ApiResponse<Map<String, Double>>> getHostIncome(@PathVariable Long hostId, Locale locale) {
+        Map<String, Double> incomeData = rentalService.getHostIncome(hostId);
         return ResponseEntity.ok(ApiResponse.success(incomeData, StatusCode.SUCCESS, messageSource, locale));
     }
 }

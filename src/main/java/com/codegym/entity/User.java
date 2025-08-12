@@ -61,7 +61,7 @@ public class User extends BaseEntity implements UserDetails {
     private Role role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private HouseRenter houseRenter;
+    private Host host;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

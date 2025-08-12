@@ -19,8 +19,8 @@ public class House extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "house_renter_id", nullable = false)
-    private User houseRenter;
+    @JoinColumn(name = "host_id", nullable = false)
+    private User host;
 
     @Column(nullable = false)
     private String title;

@@ -13,8 +13,8 @@ import java.util.List;
 @Builder
 public class HouseDTO {
     private Long id;
-    private Long houseRenterId;
-    private String houseRenterName;
+    private Long hostId;
+    private String hostName;
 
     private String title;
     private String description;
