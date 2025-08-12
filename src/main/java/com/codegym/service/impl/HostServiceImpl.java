@@ -135,19 +135,40 @@ public class HostServiceImpl implements HostService {
 
     @Override
     @Transactional
-    public void lockHost(Long id) {
-        User user = findUserByIdOrThrow(id);
-        user.setActive(false);
-        userRepository.save(user);
+    public void lockHost(Long hostId) {
+        // 1. Tìm Host entity trước
+        Host host = findHostByIdOrThrow(hostId);
+        // 2. Lấy ra User entity từ Host
+        User userToUpdate = host.getUser();
+
+        // 3. Áp dụng logic bảo vệ (tùy chọn nhưng nên có)
+        if (userToUpdate.getRole().getName().equals(RoleName.ADMIN)) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of an admin account.");
+        }
+
+        // 4. Cập nhật trạng thái và lưu lại
+        userToUpdate.setActive(false);
+        userRepository.save(userToUpdate);
     }
 
     @Override
     @Transactional
-    public void unlockHost(Long id) {
-        User user = findUserByIdOrThrow(id);
-        user.setActive(true);
-        userRepository.save(user);
+    public void unlockHost(Long hostId) {
+        // 1. Tìm Host entity trước
+        Host host = findHostByIdOrThrow(hostId);
+        // 2. Lấy ra User entity từ Host
+        User userToUpdate = host.getUser();
+
+        // 3. Áp dụng logic bảo vệ
+        if (userToUpdate.getRole().getName().equals(RoleName.ADMIN)) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of an admin account.");
+        }
+
+        // 4. Cập nhật trạng thái và lưu lại
+        userToUpdate.setActive(true);
+        userRepository.save(userToUpdate);
     }
+
 
     @Override
     @Transactional(readOnly = true)

@@ -51,4 +51,18 @@ public class HostAdminController {
         HostRequestDTO dto = requestService.rejectRequest(id, payload.getReason());
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
+
+    @PatchMapping("/hosts/{hostId}/status")
+    public ResponseEntity<ApiResponse<Void>> updateHostStatus(
+            @PathVariable Long hostId,
+            @RequestBody UserAdminController.StatusUpdateRequest request, // Tái sử dụng DTO từ UserAdminController
+            Locale locale
+    ) {
+        if (request.isActive()) {
+            hostService.unlockHost(hostId);
+        } else {
+            hostService.lockHost(hostId);
+        }
+        return ResponseEntity.ok(ApiResponse.success(StatusCode.UPDATED_SUCCESS, messageSource, locale));
+    }
 }
