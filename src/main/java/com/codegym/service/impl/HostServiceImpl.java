@@ -15,6 +15,8 @@ import com.codegym.repository.UserRepository;
 import com.codegym.service.HostService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,8 +89,8 @@ public class HostServiceImpl implements HostService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HostDTO> getAllHosts() {
-        return hostRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    public Page<HostDTO> getAllHosts(Pageable pageable) {
+        return hostRepository.findAll(pageable).map(this::toDTO);
     }
 
     @Override
@@ -168,13 +170,13 @@ public class HostServiceImpl implements HostService {
         }
 
         List<House> houses = houseRepository.findByHost(currentUser);
-        
+
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalHouses", houses.size());
         stats.put("activeHouses", houses.stream().filter(h -> "ACTIVE".equals(h.getStatus().name())).count());
         stats.put("inactiveHouses", houses.stream().filter(h -> "INACTIVE".equals(h.getStatus().name())).count());
         stats.put("totalRevenue", houses.stream().mapToDouble(House::getPrice).sum());
-        
+
         return stats;
     }
 }
