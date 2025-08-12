@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,10 +102,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllUsers(Pageable pageable) {
-        // 1. Gọi phương thức mới trong repository với Enum RoleName.ADMIN
-        Page<User> userPage = userRepository.findByRole_NameNot(RoleName.ADMIN, pageable);
+        List<RoleName> rolesToExclude = Arrays.asList(RoleName.ADMIN, RoleName.HOST);
 
-        // 2. Sử dụng hàm .map() có sẵn của Page để chuyển đổi hiệu quả
+        Page<User> userPage = userRepository.findByRole_NameNotIn(rolesToExclude, pageable);
+
         return userPage.map(this::toDTO);
     }
 

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByPhone(String phone);
 
     Page<User> findByRole_NameNot(RoleName roleName, Pageable pageable);
+
+    Page<User> findByRole_NameNotIn(List<RoleName> roles, Pageable pageable);
+
 }
