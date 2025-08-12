@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changePassword(Long id, String oldPassword, String newPassword) {
+    public void changePassword(Long id, String oldPassword, String newPassword, String confirmPassword) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User currentUser = userRepository.findByEmail(currentUsername)
@@ -160,6 +160,10 @@ public class UserServiceImpl implements UserService {
 
         if (!passwordEncoder.matches(oldPassword, currentUser.getPassword())) {
             throw new AppException(StatusCode.INVALID_PASSWORD);
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new AppException(StatusCode.PASSWORD_CONFIRMATION_MISMATCH);
         }
 
         if (passwordEncoder.matches(newPassword, currentUser.getPassword())) {

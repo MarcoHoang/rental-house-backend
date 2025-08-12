@@ -73,11 +73,13 @@ public enum StatusCode {
     DATA_INTEGRITY_VIOLATION("90", "error.data.integrity"),
     ACCESS_DENIED("91", "error.access.denied"),
     FORBIDDEN_ACTION("92", "error.forbidden"),
+    PASSWORD_CONFIRMATION_MISMATCH("93", "error.password.mismatch"),
 
     // Validation & Internal
     PARAM_TYPE_MISMATCH("97", "error.param.typeMismatch"), // {0} = paramName, {1} = expectedType
     VALIDATION_ERROR("98", "error.validation"),
     INTERNAL_ERROR("99", "error.internal"),
+
 
     // == FIELD VALIDATION MESSAGES (Dùng cho @Valid) ==
     VALIDATION_USERNAME_NOT_BLANK("V01", "validation.username.notBlank"),

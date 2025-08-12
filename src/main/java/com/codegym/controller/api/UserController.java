@@ -28,7 +28,7 @@ public class UserController {
 
     @PutMapping("/{id}/change-password")
     public ResponseEntity<ApiResponse<Void>> changePassword(@PathVariable Long id, @RequestBody @Valid ChangePasswordRequest request, Locale locale) {
-        userService.changePassword(id,request.getOldPassword(), request.getNewPassword());
+        userService.changePassword(id, request.getOldPassword(), request.getNewPassword(), request.getConfirmPassword());
         return ResponseEntity.ok(ApiResponse.success(StatusCode.PASSWORD_CHANGED, messageSource, locale));
     }
 

@@ -325,3 +325,4 @@ try {
 2. **Cloud Storage**: Chuyển sang AWS S3, Google Cloud Storage
 3. **Image Optimization**: Thêm WebP conversion
 4. **Backup**: Backup strategy cho uploaded files
+
