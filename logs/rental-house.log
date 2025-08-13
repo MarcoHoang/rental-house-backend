@@ -16241,3 +16241,5532 @@
 2025-08-13 09:00:07 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-08-13 09:00:07 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2025-08-13 09:00:07 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-08-13 09:26:15 [main] INFO  com.codegym.RentalHouseApplication - Starting RentalHouseApplication using Java 17.0.15 with PID 2158 (/Users/hieult/Desktop/RentalHouse/rental-house-backend/target/classes started by hieult in /Users/hieult/Desktop/RentalHouse/rental-house-backend)
+2025-08-13 09:26:15 [main] DEBUG com.codegym.RentalHouseApplication - Running with Spring Boot v3.1.4, Spring v6.0.12
+2025-08-13 09:26:15 [main] INFO  com.codegym.RentalHouseApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-13 09:26:16 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-13 09:26:16 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 44 ms. Found 10 JPA repository interfaces.
+2025-08-13 09:26:16 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-08-13 09:26:16 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-08-13 09:26:16 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.13]
+2025-08-13 09:26:16 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-08-13 09:26:16 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 732 ms
+2025-08-13 09:26:16 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-13 09:26:16 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.2.9.Final
+2025-08-13 09:26:16 [main] INFO  org.hibernate.cfg.Environment - HHH000406: Using bytecode reflection optimizer
+2025-08-13 09:26:16 [main] INFO  o.h.b.i.BytecodeProviderInitiator - HHH000021: Bytecode provider name : bytebuddy
+2025-08-13 09:26:16 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-13 09:26:16 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-08-13 09:26:17 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3ba46845
+2025-08-13 09:26:17 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-08-13 09:26:17 [main] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-08-13 09:26:17 [main] INFO  o.h.b.i.BytecodeProviderInitiator - HHH000021: Bytecode provider name : bytebuddy
+2025-08-13 09:26:17 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-08-13 09:26:17 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-13 09:26:17 [main] DEBUG c.c.infrastructure.JwtTokenFilter - Filter 'jwtTokenFilter' configured for use
+2025-08-13 09:26:18 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-08-13 09:26:18 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-13 09:26:18 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@39ad1fdb, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7321f698, org.springframework.security.web.context.SecurityContextHolderFilter@58a2c6a, org.springframework.security.web.header.HeaderWriterFilter@25082311, org.springframework.web.filter.CorsFilter@22e470f4, org.springframework.security.web.authentication.logout.LogoutFilter@70798698, com.codegym.infrastructure.JwtTokenFilter@52c2d1e8, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4ea01c2a, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3e9f3d0f, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6dace32a, org.springframework.security.web.session.SessionManagementFilter@474c8d42, org.springframework.security.web.access.ExceptionTranslationFilter@3057a923, org.springframework.security.web.access.intercept.AuthorizationFilter@4c00c8ce]
+2025-08-13 09:26:18 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2025-08-13 09:26:18 [main] INFO  com.codegym.RentalHouseApplication - Started RentalHouseApplication in 2.895 seconds (process running for 3.168)
+2025-08-13 09:26:18 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 09:26:18 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 09:26:18 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 09:26:18 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 09:26:18 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 09:26:18 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 09:26:18 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.username=?
+2025-08-13 09:26:18 [main] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:18 [main] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:26:22 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-13 09:26:22 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-08-13 09:26:22 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-08-13 09:26:22 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:26:22 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:22 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:26:22 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:26:22 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:26:22 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:26:22 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:22 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:26:22 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:26:22 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:26:23 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:26:23 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:23 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:26:23 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.processed_date,
+        h1_0.reason,
+        h1_0.request_date,
+        h1_0.status,
+        h1_0.user_id 
+    from
+        host_requests h1_0 
+    where
+        h1_0.status=? limit ?,?
+2025-08-13 09:26:23 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:26:23 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:26:23 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:23 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:26:23 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.processed_date,
+        h1_0.reason,
+        h1_0.request_date,
+        h1_0.status,
+        h1_0.user_id 
+    from
+        host_requests h1_0 
+    where
+        h1_0.status=? limit ?,?
+2025-08-13 09:26:23 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:26:25 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        r1_0.name not in (?,?) 
+    order by
+        u1_0.id desc limit ?,
+        ?
+2025-08-13 09:26:25 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:26:25 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        r1_0.name not in (?,?) 
+    order by
+        u1_0.id desc limit ?,
+        ?
+2025-08-13 09:26:25 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:26:25 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:27:03 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:27:03 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:27:03 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:27:03 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:27:03 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:27:03 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:31:29 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:31:29 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:31:29 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:31:29 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:31:29 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:31:29 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:31:29 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:31:29 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:31:29 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:31:29 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:31:31 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:31:31 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:31:31 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:31:31 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:31:31 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:31:31 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:31:31 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:31:31 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:31:31 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:31:31 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:31:32 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:31:32 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:31:32 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:31:32 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.processed_date,
+        h1_0.reason,
+        h1_0.request_date,
+        h1_0.status,
+        h1_0.user_id 
+    from
+        host_requests h1_0 
+    where
+        h1_0.status=? limit ?,?
+2025-08-13 09:31:32 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:31:32 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:31:32 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:31:32 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:31:32 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.processed_date,
+        h1_0.reason,
+        h1_0.request_date,
+        h1_0.status,
+        h1_0.user_id 
+    from
+        host_requests h1_0 
+    where
+        h1_0.status=? limit ?,?
+2025-08-13 09:31:32 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:33:18 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:18 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:18 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:18 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:33:18 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:33:18 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:18 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:18 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:18 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:33:18 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:33:20 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:20 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:20 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:20 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.id=?
+2025-08-13 09:33:20 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:33:20 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    /* update
+        for com.codegym.entity.User */update users 
+    set
+        active=?,
+        address=?,
+        img=?,
+        birth_date=?,
+        email=?,
+        facebook_account_id=?,
+        full_name=?,
+        google_account_id=?,
+        password=?,
+        phone=?,
+        role_id=?,
+        updated_at=?,
+        username=? 
+    where
+        id=?
+2025-08-13 09:33:22 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:22 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:22 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:22 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:22 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:22 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:27 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:27 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:27 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:29 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:29 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:29 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:30 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:30 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:30 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:32 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:32 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:32 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:41 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:41 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:41 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:43 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:43 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:43 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:44 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:44 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:44 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:46 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:46 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:46 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:47 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:47 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:47 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:33:48 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:33:48 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:33:48 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:34:38 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:34:38 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:34:38 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:34:43 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:34:43 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:34:43 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:40:49 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:40:49 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:40:49 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:40:54 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:40:54 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:40:54 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:40:55 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:40:55 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:40:55 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:40:57 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:40:57 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:40:57 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:06 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:41:06 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:06 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:06 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:41:06 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:41:06 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:41:06 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:06 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:06 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:41:06 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:41:08 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:41:08 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:41:08 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 limit ?,
+        ?
+2025-08-13 09:41:08 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:41:08 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.processed_date,
+        h1_0.reason,
+        h1_0.request_date,
+        h1_0.status,
+        h1_0.user_id 
+    from
+        host_requests h1_0 
+    where
+        h1_0.status=? limit ?,?
+2025-08-13 09:41:08 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:41:08 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:08 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        h1_0.id,
+        h1_0.processed_date,
+        h1_0.reason,
+        h1_0.request_date,
+        h1_0.status,
+        h1_0.user_id 
+    from
+        host_requests h1_0 
+    where
+        h1_0.status=? limit ?,?
+2025-08-13 09:41:08 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:41:09 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        r1_0.name not in (?,?) 
+    order by
+        u1_0.id desc limit ?,
+        ?
+2025-08-13 09:41:09 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:41:09 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        r1_0.name not in (?,?) 
+    order by
+        u1_0.id desc limit ?,
+        ?
+2025-08-13 09:41:09 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:41:09 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:51:03 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:51:03 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:51:03 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:51:07 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:51:07 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:51:07 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:51:09 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:51:09 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:51:09 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:51:14 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:51:14 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:51:14 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 09:51:21 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 09:51:21 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 09:51:21 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:06:49 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:06:49 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:06:49 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:10:43 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3m56s83ms).
+2025-08-13 10:11:04 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:04 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:04 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:15 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:15 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:15 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:15 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:15 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:15 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:15 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:15 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:15 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:18 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:18 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:18 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:18 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:18 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:18 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:18 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:18 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:18 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:18 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:18 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:18 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:30 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:30 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:30 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:30 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 10:11:30 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* update
+        for com.codegym.entity.User */update users 
+    set
+        active=?,
+        address=?,
+        img=?,
+        birth_date=?,
+        email=?,
+        facebook_account_id=?,
+        full_name=?,
+        google_account_id=?,
+        password=?,
+        phone=?,
+        role_id=?,
+        updated_at=?,
+        username=? 
+    where
+        id=?
+2025-08-13 10:11:34 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:34 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:34 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:34 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:34 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:34 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:37 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:37 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:37 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:37 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:37 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:37 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:37 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:37 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:37 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:37 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:37 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:37 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:44 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:11:44 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:11:44 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:11:44 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id,
+        u1_0.password,
+        u1_0.phone,
+        r1_0.id,
+        r1_0.name,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        hosts h1_0 
+            on u1_0.id=h1_0.user_id 
+    left join
+        roles r1_0 
+            on r1_0.id=u1_0.role_id 
+    where
+        u1_0.id=?
+2025-08-13 10:11:44 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* update
+        for com.codegym.entity.User */update users 
+    set
+        active=?,
+        address=?,
+        img=?,
+        birth_date=?,
+        email=?,
+        facebook_account_id=?,
+        full_name=?,
+        google_account_id=?,
+        password=?,
+        phone=?,
+        role_id=?,
+        updated_at=?,
+        username=? 
+    where
+        id=?
+2025-08-13 10:12:26 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:26 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:26 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:26 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:26 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:26 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:27 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    /* update
+        for com.codegym.entity.User */update users 
+    set
+        active=?,
+        address=?,
+        img=?,
+        birth_date=?,
+        email=?,
+        facebook_account_id=?,
+        full_name=?,
+        google_account_id=?,
+        password=?,
+        phone=?,
+        role_id=?,
+        updated_at=?,
+        username=? 
+    where
+        id=?
+2025-08-13 10:12:27 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:27 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:27 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:27 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:27 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:27 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:36 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:41 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:41 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:41 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:41 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:41 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:41 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:52 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:52 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:52 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:52 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:52 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:52 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:52 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:52 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:52 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:56 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:56 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:56 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:56 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:56 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:56 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:56 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:56 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:56 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:12:56 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:12:56 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:12:56 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:13:05 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:13:05 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:13:05 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:13:05 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:13:05 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:13:05 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:19:20 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-13 10:19:20 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-08-13 10:19:20 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-08-13 10:19:22 [main] INFO  com.codegym.RentalHouseApplication - Starting RentalHouseApplication using Java 17.0.15 with PID 2742 (/Users/hieult/Desktop/RentalHouse/rental-house-backend/target/classes started by hieult in /Users/hieult/Desktop/RentalHouse/rental-house-backend)
+2025-08-13 10:19:22 [main] DEBUG com.codegym.RentalHouseApplication - Running with Spring Boot v3.1.4, Spring v6.0.12
+2025-08-13 10:19:22 [main] INFO  com.codegym.RentalHouseApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-13 10:19:22 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-13 10:19:22 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 34 ms. Found 10 JPA repository interfaces.
+2025-08-13 10:19:23 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-08-13 10:19:23 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-08-13 10:19:23 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.13]
+2025-08-13 10:19:23 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-08-13 10:19:23 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 687 ms
+2025-08-13 10:19:23 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-13 10:19:23 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.2.9.Final
+2025-08-13 10:19:23 [main] INFO  org.hibernate.cfg.Environment - HHH000406: Using bytecode reflection optimizer
+2025-08-13 10:19:23 [main] INFO  o.h.b.i.BytecodeProviderInitiator - HHH000021: Bytecode provider name : bytebuddy
+2025-08-13 10:19:23 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-13 10:19:23 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-08-13 10:19:23 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6921cfa
+2025-08-13 10:19:23 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-08-13 10:19:23 [main] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-08-13 10:19:23 [main] INFO  o.h.b.i.BytecodeProviderInitiator - HHH000021: Bytecode provider name : bytebuddy
+2025-08-13 10:19:24 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-08-13 10:19:24 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-13 10:19:24 [main] DEBUG c.c.infrastructure.JwtTokenFilter - Filter 'jwtTokenFilter' configured for use
+2025-08-13 10:19:24 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-08-13 10:19:24 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-13 10:19:24 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@41a56594, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4b1a7b39, org.springframework.security.web.context.SecurityContextHolderFilter@3e9f3d0f, org.springframework.security.web.header.HeaderWriterFilter@23216e17, org.springframework.web.filter.CorsFilter@42ffabb, org.springframework.security.web.authentication.logout.LogoutFilter@3387d45e, com.codegym.infrastructure.JwtTokenFilter@506654fa, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6ccb3dd, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@462f1d85, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7a63c618, org.springframework.security.web.session.SessionManagementFilter@7ec02149, org.springframework.security.web.access.ExceptionTranslationFilter@3396d2a6, org.springframework.security.web.access.intercept.AuthorizationFilter@6dace32a]
+2025-08-13 10:19:25 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2025-08-13 10:19:25 [main] INFO  com.codegym.RentalHouseApplication - Started RentalHouseApplication in 2.777 seconds (process running for 3.002)
+2025-08-13 10:19:25 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 10:19:25 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 10:19:25 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 10:19:25 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 10:19:25 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 10:19:25 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.name=?
+2025-08-13 10:19:25 [main] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.username=?
+2025-08-13 10:19:25 [main] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:19:25 [main] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:19:37 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-13 10:19:37 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-08-13 10:19:37 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-08-13 10:19:37 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:19:37 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:19:37 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:19:37 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:19:37 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:19:37 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:20:02 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:20:02 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:20:02 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:20:02 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.address,
+        u1_0.img,
+        u1_0.birth_date,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.facebook_account_id,
+        u1_0.full_name,
+        u1_0.google_account_id,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role_id,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-08-13 10:20:02 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.approved_date,
+        h1_0.created_at,
+        h1_0.national_id,
+        h1_0.proof_of_ownership_url,
+        h1_0.updated_at,
+        h1_0.user_id 
+    from
+        hosts h1_0 
+    where
+        h1_0.user_id=?
+2025-08-13 10:20:02 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.name 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2025-08-13 10:21:09 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-13 10:21:09 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-08-13 10:21:09 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

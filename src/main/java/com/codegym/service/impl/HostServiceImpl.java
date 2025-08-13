@@ -34,6 +34,12 @@ public class HostServiceImpl implements HostService {
     private final UserRepository userRepository;
     private final HouseRepository houseRepository;
 
+    private User getCurrentAuthenticatedUser() {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUserEmail));
+    }
+
     private Host findHostByIdOrThrow(Long id) {
         return hostRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, id));
@@ -199,6 +205,38 @@ public class HostServiceImpl implements HostService {
         stats.put("totalRevenue", houses.stream().mapToDouble(House::getPrice).sum());
 
         return stats;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HostDTO getCurrentHostDetails() {
+        User currentUser = getCurrentAuthenticatedUser();
+        Host host = hostRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, currentUser.getId()));
+        return toDTO(host);
+    }
+
+    @Override
+    @Transactional
+    public HostDTO updateCurrentHostProfile(HostDTO dto) {
+        User currentUser = getCurrentAuthenticatedUser();
+        Host hostToUpdate = hostRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, currentUser.getId()));
+
+
+        currentUser.setFullName(dto.getFullName());
+        currentUser.setPhone(dto.getPhone());
+
+        if (dto.getAvatar() != null && !dto.getAvatar().isBlank()) {
+            currentUser.setAvatarUrl(dto.getAvatar());
+        }
+        userRepository.save(currentUser);
+
+        hostToUpdate.setAddress(dto.getAddress());
+        hostToUpdate.setNationalId(dto.getNationalId());
+        Host updatedHost = hostRepository.save(hostToUpdate);
+
+        return toDTO(updatedHost);
     }
 }
 

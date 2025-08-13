@@ -89,4 +89,16 @@ public class HostController {
         Map<String, Double> income = rentalService.getHostIncome(id);
         return ResponseEntity.ok(ApiResponse.success(income, StatusCode.SUCCESS, messageSource, locale));
     }
+
+    @GetMapping("/my-profile")
+    public ResponseEntity<ApiResponse<HostDTO>> getMyProfile(Locale locale) {
+        HostDTO hostDetails = hostService.getCurrentHostDetails();
+        return ResponseEntity.ok(ApiResponse.success(hostDetails, StatusCode.SUCCESS, messageSource, locale));
+    }
+
+    @PutMapping("/my-profile")
+    public ResponseEntity<ApiResponse<HostDTO>> updateMyProfile(@RequestBody @Valid HostDTO dto, Locale locale) {
+        HostDTO updatedHost = hostService.updateCurrentHostProfile(dto);
+        return ResponseEntity.ok(ApiResponse.success(updatedHost, StatusCode.UPDATED_SUCCESS, messageSource, locale));
+    }
 }
