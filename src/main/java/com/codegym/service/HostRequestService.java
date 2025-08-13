@@ -21,5 +21,7 @@ public interface HostRequestService {
     HostRequestDTO approveRequest(Long id);
 
     HostRequestDTO rejectRequest(Long id, String reason);
+
+    HostRequestDTO findById(Long id);
 }
 

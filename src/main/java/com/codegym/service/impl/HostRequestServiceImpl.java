@@ -148,16 +148,26 @@ public class HostRequestServiceImpl implements HostRequestService {
     }
 
     private HostRequestDTO mapToDTO(HostRequest entity) {
+        User user = entity.getUser();
+
         return HostRequestDTO.builder()
                 .id(entity.getId())
-                .userId(entity.getUser().getId())
-                .userEmail(entity.getUser().getEmail())
-                .username(entity.getUser().getUsername())
+                .userId(user.getId())
+                .userEmail(user.getEmail())
+                .username(user.getUsername())
                 .status(entity.getStatus().name())
                 .reason(entity.getReason())
                 .requestDate(entity.getRequestDate())
                 .processedDate(entity.getProcessedDate())
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HostRequestDTO findById(Long id) {
+        return hostRequestRepository.findById(id)
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.REQUEST_NOT_FOUND, id));
     }
 }
 

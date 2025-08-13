@@ -65,4 +65,10 @@ public class HostAdminController {
         }
         return ResponseEntity.ok(ApiResponse.success(StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
+
+    @GetMapping("/host-requests/{requestId}")
+    public ResponseEntity<ApiResponse<HostRequestDTO>> getRequestDetails(@PathVariable Long requestId, Locale locale) {
+        HostRequestDTO requestDetails = requestService.findById(requestId);
+        return ResponseEntity.ok(ApiResponse.success(requestDetails, StatusCode.SUCCESS, messageSource, locale));
+    }
 }
