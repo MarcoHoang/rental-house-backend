@@ -25,6 +25,12 @@ public class HostRequest {
     @Column(nullable = false)
     private Status status;
 
+    @Column(name = "national_id")
+    private String nationalId;
+
+    @Column(name = "proof_of_ownership_url")
+    private String proofOfOwnershipUrl;
+
     private String reason;
 
     private LocalDateTime requestDate;

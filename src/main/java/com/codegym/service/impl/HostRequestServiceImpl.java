@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,30 +67,37 @@ public class HostRequestServiceImpl implements HostRequestService {
     @Override
     @Transactional
     public HostRequestDTO createRequest(HostRequestDTO dto) {
-        // Validate user exists and is active
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, dto.getUserId()));
 
-        if (!user.isActive()) {
-            throw new AppException(StatusCode.ACCOUNT_LOCKED);
+        if (user.getRole().getName() == RoleName.HOST) {
+            throw new AppException(StatusCode.USER_ALREADY_HOST, "Bạn đã là một chủ nhà.");
         }
 
-        // Check if user is already a host
-        if (hostRepository.existsById(dto.getUserId())) {
-            throw new AppException(StatusCode.USER_ALREADY_HOST);
+        Optional<HostRequest> existingRequestOpt = hostRequestRepository.findByUserId(user.getId());
+
+        HostRequest requestToSave;
+
+        if (existingRequestOpt.isPresent()) {
+            requestToSave = existingRequestOpt.get();
+
+            if (requestToSave.getStatus() == HostRequest.Status.PENDING) {
+                throw new AppException(StatusCode.PENDING_REQUEST_EXISTS, "Bạn đã có một đơn đăng ký đang chờ duyệt.");
+            }
+
+            requestToSave.setStatus(HostRequest.Status.PENDING);
+            requestToSave.setRequestDate(LocalDateTime.now());
+            requestToSave.setProcessedDate(null);
+            requestToSave.setReason(null);
+
+        } else {
+            requestToSave = new HostRequest();
+            requestToSave.setUser(user);
+            requestToSave.setStatus(HostRequest.Status.PENDING);
         }
-
-        // Check if there's already a pending request
-        if (hostRequestRepository.existsByUserIdAndStatus(dto.getUserId(), HostRequest.Status.PENDING)) {
-            throw new AppException(StatusCode.PENDING_REQUEST_EXISTS);
-        }
-
-        HostRequest entity = new HostRequest();
-        entity.setUser(user);
-        entity.setRequestDate(LocalDateTime.now());
-        entity.setStatus(HostRequest.Status.PENDING);
-
-        HostRequest savedEntity = hostRequestRepository.save(entity);
+        requestToSave.setNationalId(dto.getNationalId());
+        requestToSave.setProofOfOwnershipUrl(dto.getProofOfOwnershipUrl());
+        HostRequest savedEntity = hostRequestRepository.save(requestToSave);
         return mapToDTO(savedEntity);
     }
 
@@ -108,18 +116,22 @@ public class HostRequestServiceImpl implements HostRequestService {
 
         User user = request.getUser();
         
-        // Update user role to HOST
         Role hostRole = roleRepository.findByName(RoleName.HOST)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.ROLE_NOT_FOUND));
         user.setRole(hostRole);
         userRepository.save(user);
 
-        // Create Host record if not exists
         if (!hostRepository.existsById(user.getId())) {
             Host newHost = new Host();
             newHost.setId(user.getId());
             newHost.setUser(user);
             newHost.setApprovedDate(LocalDateTime.now());
+
+            // Lấy thông tin trực tiếp từ đối tượng request đã được lưu
+            newHost.setNationalId(request.getNationalId());
+            newHost.setAddress(user.getAddress()); // Vẫn có thể lấy địa chỉ từ user
+            newHost.setProofOfOwnershipUrl(request.getProofOfOwnershipUrl());
+
             hostRepository.save(newHost);
         }
 

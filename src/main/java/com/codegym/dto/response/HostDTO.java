@@ -20,5 +20,7 @@ public class HostDTO {
     private String address;
     private LocalDateTime approvedDate;
     private boolean approved;
+    private boolean active;
+
 }
 
