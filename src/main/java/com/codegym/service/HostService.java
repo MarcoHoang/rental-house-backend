@@ -1,6 +1,7 @@
 package com.codegym.service;
 
 import com.codegym.dto.response.HostDTO;
+import com.codegym.dto.response.HostDetailAdminDTO;
 import com.codegym.dto.response.HouseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,9 +22,8 @@ public interface HostService {
 
     void deleteHost(Long id);
 
-    void lockHost(Long id);
-
-    void unlockHost(Long id);
+    void lockHostByUserId(Long userId);
+    void unlockHostByUserId(Long userId);
 
     List<HouseDTO> getHostHouses(Long id);
 
@@ -32,6 +32,9 @@ public interface HostService {
     HostDTO getCurrentHostDetails();
 
     HostDTO updateCurrentHostProfile(HostDTO dto);
+
+    HostDetailAdminDTO getHostDetailsByUserId(Long userId);
+
 
 }
 

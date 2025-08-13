@@ -18,6 +18,7 @@ public enum StatusCode {
     SEND_SUCCESS("09", "success.password.reset.requested"),
     FILE_UPLOAD_SUCCESS("10", "success.file.upload"),
     FILE_DELETE_SUCCESS("11", "success.file.delete"),
+    GET_DETAIL_SUCCESS("12", "success.detail.found"),
 
     // == BUSINESS LOGIC ERRORS (10-89) ==
 

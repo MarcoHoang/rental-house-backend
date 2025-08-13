@@ -60,18 +60,6 @@ public class HostController {
         return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
     }
 
-    @PostMapping("/{id}/lock")
-    public ResponseEntity<ApiResponse<Void>> lockHost(@PathVariable Long id, Locale locale) {
-        hostService.lockHost(id);
-        return ResponseEntity.ok(ApiResponse.success(StatusCode.UPDATED_SUCCESS, messageSource, locale));
-    }
-
-    @PostMapping("/{id}/unlock")
-    public ResponseEntity<ApiResponse<Void>> unlockHost(@PathVariable Long id, Locale locale) {
-        hostService.unlockHost(id);
-        return ResponseEntity.ok(ApiResponse.success(StatusCode.UPDATED_SUCCESS, messageSource, locale));
-    }
-
     @GetMapping("/{id}/houses")
     public ResponseEntity<ApiResponse<List<HouseDTO>>> getHostHouses(@PathVariable Long id, Locale locale) {
         List<HouseDTO> houses = hostService.getHostHouses(id);

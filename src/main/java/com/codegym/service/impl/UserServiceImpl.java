@@ -291,23 +291,18 @@ public class UserServiceImpl implements UserService {
         User userToUpdate = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
 
-        // 2. Lấy thông tin admin đang thực hiện hành động (để kiểm tra)
         String currentAdminEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentAdmin = userRepository.findByEmail(currentAdminEmail)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentAdminEmail));
 
-        // 3. Quy tắc bảo vệ: Admin không được tự khóa chính mình
         if (userToUpdate.getId().equals(currentAdmin.getId())) {
             throw new AppException(StatusCode.FORBIDDEN_ACTION, "Admin cannot lock their own account.");
         }
 
-        // 4. Quy tắc bảo vệ: Không được phép thay đổi trạng thái của các Admin khác
         if (userToUpdate.getRole().getName().equals(RoleName.ADMIN)) {
             throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of another admin account.");
         }
 
-        // 5. Nếu vượt qua tất cả các kiểm tra, thực hiện thay đổi
-        //    Quy tắc này sẽ áp dụng đúng cho cả USER và HOST
         userToUpdate.setActive(active);
         userRepository.save(userToUpdate);
     }

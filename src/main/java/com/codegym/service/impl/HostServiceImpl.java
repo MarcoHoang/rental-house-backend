@@ -1,6 +1,7 @@
 package com.codegym.service.impl;
 
 import com.codegym.dto.response.HostDTO;
+import com.codegym.dto.response.HostDetailAdminDTO;
 import com.codegym.dto.response.HouseDTO;
 import com.codegym.entity.Host;
 import com.codegym.entity.House;
@@ -11,6 +12,7 @@ import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HostRepository;
 import com.codegym.repository.HouseRepository;
+import com.codegym.repository.RentalRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.HostService;
 import com.codegym.utils.StatusCode;
@@ -21,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +36,13 @@ public class HostServiceImpl implements HostService {
     private final HostRepository hostRepository;
     private final UserRepository userRepository;
     private final HouseRepository houseRepository;
+    private final RentalRepository rentalRepository;
+
+    private Host findHostByUserIdOrThrow(Long userId) {
+        User user = findUserByIdOrThrow(userId);
+        return hostRepository.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, userId));
+    }
 
     private User getCurrentAuthenticatedUser() {
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -147,30 +157,18 @@ public class HostServiceImpl implements HostService {
 
     @Override
     @Transactional
-    public void lockHost(Long hostId) {
-        Host host = findHostByIdOrThrow(hostId);
+    public void lockHostByUserId(Long userId) {
+        Host host = findHostByUserIdOrThrow(userId);
         User userToUpdate = host.getUser();
-
-        if (userToUpdate.getRole().getName().equals(RoleName.ADMIN)) {
-            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of an admin account.");
-        }
-
         userToUpdate.setActive(false);
         userRepository.save(userToUpdate);
     }
 
     @Override
     @Transactional
-    public void unlockHost(Long hostId) {
-        Host host = findHostByIdOrThrow(hostId);
+    public void unlockHostByUserId(Long userId) {
+        Host host = findHostByUserIdOrThrow(userId);
         User userToUpdate = host.getUser();
-
-        // 3. Áp dụng logic bảo vệ
-        if (userToUpdate.getRole().getName().equals(RoleName.ADMIN)) {
-            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of an admin account.");
-        }
-
-        // 4. Cập nhật trạng thái và lưu lại
         userToUpdate.setActive(true);
         userRepository.save(userToUpdate);
     }
@@ -238,6 +236,34 @@ public class HostServiceImpl implements HostService {
         Host updatedHost = hostRepository.save(hostToUpdate);
 
         return toDTO(updatedHost);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HostDetailAdminDTO getHostDetailsByUserId(Long userId) {
+        User user = findUserByIdOrThrow(userId);
+        Host host = hostRepository.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, userId));
+
+        List<House> houseEntities = houseRepository.findByHostId(host.getId());
+        List<HouseDTO> houseDTOs = houseEntities.stream()
+                .map(this::toHouseDTO).collect(Collectors.toList());
+
+        Double revenue = rentalRepository.sumTotalPriceByHost(user);
+        BigDecimal totalRevenue = (revenue != null) ? BigDecimal.valueOf(revenue) : BigDecimal.ZERO;
+
+        return HostDetailAdminDTO.builder()
+                .id(user.getId())
+                .avatarUrl(user.getAvatarUrl())
+                .username(user.getUsername())
+                .fullName(user.getFullName())
+                .phone(user.getPhone())
+                .email(user.getEmail())
+                .active(user.isActive())
+                .address(host.getAddress())
+                .totalRevenue(totalRevenue)
+                .houses(houseDTOs)
+                .build();
     }
 }
 

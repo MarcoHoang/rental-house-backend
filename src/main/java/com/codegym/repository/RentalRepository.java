@@ -1,6 +1,7 @@
 package com.codegym.repository;
 
 import com.codegym.entity.Rental;
+import com.codegym.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -43,5 +44,8 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
 
     @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.renter.id = :renterId")
     Double sumTotalPriceByRenterId(@Param("renterId") Long renterId);
+
+    @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.house.host = :hostUser")
+    Double sumTotalPriceByHost(@Param("hostUser") User hostUser);
 
 }
