@@ -30,7 +30,8 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+.vscode/git rm -r --cached logs
+
 
 ### Uploads ###
 uploads/
@@ -39,4 +40,7 @@ uploads/
 *.png
 *.gif
 *.webp
-logs/logs/rental-house.log
+logs/
+
+.env
+logs/rental-house.log
