@@ -42,4 +42,5 @@ uploads/
 *.webp
 logs/
 
-.envlogs/rental-house.log
+.env
+logs/rental-house.log
