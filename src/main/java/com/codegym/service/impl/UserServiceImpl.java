@@ -4,6 +4,7 @@ import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.RentalHistoryDTO;
 import com.codegym.dto.response.UserDTO;
 import com.codegym.dto.response.UserDetailAdminDTO;
+import com.codegym.dto.response.HostDTO;
 import com.codegym.entity.*;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
@@ -22,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -104,10 +102,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllUsers(Pageable pageable) {
-        // 1. Gọi phương thức mới trong repository với Enum RoleName.ADMIN
-        Page<User> userPage = userRepository.findByRole_NameNot(RoleName.ADMIN, pageable);
+        List<RoleName> rolesToExclude = Arrays.asList(RoleName.ADMIN, RoleName.HOST);
 
-        // 2. Sử dụng hàm .map() có sẵn của Page để chuyển đổi hiệu quả
+        Page<User> userPage = userRepository.findByRole_NameNotIn(rolesToExclude, pageable);
+
         return userPage.map(this::toDTO);
     }
 
@@ -197,6 +195,49 @@ public class UserServiceImpl implements UserService {
         return toDTO(currentUser);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isCurrentUserHost() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        return currentUser.getRole().getName().equals(RoleName.HOST);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HostDTO getCurrentUserHostInfo() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        if (!currentUser.getRole().getName().equals(RoleName.HOST)) {
+            throw new AppException(StatusCode.UNAUTHORIZED, "Người dùng không phải là chủ nhà");
+        }
+
+        if (currentUser.getHost() == null) {
+            throw new AppException(StatusCode.RESOURCE_NOT_FOUND, "thông tin chủ nhà");
+        }
+
+        Host host = currentUser.getHost();
+        return HostDTO.builder()
+                .id(host.getId())
+                .fullName(currentUser.getFullName())
+                .username(currentUser.getUsername())
+                .email(currentUser.getEmail())
+                .phone(currentUser.getPhone())
+                .avatar(currentUser.getAvatarUrl())
+                .nationalId(host.getNationalId())
+                .proofOfOwnershipUrl(host.getProofOfOwnershipUrl())
+                .address(host.getAddress())
+                .approvedDate(host.getApprovedDate())
+                .approved(true) // Nếu đã có host record thì đã được approved
+                .build();
+    }
+
 
     @Override
     @Transactional
@@ -247,15 +288,28 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUserStatus(Long userId, boolean active) {
-        User user = userRepository.findById(userId)
+        User userToUpdate = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
 
-        if (user.getRole().getName().equals(RoleName.ADMIN)) {
-            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of an admin account.");
+        // 2. Lấy thông tin admin đang thực hiện hành động (để kiểm tra)
+        String currentAdminEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentAdmin = userRepository.findByEmail(currentAdminEmail)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentAdminEmail));
+
+        // 3. Quy tắc bảo vệ: Admin không được tự khóa chính mình
+        if (userToUpdate.getId().equals(currentAdmin.getId())) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Admin cannot lock their own account.");
         }
 
-        user.setActive(active);
-        userRepository.save(user);
+        // 4. Quy tắc bảo vệ: Không được phép thay đổi trạng thái của các Admin khác
+        if (userToUpdate.getRole().getName().equals(RoleName.ADMIN)) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of another admin account.");
+        }
+
+        // 5. Nếu vượt qua tất cả các kiểm tra, thực hiện thay đổi
+        //    Quy tắc này sẽ áp dụng đúng cho cả USER và HOST
+        userToUpdate.setActive(active);
+        userRepository.save(userToUpdate);
     }
 
     @Override

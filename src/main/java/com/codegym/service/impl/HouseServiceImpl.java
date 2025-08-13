@@ -4,6 +4,7 @@ import com.codegym.dto.response.HouseDTO;
 import com.codegym.entity.House;
 import com.codegym.entity.HouseImage;
 import com.codegym.entity.User;
+import com.codegym.entity.RoleName;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HouseRepository;
@@ -11,6 +12,7 @@ import com.codegym.repository.UserRepository;
 import com.codegym.service.HouseService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.codegym.service.GeocodingService;
@@ -32,16 +34,16 @@ public class HouseServiceImpl implements HouseService {
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOUSE_NOT_FOUND, id));
     }
 
-    private User findHouseRenterByIdOrThrow(Long id) {
+    private User findHostByIdOrThrow(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOUSE_RENTER_NOT_FOUND, id));
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, id));
     }
 
     private HouseDTO toDTO(House house) {
         return HouseDTO.builder()
                 .id(house.getId())
-                .houseRenterId(house.getHouseRenter().getId())
-                .houseRenterName(house.getHouseRenter().getUsername())
+                .hostId(house.getHost().getId())
+                .hostName(house.getHost().getUsername())
                 .title(house.getTitle())
                 .description(house.getDescription())
                 .address(house.getAddress())
@@ -59,8 +61,8 @@ public class HouseServiceImpl implements HouseService {
                 .build();
     }
 
-    private void updateEntityFromDTO(House house, HouseDTO dto, User houseRenter) {
-        house.setHouseRenter(houseRenter);
+    private void updateEntityFromDTO(House house, HouseDTO dto, User host) {
+        house.setHost(host);
         house.setTitle(dto.getTitle());
         house.setDescription(dto.getDescription());
         house.setAddress(dto.getAddress());
@@ -88,10 +90,10 @@ public class HouseServiceImpl implements HouseService {
     @Override
     @Transactional
     public HouseDTO createHouse(HouseDTO dto) {
-        User houseRenter = findHouseRenterByIdOrThrow(dto.getHouseRenterId());
+        User host = findHostByIdOrThrow(dto.getHostId());
 
         House house = new House();
-        updateEntityFromDTO(house, dto, houseRenter);
+        updateEntityFromDTO(house, dto, host);
 
         if (house.getLatitude() == null || house.getLongitude() == null) {
             double[] latLng = geocodingService.getLatLngFromAddress(house.getAddress());
@@ -108,11 +110,11 @@ public class HouseServiceImpl implements HouseService {
     @Transactional
     public HouseDTO updateHouse(Long id, HouseDTO dto) {
         House existingHouse = findHouseByIdOrThrow(id);
-        User houseRenter = findHouseRenterByIdOrThrow(dto.getHouseRenterId());
+        User host = findHostByIdOrThrow(dto.getHostId());
 
         boolean addressChanged = !existingHouse.getAddress().equals(dto.getAddress());
 
-        updateEntityFromDTO(existingHouse, dto, houseRenter);
+        updateEntityFromDTO(existingHouse, dto, host);
 
         if (addressChanged || existingHouse.getLatitude() == null || existingHouse.getLongitude() == null) {
             double[] latLng = geocodingService.getLatLngFromAddress(existingHouse.getAddress());
@@ -169,5 +171,22 @@ public class HouseServiceImpl implements HouseService {
         return house.getImages() != null
                 ? house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList())
                 : List.of();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HouseDTO> getHousesByCurrentHost() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        if (!currentUser.getRole().getName().equals(RoleName.HOST)) {
+            throw new AppException(StatusCode.UNAUTHORIZED, "Người dùng không phải là chủ nhà");
+        }
+
+        return houseRepository.findByHost(currentUser).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 }

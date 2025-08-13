@@ -24,7 +24,7 @@ target/
 /nbbuild/
 /dist/
 /nbdist/
-/.nb-gradle/
+.nb-gradle/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -39,3 +39,8 @@ uploads/
 *.png
 *.gif
 *.webp
+
+### Logs ###
+logs/
+
+.env

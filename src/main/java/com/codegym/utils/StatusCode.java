@@ -35,15 +35,16 @@ public enum StatusCode {
 
     // --- Resource Not Found (20-29) ---
     USER_NOT_FOUND("21", "error.user.notFound"), // {0} = userId
-    HOUSE_RENTER_NOT_FOUND("22", "error.houserenter.notFound"), // {0} = renterId
+    HOST_NOT_FOUND("22", "error.host.notFound"), // {0} = hostId
     HOUSE_NOT_FOUND("23", "error.house.notFound"), // {0} = houseId
     REQUEST_NOT_FOUND("24", "error.request.notFound"), // {0} = requestId
     RENTAL_NOT_FOUND("25", "error.rental.notFound"), // {0} = rentalId
     REVIEW_NOT_FOUND("26", "error.review.notFound"), // {0} = reviewId
     NOTIFICATION_NOT_FOUND("27", "error.notification.notFound"), // {0} = notificationId
+    RESOURCE_NOT_FOUND("28", "error.resource.notFound"), // {0} = resourceName
 
-    // --- House Renter Request (30-39) ---
-    USER_ALREADY_HOUSE_RENTER("30", "error.request.userAlreadyHouseRenter"),
+    // --- Host Request (30-39) ---
+    USER_ALREADY_HOST("30", "error.request.userAlreadyHost"),
     PENDING_REQUEST_EXISTS("31", "error.request.pendingExists"),
     INVALID_REQUEST_STATUS("32", "error.request.invalidStatus"),
 

@@ -65,6 +65,12 @@ public class HouseController {
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
     }
 
+    @GetMapping("/my-houses")
+    public ResponseEntity<ApiResponse<List<HouseDTO>>> getMyHouses(Locale locale) {
+        List<HouseDTO> houses = houseService.getHousesByCurrentHost();
+        return ResponseEntity.ok(ApiResponse.success(houses, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<HouseDTO>> createHouse(@RequestBody @Valid HouseDTO dto, Locale locale) {
         HouseDTO created = houseService.createHouse(dto);

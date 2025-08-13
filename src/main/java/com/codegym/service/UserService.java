@@ -1,5 +1,6 @@
 package com.codegym.service;
 
+import com.codegym.dto.response.HostDTO;
 import com.codegym.dto.response.UserDTO;
 import com.codegym.dto.response.UserDetailAdminDTO;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,10 @@ public interface UserService {
     void updateUserStatus(Long userId, boolean active);
 
     UserDTO getCurrentUserProfile();
+
+    boolean isCurrentUserHost();
+
+    HostDTO getCurrentUserHostInfo();
 
     UserDetailAdminDTO findUserDetailById(Long userId);
 

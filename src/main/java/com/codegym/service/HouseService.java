@@ -23,4 +23,6 @@ public interface HouseService {
 
     List<String> getHouseImages(Long id);
 
+    List<HouseDTO> getHousesByCurrentHost();
+
 }
