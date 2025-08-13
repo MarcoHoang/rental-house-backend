@@ -56,3 +56,4 @@ public class HostRequestController {
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 }
+

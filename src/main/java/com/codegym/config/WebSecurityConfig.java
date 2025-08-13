@@ -50,7 +50,7 @@ public class WebSecurityConfig {
                                         String.format("%s/users/password-reset/**", apiPrefix),
                                         String.format("%s/houses", apiPrefix),
                                         String.format("%s/houses/top", apiPrefix),
-                                        String.format("%s/houses/**", apiPrefix),
+                                        String.format("%s/houses/search", apiPrefix),
                                         String.format("%s/files/**", apiPrefix) // File access
                                 ).permitAll()
 
@@ -59,6 +59,7 @@ public class WebSecurityConfig {
                                         String.format("%s/users/*/profile", apiPrefix),
                                         String.format("%s/users/profile", apiPrefix),
                                         String.format("%s/users/*/change-password", apiPrefix),
+                                        String.format("%s/houses/*", apiPrefix), // Xem chi tiết nhà
                                         String.format("%s/rentals", apiPrefix),
                                         String.format("%s/rentals/*", apiPrefix),
                                         String.format("%s/reviews", apiPrefix),
@@ -88,12 +89,14 @@ public class WebSecurityConfig {
                                         String.format("%s/users/host-info", apiPrefix),
                                         String.format("%s/houses/my-houses", apiPrefix),
                                         String.format("%s/hosts/my-stats", apiPrefix),
+                                        String.format("%s/houses", apiPrefix), // Tạo nhà mới
+                                        String.format("%s/houses/*", apiPrefix), // Sửa/xóa nhà của mình
+                                        String.format("%s/houses/*/status", apiPrefix), // Thay đổi trạng thái
                                         String.format("%s/renters/*/houses", apiPrefix),
                                         String.format("%s/renters/*/rentals", apiPrefix),
                                         String.format("%s/renters/*/income", apiPrefix),
                                         String.format("%s/reviews/*/hide", apiPrefix),
                                         String.format("%s/house-images", apiPrefix),
-                                        String.format("%s/houses/*/status", apiPrefix),
                                         String.format("%s/renter-requests", apiPrefix),
                                         String.format("%s/notifications", apiPrefix),
                                         String.format("%s/renters/*/checkin", apiPrefix),
@@ -101,14 +104,10 @@ public class WebSecurityConfig {
                                         String.format("%s/renters/*/statistics", apiPrefix)
                                 ).hasRole("HOST")
 
-                                // Các hành động chung cho cả chủ nhà và người dùng
+                                // Admin chỉ có thể xóa nhà, không sửa
                                 .requestMatchers(
-                                        String.format("%s/houses", apiPrefix),
-                                        String.format("%s/houses/*", apiPrefix),
-                                        String.format("%s/houses/*/status", apiPrefix),
-                                        String.format("%s/house-images", apiPrefix),
-                                        String.format("%s/house-images/*", apiPrefix)
-                                ).hasAnyRole("USER", "HOST")
+                                        String.format("%s/houses/*", apiPrefix)
+                                ).hasRole("ADMIN")
 
                                 .anyRequest().authenticated()
                 );

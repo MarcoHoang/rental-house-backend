@@ -1,6 +1,7 @@
 package com.codegym.controller.api;
 
 import com.codegym.dto.ApiResponse;
+import com.codegym.dto.request.HouseRequest;
 import com.codegym.dto.response.HouseDTO;
 import com.codegym.service.HouseService;
 import com.codegym.utils.StatusCode;
@@ -72,14 +73,14 @@ public class HouseController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<HouseDTO>> createHouse(@RequestBody @Valid HouseDTO dto, Locale locale) {
-        HouseDTO created = houseService.createHouse(dto);
+    public ResponseEntity<ApiResponse<HouseDTO>> createHouse(@RequestBody @Valid HouseRequest request, Locale locale) {
+        HouseDTO created = houseService.createHouse(request);
         return new ResponseEntity<>(ApiResponse.success(created, StatusCode.CREATED_SUCCESS, messageSource, locale), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<HouseDTO>> updateHouse(@PathVariable Long id, @RequestBody @Valid HouseDTO dto, Locale locale) {
-        HouseDTO updated = houseService.updateHouse(id, dto);
+    public ResponseEntity<ApiResponse<HouseDTO>> updateHouse(@PathVariable Long id, @RequestBody @Valid HouseRequest request, Locale locale) {
+        HouseDTO updated = houseService.updateHouse(id, request);
         return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 

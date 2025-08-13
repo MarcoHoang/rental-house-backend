@@ -36,6 +36,9 @@ spring:
 api:
   prefix: api
 
+app:
+  base-url: ${APP_BASE_URL:http://localhost}
+
 jwt:
   expiration: 36000
   secretKey: ${JWT_SECRET_KEY}

@@ -67,6 +67,12 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Value("${server.port}")
     private String serverPort;
 
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
+
+    @Value("${app.base-url:http://localhost}")
+    private String baseUrl;
+
     @Override
     public FileUploadResponse uploadFile(MultipartFile file, String uploadType) {
         try {
@@ -236,7 +242,8 @@ public class FileUploadServiceImpl implements FileUploadService {
      * Generate file URL for accessing the uploaded file.
      */
     private String generateFileUrl(String uploadType, String filename) {
-        return String.format("http://localhost:%s/api/files/%s/%s", serverPort, uploadType, filename);
+        String context = contextPath.isEmpty() ? "" : contextPath;
+        return String.format("%s:%s%s/api/files/%s/%s", baseUrl, serverPort, context, uploadType, filename);
     }
 
     /**

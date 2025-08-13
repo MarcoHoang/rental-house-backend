@@ -1,5 +1,6 @@
 package com.codegym.service;
 
+import com.codegym.dto.request.HouseRequest;
 import com.codegym.dto.response.HouseDTO;
 import java.util.List;
 
@@ -9,9 +10,9 @@ public interface HouseService {
 
     HouseDTO getHouseById(Long id);
 
-    HouseDTO createHouse(HouseDTO dto);
+    HouseDTO createHouse(HouseRequest request);
 
-    HouseDTO updateHouse(Long id, HouseDTO dto);
+    HouseDTO updateHouse(Long id, HouseRequest request);
 
     void deleteHouse(Long id);
 
