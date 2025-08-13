@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HouseRenterDTO {
+public class HostDTO {
     private Long id;
     private String fullName;
     private String username;
@@ -20,4 +20,8 @@ public class HouseRenterDTO {
     private String address;
     private LocalDateTime approvedDate;
     private boolean approved;
+    private boolean active;
+
 }
+
+

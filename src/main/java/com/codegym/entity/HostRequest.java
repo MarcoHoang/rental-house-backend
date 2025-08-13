@@ -6,13 +6,12 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "house_renters")
-@Getter
-@Setter
+@Table(name = "host_requests")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HouseRenter extends BaseEntity {
+public class HostRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,15 +21,31 @@ public class HouseRenter extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+
+    @Column(name = "national_id")
     private String nationalId;
+
+    @Column(name = "proof_of_ownership_url")
     private String proofOfOwnershipUrl;
-    private String address;
-    private LocalDateTime approvedDate;
+
+    private String reason;
+
+    private LocalDateTime requestDate;
+    private LocalDateTime processedDate;
+
+    public enum Status {
+        PENDING,
+        APPROVED,
+        REJECTED
+    }
 
     @PrePersist
     protected void onCreate() {
-        super.onCreate();
-        this.approvedDate = LocalDateTime.now();
+        this.requestDate = LocalDateTime.now();
     }
 }
+
 

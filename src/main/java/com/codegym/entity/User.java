@@ -44,6 +44,7 @@ public class User extends BaseEntity implements UserDetails {
     private boolean active;
 
     @Column(name = "img")
+    @Builder.Default
     private String avatarUrl = "/images/default-avatar.png";
 
     @Column(name = "full_name")
@@ -61,7 +62,7 @@ public class User extends BaseEntity implements UserDetails {
     private Role role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private HouseRenter houseRenter;
+    private Host host;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -28,6 +28,7 @@ public class Notification extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Builder.Default
     private Boolean isRead = false;
 
     public enum Type {

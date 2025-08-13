@@ -1,5 +1,6 @@
 package com.codegym.dto.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -8,13 +9,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HouseRenterRequestDTO {
+public class HostRequestDTO {
     private Long id;
+    
+    @NotNull(message = "User ID is required")
     private Long userId;
+    
     private String userEmail;
     private String username;
     private String status;
     private String reason;
     private LocalDateTime requestDate;
     private LocalDateTime processedDate;
+    private String nationalId;
+    private String proofOfOwnershipUrl;
 }

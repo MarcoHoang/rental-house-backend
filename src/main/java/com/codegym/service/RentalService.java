@@ -22,7 +22,7 @@ public interface RentalService {
 
     List<RentalDTO> getUserRentals(Long userId);
 
-    List<RentalDTO> getHouseRenterRentals(Long landlordId);
+    List<RentalDTO> getHostRentals(Long hostId);
 
-    Map<String, Double> getHouseRenterIncome(Long landlordId);
+    Map<String, Double> getHostIncome(Long hostId);
 }

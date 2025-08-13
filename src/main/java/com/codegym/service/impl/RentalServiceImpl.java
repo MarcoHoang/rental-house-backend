@@ -165,17 +165,17 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<RentalDTO> getHouseRenterRentals(Long houseRenterId) {
-        findUserByIdOrThrow(houseRenterId);
-        return rentalRepository.findByHouse_HouseRenter_IdOrderByStartDateDesc(houseRenterId)
+    public List<RentalDTO> getHostRentals(Long hostId) {
+        findUserByIdOrThrow(hostId);
+        return rentalRepository.findByHouse_Host_IdOrderByStartDateDesc(hostId)
                 .stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, Double> getHouseRenterIncome(Long houseRenterId) {
-        findUserByIdOrThrow(houseRenterId);
-        List<Rental> rentals = rentalRepository.findByHouse_HouseRenter_IdAndStatus(houseRenterId, Rental.Status.CHECKED_OUT);
+    public Map<String, Double> getHostIncome(Long hostId) {
+        findUserByIdOrThrow(hostId);
+        List<Rental> rentals = rentalRepository.findByHouse_Host_IdAndStatus(hostId, Rental.Status.CHECKED_OUT);
 
         return rentals.stream()
                 .collect(Collectors.groupingBy(

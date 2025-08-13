@@ -1,7 +1,8 @@
 package com.codegym.service;
 
+import com.codegym.dto.response.HostDTO;
 import com.codegym.dto.response.UserDTO;
-import com.codegym.dto.response.UserDetailDTO;
+import com.codegym.dto.response.UserDetailAdminDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,7 +20,7 @@ public interface UserService {
 
     void deleteUser(Long id);
 
-    void changePassword(Long id, String oldPassword, String newPassword);
+    void changePassword(Long id, String oldPassword, String newPassword, String confirmPassword);
 
     UserDTO updateProfile(Long id, UserDTO dto);
 
@@ -31,6 +32,10 @@ public interface UserService {
 
     UserDTO getCurrentUserProfile();
 
-    UserDetailDTO getUserDetailsById(Long userId);
+    boolean isCurrentUserHost();
+
+    HostDTO getCurrentUserHostInfo();
+
+    UserDetailAdminDTO findUserDetailById(Long userId);
 
 }

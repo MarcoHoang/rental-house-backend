@@ -3,11 +3,13 @@ package com.codegym.service.impl;
 import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.RentalHistoryDTO;
 import com.codegym.dto.response.UserDTO;
-import com.codegym.dto.response.UserDetailDTO;
+import com.codegym.dto.response.UserDetailAdminDTO;
+import com.codegym.dto.response.HostDTO;
 import com.codegym.entity.*;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.PasswordResetTokenRepository;
+import com.codegym.repository.RentalRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.EmailService;
 import com.codegym.service.UserService;
@@ -20,11 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final EmailService emailService;
+    private final RentalRepository rentalRepository;
+
 
     private UserDTO toDTO(User user) {
         if (user == null) return null;
@@ -101,10 +102,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllUsers(Pageable pageable) {
-        // 1. Gọi phương thức mới trong repository với Enum RoleName.ADMIN
-        Page<User> userPage = userRepository.findByRole_NameNot(RoleName.ADMIN, pageable);
+        List<RoleName> rolesToExclude = Arrays.asList(RoleName.ADMIN, RoleName.HOST);
 
-        // 2. Sử dụng hàm .map() có sẵn của Page để chuyển đổi hiệu quả
+        Page<User> userPage = userRepository.findByRole_NameNotIn(rolesToExclude, pageable);
+
         return userPage.map(this::toDTO);
     }
 
@@ -148,7 +149,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changePassword(Long id, String oldPassword, String newPassword) {
+    public void changePassword(Long id, String oldPassword, String newPassword, String confirmPassword) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User currentUser = userRepository.findByEmail(currentUsername)
@@ -160,6 +161,10 @@ public class UserServiceImpl implements UserService {
 
         if (!passwordEncoder.matches(oldPassword, currentUser.getPassword())) {
             throw new AppException(StatusCode.INVALID_PASSWORD);
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new AppException(StatusCode.PASSWORD_CONFIRMATION_MISMATCH);
         }
 
         if (passwordEncoder.matches(newPassword, currentUser.getPassword())) {
@@ -188,6 +193,49 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
 
         return toDTO(currentUser);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isCurrentUserHost() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        return currentUser.getRole().getName().equals(RoleName.HOST);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HostDTO getCurrentUserHostInfo() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+        if (!currentUser.getRole().getName().equals(RoleName.HOST)) {
+            throw new AppException(StatusCode.UNAUTHORIZED, "Người dùng không phải là chủ nhà");
+        }
+
+        if (currentUser.getHost() == null) {
+            throw new AppException(StatusCode.RESOURCE_NOT_FOUND, "thông tin chủ nhà");
+        }
+
+        Host host = currentUser.getHost();
+        return HostDTO.builder()
+                .id(host.getId())
+                .fullName(currentUser.getFullName())
+                .username(currentUser.getUsername())
+                .email(currentUser.getEmail())
+                .phone(currentUser.getPhone())
+                .avatar(currentUser.getAvatarUrl())
+                .nationalId(host.getNationalId())
+                .proofOfOwnershipUrl(host.getProofOfOwnershipUrl())
+                .address(host.getAddress())
+                .approvedDate(host.getApprovedDate())
+                .approved(true) // Nếu đã có host record thì đã được approved
+                .build();
     }
 
 
@@ -240,54 +288,69 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUserStatus(Long userId, boolean active) {
-        User user = userRepository.findById(userId)
+        User userToUpdate = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
 
-        if (user.getRole().getName().equals(RoleName.ADMIN)) {
-            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of an admin account.");
+        String currentAdminEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentAdmin = userRepository.findByEmail(currentAdminEmail)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentAdminEmail));
+
+        if (userToUpdate.getId().equals(currentAdmin.getId())) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Admin cannot lock their own account.");
         }
 
-        user.setActive(active);
-        userRepository.save(user);
+        if (userToUpdate.getRole().getName().equals(RoleName.ADMIN)) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of another admin account.");
+        }
+
+        userToUpdate.setActive(active);
+        userRepository.save(userToUpdate);
     }
 
     @Override
-    public UserDetailDTO getUserDetailsById(Long userId) {
-        // 1. Tìm User trong DB, nếu không có thì báo lỗi
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
+    @Transactional(readOnly = true)
+    public UserDetailAdminDTO findUserDetailById(Long userId) {
+        // 1. Tìm user
+        User user = findUserByIdOrThrow(userId);
 
-        // 2. Lấy toàn bộ lịch sử thuê nhà của user này
-        List<Rental> userRentals = rentalRepository.findByUser(user);
+        // 2. Lấy lịch sử thuê nhà bằng phương thức có sẵn
+        List<Rental> rentalRecords = rentalRepository.findByRenterIdOrderByStartDateDesc(user.getId());
 
-        // 3. Tính tổng số tiền đã chi tiêu
-        BigDecimal totalSpent = userRentals.stream()
-                .map(Rental::getTotalPrice) // Lấy ra tổng tiền từ mỗi lần thuê
-                .reduce(BigDecimal.ZERO, BigDecimal::add); // Cộng dồn chúng lại
+        // 3. Tính tổng số tiền đã chi tiêu bằng phương thức mới thêm vào
+        Double totalSpent = rentalRepository.sumTotalPriceByRenterId(user.getId());
+        if (totalSpent == null) {
+            totalSpent = 0.0;
+        }
 
-        // 4. Chuyển đổi lịch sử thuê nhà từ Entity sang DTO
-        List<RentalHistoryDTO> rentalHistory = userRentals.stream()
-                .map(rental -> RentalHistoryDTO.builder()
-                        .houseId(rental.getHouse().getId())
-                        .houseTitle(rental.getHouse().getTitle())
-                        .startDate(rental.getStartDate())
-                        .endDate(rental.getEndDate())
-                        .totalPrice(rental.getTotalPrice())
-                        .build())
-                .collect(Collectors.toList());
+        // 4. Chuyển đổi danh sách Rental sang DTO (giữ nguyên logic này)
+        List<RentalHistoryDTO> rentalHistory;
+        if (rentalRecords != null && !rentalRecords.isEmpty()) {
+            rentalHistory = rentalRecords.stream()
+                    .map(rental -> RentalHistoryDTO.builder()
+                            .houseId(rental.getHouse().getId())
+                            .houseName(rental.getHouse().getTitle())
+                            .checkinDate(rental.getStartDate().toLocalDate())
+                            .checkoutDate(rental.getEndDate().toLocalDate())
+                            .price(rental.getTotalPrice())
+                            .build())
+                    .collect(Collectors.toList());
+        } else {
+            rentalHistory = Collections.emptyList();
+        }
 
-        // 5. Xây dựng và trả về đối tượng UserDetailDTO hoàn chỉnh
-        return UserDetailDTO.builder()
+        // 5. Xây dựng và trả về DTO chi tiết (giữ nguyên logic này)
+        return UserDetailAdminDTO.builder()
                 .id(user.getId())
+                .username(user.getUsername())
                 .fullName(user.getFullName())
-                .address(user.getAddress())
+                .email(user.getEmail())
                 .phone(user.getPhone())
                 .avatarUrl(user.getAvatarUrl())
-                .email(user.getEmail())
-                .birthDate(user.getBirthDate())
                 .active(user.isActive())
-                .totalSpent(totalSpent) // Gán tổng tiền đã tính
-                .rentalHistory(rentalHistory) // Gán lịch sử đã chuyển đổi
+                .birthDate(user.getBirthDate())
+                .address(user.getAddress())
+                .totalSpent(totalSpent)
+                .rentalHistory(rentalHistory)
                 .build();
     }
 

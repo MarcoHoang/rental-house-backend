@@ -18,6 +18,7 @@ public enum StatusCode {
     SEND_SUCCESS("09", "success.password.reset.requested"),
     FILE_UPLOAD_SUCCESS("10", "success.file.upload"),
     FILE_DELETE_SUCCESS("11", "success.file.delete"),
+    GET_DETAIL_SUCCESS("12", "success.detail.found"),
 
     // == BUSINESS LOGIC ERRORS (10-89) ==
 
@@ -35,15 +36,16 @@ public enum StatusCode {
 
     // --- Resource Not Found (20-29) ---
     USER_NOT_FOUND("21", "error.user.notFound"), // {0} = userId
-    HOUSE_RENTER_NOT_FOUND("22", "error.houserenter.notFound"), // {0} = renterId
+    HOST_NOT_FOUND("22", "error.host.notFound"), // {0} = hostId
     HOUSE_NOT_FOUND("23", "error.house.notFound"), // {0} = houseId
     REQUEST_NOT_FOUND("24", "error.request.notFound"), // {0} = requestId
     RENTAL_NOT_FOUND("25", "error.rental.notFound"), // {0} = rentalId
     REVIEW_NOT_FOUND("26", "error.review.notFound"), // {0} = reviewId
     NOTIFICATION_NOT_FOUND("27", "error.notification.notFound"), // {0} = notificationId
+    RESOURCE_NOT_FOUND("28", "error.resource.notFound"), // {0} = resourceName
 
-    // --- House Renter Request (30-39) ---
-    USER_ALREADY_HOUSE_RENTER("30", "error.request.userAlreadyHouseRenter"),
+    // --- Host Request (30-39) ---
+    USER_ALREADY_HOST("30", "error.request.userAlreadyHost"),
     PENDING_REQUEST_EXISTS("31", "error.request.pendingExists"),
     INVALID_REQUEST_STATUS("32", "error.request.invalidStatus"),
 
@@ -73,11 +75,13 @@ public enum StatusCode {
     DATA_INTEGRITY_VIOLATION("90", "error.data.integrity"),
     ACCESS_DENIED("91", "error.access.denied"),
     FORBIDDEN_ACTION("92", "error.forbidden"),
+    PASSWORD_CONFIRMATION_MISMATCH("93", "error.password.mismatch"),
 
     // Validation & Internal
     PARAM_TYPE_MISMATCH("97", "error.param.typeMismatch"), // {0} = paramName, {1} = expectedType
     VALIDATION_ERROR("98", "error.validation"),
     INTERNAL_ERROR("99", "error.internal"),
+
 
     // == FIELD VALIDATION MESSAGES (Dùng cho @Valid) ==
     VALIDATION_USERNAME_NOT_BLANK("V01", "validation.username.notBlank"),

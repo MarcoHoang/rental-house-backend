@@ -16,6 +16,7 @@ import com.codegym.repository.UserRepository;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,17 +41,9 @@ public class AuthService {
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final AuthenticationManager authenticationManager;
 
-    /**
-     * Authenticates a user with email and password, returning a JWT token.
-     * 
-     * This method validates user credentials, checks if the account is active,
-     * and generates a JWT token for successful authentication.
-     * 
-     * @param request The login request containing email and password
-     * @return LoginResponse containing the JWT token
-     * @throws AppException if credentials are invalid or account is locked
-     */
+
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(StatusCode.INVALID_CREDENTIALS));
@@ -59,13 +52,19 @@ public class AuthService {
             throw new AppException(StatusCode.INVALID_CREDENTIALS);
         }
 
+
         if (!user.isEnabled()) {
             throw new AppException(StatusCode.ACCOUNT_LOCKED);
         }
 
         try {
             String token = jwtTokenUtil.generateToken(user);
-            return new LoginResponse(token);
+            UserDTO userDTO = userMapper.toResponse(user);
+            return LoginResponse.builder()
+                    .token(token)
+                    .role(user.getRole().getName())
+                    .user(userDTO)
+                    .build();
         } catch (Exception e) {
             log.error("Error generating JWT token for user: {}", user.getEmail(), e);
             throw new AppException(StatusCode.INTERNAL_ERROR);
@@ -74,9 +73,9 @@ public class AuthService {
 
     /**
      * Authenticates an admin user with email and password, returning a JWT token.
-     * 
+     *
      * This method validates admin credentials and ensures the user has ADMIN role.
-     * 
+     *
      * @param request The login request containing email and password
      * @return LoginResponse containing the JWT token
      * @throws AppException if credentials are invalid or user is not an admin
@@ -95,7 +94,12 @@ public class AuthService {
 
         try {
             String token = jwtTokenUtil.generateToken(user);
-            return new LoginResponse(token);
+            UserDTO userDTO = userMapper.toResponse(user);
+            return LoginResponse.builder()
+                    .token(token)
+                    .role(user.getRole().getName())
+                    .user(userDTO)
+                    .build();
         } catch (Exception e) {
             log.error("Error generating JWT token for admin: {}", user.getEmail(), e);
             throw new AppException(StatusCode.INTERNAL_ERROR);

@@ -101,7 +101,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 StatusCode.PHONE_ALREADY_EXISTS,
                 StatusCode.USERNAME_ALREADY_EXISTS,
                 StatusCode.DATA_INTEGRITY_VIOLATION,
-                StatusCode.USER_ALREADY_HOUSE_RENTER,
+                StatusCode.USER_ALREADY_HOST,
                 StatusCode.PENDING_REQUEST_EXISTS
         ).contains(statusCode);
     }
