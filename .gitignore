@@ -30,7 +30,8 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+.vscode/git rm -r --cached logs
+
 
 ### Uploads ###
 uploads/
@@ -40,3 +41,5 @@ uploads/
 *.gif
 *.webp
 logs/
+
+.env
