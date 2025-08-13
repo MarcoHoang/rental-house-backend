@@ -34,6 +34,12 @@ public class HostServiceImpl implements HostService {
     private final UserRepository userRepository;
     private final HouseRepository houseRepository;
 
+    private User getCurrentAuthenticatedUser() {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUserEmail));
+    }
+
     private Host findHostByIdOrThrow(Long id) {
         return hostRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, id));
@@ -45,22 +51,28 @@ public class HostServiceImpl implements HostService {
     }
 
     private HostDTO toDTO(Host host) {
+        User user = host.getUser();
+        if (user == null) {
+            return null;
+        }
+
         HostDTO dto = new HostDTO();
-        dto.setId(host.getId());
+
+
+        dto.setId(user.getId());
+
+        dto.setFullName(user.getFullName());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setPhone(user.getPhone());
+        dto.setAvatar(user.getAvatarUrl());
+        dto.setActive(user.isActive());
+
         dto.setNationalId(host.getNationalId());
         dto.setProofOfOwnershipUrl(host.getProofOfOwnershipUrl());
         dto.setAddress(host.getAddress());
         dto.setApprovedDate(host.getApprovedDate());
         dto.setApproved(host.getApprovedDate() != null);
-
-        if (host.getUser() != null) {
-            User user = host.getUser();
-            dto.setFullName(user.getFullName());
-            dto.setUsername(user.getUsername());
-            dto.setEmail(user.getEmail());
-            dto.setPhone(user.getPhone());
-            dto.setAvatar(user.getAvatarUrl());
-        }
 
         return dto;
     }
@@ -136,17 +148,13 @@ public class HostServiceImpl implements HostService {
     @Override
     @Transactional
     public void lockHost(Long hostId) {
-        // 1. Tìm Host entity trước
         Host host = findHostByIdOrThrow(hostId);
-        // 2. Lấy ra User entity từ Host
         User userToUpdate = host.getUser();
 
-        // 3. Áp dụng logic bảo vệ (tùy chọn nhưng nên có)
         if (userToUpdate.getRole().getName().equals(RoleName.ADMIN)) {
             throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of an admin account.");
         }
 
-        // 4. Cập nhật trạng thái và lưu lại
         userToUpdate.setActive(false);
         userRepository.save(userToUpdate);
     }
@@ -154,9 +162,7 @@ public class HostServiceImpl implements HostService {
     @Override
     @Transactional
     public void unlockHost(Long hostId) {
-        // 1. Tìm Host entity trước
         Host host = findHostByIdOrThrow(hostId);
-        // 2. Lấy ra User entity từ Host
         User userToUpdate = host.getUser();
 
         // 3. Áp dụng logic bảo vệ
@@ -199,6 +205,39 @@ public class HostServiceImpl implements HostService {
         stats.put("totalRevenue", houses.stream().mapToDouble(House::getPrice).sum());
 
         return stats;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HostDTO getCurrentHostDetails() {
+        User currentUser = getCurrentAuthenticatedUser();
+        Host host = hostRepository.findByUser(currentUser)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, currentUser.getId()));
+
+        return toDTO(host);
+    }
+
+    @Override
+    @Transactional
+    public HostDTO updateCurrentHostProfile(HostDTO dto) {
+        User currentUser = getCurrentAuthenticatedUser();
+        Host hostToUpdate = hostRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, currentUser.getId()));
+
+
+        currentUser.setFullName(dto.getFullName());
+        currentUser.setPhone(dto.getPhone());
+
+        if (dto.getAvatar() != null && !dto.getAvatar().isBlank()) {
+            currentUser.setAvatarUrl(dto.getAvatar());
+        }
+        userRepository.save(currentUser);
+
+        hostToUpdate.setAddress(dto.getAddress());
+        hostToUpdate.setNationalId(dto.getNationalId());
+        Host updatedHost = hostRepository.save(hostToUpdate);
+
+        return toDTO(updatedHost);
     }
 }
 

@@ -21,4 +21,6 @@ public class HostRequestDTO {
     private String reason;
     private LocalDateTime requestDate;
     private LocalDateTime processedDate;
+    private String nationalId;
+    private String proofOfOwnershipUrl;
 }

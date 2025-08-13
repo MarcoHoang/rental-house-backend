@@ -29,5 +29,9 @@ public interface HostService {
 
     Map<String, Object> getCurrentHostStats();
 
+    HostDTO getCurrentHostDetails();
+
+    HostDTO updateCurrentHostProfile(HostDTO dto);
+
 }
 
