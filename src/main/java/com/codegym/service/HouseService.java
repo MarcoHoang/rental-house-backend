@@ -26,4 +26,7 @@ public interface HouseService {
 
     List<HouseDTO> getHousesByCurrentHost();
 
+    // Admin methods
+    org.springframework.data.domain.Page<HouseDTO> getAllHousesForAdmin(org.springframework.data.domain.Pageable pageable);
+
 }

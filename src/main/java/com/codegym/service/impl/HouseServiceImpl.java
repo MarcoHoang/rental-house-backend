@@ -46,7 +46,7 @@ public class HouseServiceImpl implements HouseService {
         return HouseDTO.builder()
                 .id(house.getId())
                 .hostId(house.getHost().getId())
-                .hostName(house.getHost().getUsername())
+                .hostName(house.getHost().getFullName())
                 .title(house.getTitle())
                 .description(house.getDescription())
                 .address(house.getAddress())
@@ -292,5 +292,12 @@ public class HouseServiceImpl implements HouseService {
         if (!newImageUrls.isEmpty()) {
             saveHouseImages(house, newImageUrls);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public org.springframework.data.domain.Page<HouseDTO> getAllHousesForAdmin(org.springframework.data.domain.Pageable pageable) {
+        org.springframework.data.domain.Page<House> housePage = houseRepository.findAll(pageable);
+        return housePage.map(this::toDTO);
     }
 }
