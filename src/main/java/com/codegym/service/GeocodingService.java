@@ -36,17 +36,62 @@ public class GeocodingService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(response.body());
 
-            JsonNode location = jsonNode
-                    .get("results").get(0)
-                    .get("geometry")
-                    .get("location");
+            // Kiểm tra status của response
+            String status = jsonNode.get("status").asText();
+            if (!"OK".equals(status)) {
+                System.err.println("Google Geocoding API returned status: " + status + " for address: " + address);
+                throw new AppException(StatusCode.GEOCODING_FAILED);
+            }
 
-            double lat = location.get("lat").asDouble();
-            double lng = location.get("lng").asDouble();
+            // Kiểm tra có results không
+            JsonNode results = jsonNode.get("results");
+            if (results == null || results.isEmpty() || results.size() == 0) {
+                System.err.println("Google Geocoding API returned no results for address: " + address);
+                throw new AppException(StatusCode.GEOCODING_FAILED);
+            }
+
+            // Lấy kết quả đầu tiên
+            JsonNode firstResult = results.get(0);
+            if (firstResult == null) {
+                System.err.println("Google Geocoding API returned null first result for address: " + address);
+                throw new AppException(StatusCode.GEOCODING_FAILED);
+            }
+
+            // Kiểm tra geometry và location
+            JsonNode geometry = firstResult.get("geometry");
+            if (geometry == null) {
+                System.err.println("Google Geocoding API returned null geometry for address: " + address);
+                throw new AppException(StatusCode.GEOCODING_FAILED);
+            }
+
+            JsonNode location = geometry.get("location");
+            if (location == null) {
+                System.err.println("Google Geocoding API returned null location for address: " + address);
+                throw new AppException(StatusCode.GEOCODING_FAILED);
+            }
+
+            // Kiểm tra lat và lng
+            JsonNode latNode = location.get("lat");
+            JsonNode lngNode = location.get("lng");
+            
+            if (latNode == null || lngNode == null) {
+                System.err.println("Google Geocoding API returned null lat/lng for address: " + address);
+                throw new AppException(StatusCode.GEOCODING_FAILED);
+            }
+
+            double lat = latNode.asDouble();
+            double lng = lngNode.asDouble();
+
+            // Kiểm tra giá trị hợp lệ
+            if (lat == 0.0 && lng == 0.0) {
+                System.err.println("Google Geocoding API returned invalid coordinates (0,0) for address: " + address);
+                throw new AppException(StatusCode.GEOCODING_FAILED);
+            }
 
             return new double[]{lat, lng};
 
         } catch (Exception e) {
+            System.err.println("Exception in geocoding for address: " + address + ". Error: " + e.getMessage());
             throw new AppException(StatusCode.GEOCODING_FAILED);
         }
     }
