@@ -51,6 +51,8 @@ public class WebSecurityConfig {
                                         String.format("%s/houses", apiPrefix),
                                         String.format("%s/houses/top", apiPrefix),
                                         String.format("%s/houses/search", apiPrefix),
+                                        String.format("%s/houses/*/images", apiPrefix),
+                                        String.format("%s/files/uploads/avatar", apiPrefix),
                                         String.format("%s/files/**", apiPrefix) // File access
                                 ).permitAll()
 
@@ -59,7 +61,6 @@ public class WebSecurityConfig {
                                         String.format("%s/users/*/profile", apiPrefix),
                                         String.format("%s/users/profile", apiPrefix),
                                         String.format("%s/users/*/change-password", apiPrefix),
-                                        String.format("%s/houses/*", apiPrefix), // Xem chi tiết nhà
                                         String.format("%s/rentals", apiPrefix),
                                         String.format("%s/rentals/*", apiPrefix),
                                         String.format("%s/reviews", apiPrefix),
