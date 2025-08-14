@@ -220,25 +220,45 @@ public class HostServiceImpl implements HostService {
     @Override
     @Transactional
     public HostDTO updateCurrentHostProfile(HostDTO dto) {
+        // Lấy user hiện tại từ SecurityContext
         User currentUser = getCurrentAuthenticatedUser();
-        Host hostToUpdate = hostRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, currentUser.getId()));
 
+        // Lấy host theo userId (fetch user luôn để tránh lazy)
+        Host hostToUpdate = hostRepository.findByUserId(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        StatusCode.HOST_NOT_FOUND, currentUser.getId()
+                ));
 
-        currentUser.setFullName(dto.getFullName());
-        currentUser.setPhone(dto.getPhone());
-
+        // ===== Update thông tin User =====
+        if (dto.getFullName() != null) {
+            currentUser.setFullName(dto.getFullName().trim());
+        }
+        if (dto.getPhone() != null) {
+            currentUser.setPhone(dto.getPhone().trim());
+        }
         if (dto.getAvatar() != null && !dto.getAvatar().isBlank()) {
-            currentUser.setAvatarUrl(dto.getAvatar());
+            currentUser.setAvatarUrl(dto.getAvatar().trim());
         }
         userRepository.save(currentUser);
 
-        hostToUpdate.setAddress(dto.getAddress());
-        hostToUpdate.setNationalId(dto.getNationalId());
-        Host updatedHost = hostRepository.save(hostToUpdate);
+        // ===== Update thông tin Host =====
+        if (dto.getAddress() != null) {
+            hostToUpdate.setAddress(dto.getAddress().trim());
+        }
+        if (dto.getNationalId() != null) {
+            hostToUpdate.setNationalId(dto.getNationalId().trim());
+        }
+        hostRepository.save(hostToUpdate);
+
+        // Refresh lại dữ liệu host từ DB để lấy thông tin user mới nhất
+        Host updatedHost = hostRepository.findById(hostToUpdate.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        StatusCode.HOST_NOT_FOUND, hostToUpdate.getId()
+                ));
 
         return toDTO(updatedHost);
     }
+
 
     @Override
     @Transactional(readOnly = true)
