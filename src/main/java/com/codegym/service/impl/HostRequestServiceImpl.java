@@ -167,10 +167,14 @@ public class HostRequestServiceImpl implements HostRequestService {
                 .userId(user.getId())
                 .userEmail(user.getEmail())
                 .username(user.getUsername())
+                .fullName(user.getFullName())
+                .phone(user.getPhone())
                 .status(entity.getStatus().name())
                 .reason(entity.getReason())
                 .requestDate(entity.getRequestDate())
                 .processedDate(entity.getProcessedDate())
+                .nationalId(entity.getNationalId())
+                .proofOfOwnershipUrl(entity.getProofOfOwnershipUrl())
                 .build();
     }
 

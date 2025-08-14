@@ -17,6 +17,8 @@ public class HostRequestDTO {
     
     private String userEmail;
     private String username;
+    private String fullName;
+    private String phone;
     private String status;
     private String reason;
     private LocalDateTime requestDate;
