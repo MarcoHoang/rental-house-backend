@@ -16,6 +16,7 @@ public class HostDetailAdminDTO {
     private String email;
     private boolean active;
     private String address;
+    private String nationalId;
     private BigDecimal totalRevenue;
     private List<HouseDTO> houses;
 }

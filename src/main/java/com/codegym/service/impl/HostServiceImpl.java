@@ -103,6 +103,8 @@ public class HostServiceImpl implements HostService {
                 .title(house.getTitle())
                 .address(house.getAddress())
                 .price(house.getPrice())
+                .status(house.getStatus())
+                .houseType(house.getHouseType())
                 .imageUrls(house.getImages() != null ?
                         house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList())
                         : List.of())
@@ -245,7 +247,7 @@ public class HostServiceImpl implements HostService {
         Host host = hostRepository.findByUser(user)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, userId));
 
-        List<House> houseEntities = houseRepository.findByHostId(host.getId());
+        List<House> houseEntities = houseRepository.findByHost(user);
         List<HouseDTO> houseDTOs = houseEntities.stream()
                 .map(this::toHouseDTO).collect(Collectors.toList());
 
@@ -261,6 +263,7 @@ public class HostServiceImpl implements HostService {
                 .email(user.getEmail())
                 .active(user.isActive())
                 .address(host.getAddress())
+                .nationalId(host.getNationalId())
                 .totalRevenue(totalRevenue)
                 .houses(houseDTOs)
                 .build();
