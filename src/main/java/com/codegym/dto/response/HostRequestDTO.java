@@ -25,4 +25,7 @@ public class HostRequestDTO {
     private LocalDateTime processedDate;
     private String nationalId;
     private String proofOfOwnershipUrl;
+    private String idFrontPhotoUrl;
+    private String idBackPhotoUrl;
+    private String address;
 }

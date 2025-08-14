@@ -26,4 +26,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findByRole_NameNotIn(List<RoleName> roles, Pageable pageable);
 
+    List<User> findByRole_Name(RoleName roleName);
 }
