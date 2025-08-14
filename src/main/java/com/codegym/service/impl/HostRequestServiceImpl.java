@@ -97,6 +97,18 @@ public class HostRequestServiceImpl implements HostRequestService {
         }
         requestToSave.setNationalId(dto.getNationalId());
         requestToSave.setProofOfOwnershipUrl(dto.getProofOfOwnershipUrl());
+        requestToSave.setIdFrontPhotoUrl(dto.getIdFrontPhotoUrl());
+        requestToSave.setIdBackPhotoUrl(dto.getIdBackPhotoUrl());
+        
+        // Cập nhật thông tin user nếu có thay đổi
+        if (dto.getAddress() != null && !dto.getAddress().equals(user.getAddress())) {
+            user.setAddress(dto.getAddress());
+            userRepository.save(user);
+        }
+        if (dto.getPhone() != null && !dto.getPhone().equals(user.getPhone())) {
+            user.setPhone(dto.getPhone());
+            userRepository.save(user);
+        }
         HostRequest savedEntity = hostRequestRepository.save(requestToSave);
         return mapToDTO(savedEntity);
     }
@@ -175,6 +187,9 @@ public class HostRequestServiceImpl implements HostRequestService {
                 .processedDate(entity.getProcessedDate())
                 .nationalId(entity.getNationalId())
                 .proofOfOwnershipUrl(entity.getProofOfOwnershipUrl())
+                .idFrontPhotoUrl(entity.getIdFrontPhotoUrl())
+                .idBackPhotoUrl(entity.getIdBackPhotoUrl())
+                .address(user.getAddress())
                 .build();
     }
 
