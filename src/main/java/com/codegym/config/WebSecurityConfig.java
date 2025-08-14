@@ -90,6 +90,8 @@ public class WebSecurityConfig {
                                         String.format("%s/users/host-info", apiPrefix),
                                         String.format("%s/houses/my-houses", apiPrefix),
                                         String.format("%s/hosts/my-stats", apiPrefix),
+                                        String.format("%s/hosts/my-profile", apiPrefix),
+                                        String.format("%s/hosts/my-profile/**", apiPrefix),
                                         String.format("%s/houses", apiPrefix), // Tạo nhà mới
                                         String.format("%s/houses/*", apiPrefix), // Sửa/xóa nhà của mình
                                         String.format("%s/houses/*/status", apiPrefix), // Thay đổi trạng thái
