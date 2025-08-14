@@ -26,7 +26,7 @@ import java.util.Locale;
 /**
  * REST controller for handling file upload and download operations.
  * Provides endpoints for uploading images and serving static files.
- * 
+ *
  * @author CodeGym Team
  * @version 1.0
  * @since 2024
@@ -43,7 +43,7 @@ public class FileUploadController {
 
     /**
      * Upload a single file.
-     * 
+     *
      * @param file The file to upload
      * @param uploadType The type of upload (avatar, house-image, etc.)
      * @param locale The locale for internationalized messages
@@ -54,9 +54,9 @@ public class FileUploadController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("uploadType") String uploadType,
             Locale locale) {
-        
+
         FileUploadResponse response = fileUploadService.uploadFile(file, uploadType);
-        
+
         return ResponseEntity.ok(
                 ApiResponse.success(response, StatusCode.FILE_UPLOAD_SUCCESS, messageSource, locale)
         );
@@ -64,7 +64,7 @@ public class FileUploadController {
 
     /**
      * Upload multiple files.
-     * 
+     *
      * @param files List of files to upload
      * @param uploadType The type of upload
      * @param locale The locale for internationalized messages
@@ -75,9 +75,9 @@ public class FileUploadController {
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("uploadType") String uploadType,
             Locale locale) {
-        
+
         List<FileUploadResponse> responses = fileUploadService.uploadMultipleFiles(files, uploadType);
-        
+
         return ResponseEntity.ok(
                 ApiResponse.success(responses, StatusCode.FILE_UPLOAD_SUCCESS, messageSource, locale)
         );
@@ -85,7 +85,7 @@ public class FileUploadController {
 
     /**
      * Delete a file.
-     * 
+     *
      * @param fileUrl The URL of the file to delete
      * @param locale The locale for internationalized messages
      * @return ResponseEntity indicating success or failure
@@ -94,9 +94,9 @@ public class FileUploadController {
     public ResponseEntity<ApiResponse<Void>> deleteFile(
             @RequestParam("fileUrl") String fileUrl,
             Locale locale) {
-        
+
         boolean deleted = fileUploadService.deleteFile(fileUrl);
-        
+
         if (deleted) {
             return ResponseEntity.ok(
                     ApiResponse.success(StatusCode.FILE_DELETE_SUCCESS, messageSource, locale)
@@ -111,7 +111,7 @@ public class FileUploadController {
 
     /**
      * Serve a file by its upload type and filename.
-     * 
+     *
      * @param uploadType The type of upload (avatar, house-image, etc.)
      * @param filename The filename to serve
      * @return ResponseEntity containing the file resource
@@ -120,15 +120,15 @@ public class FileUploadController {
     public ResponseEntity<Resource> serveFile(
             @PathVariable String uploadType,
             @PathVariable String filename) {
-        
+
         try {
             Path filePath = Paths.get("uploads", uploadType, filename);
             Resource resource = new UrlResource(filePath.toUri());
-            
+
             if (resource.exists() && resource.isReadable()) {
                 // Determine content type based on file extension
                 String contentType = determineContentType(filename);
-                
+
                 return ResponseEntity.ok()
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                         .contentType(MediaType.parseMediaType(contentType))
@@ -136,7 +136,7 @@ public class FileUploadController {
             } else {
                 return ResponseEntity.notFound().build();
             }
-            
+
         } catch (MalformedURLException e) {
             log.error("Error serving file: {}/{}", uploadType, filename, e);
             return ResponseEntity.notFound().build();
@@ -145,13 +145,13 @@ public class FileUploadController {
 
     /**
      * Determine the content type based on file extension.
-     * 
+     *
      * @param filename The filename
      * @return The appropriate content type
      */
     private String determineContentType(String filename) {
         String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-        
+
         return switch (extension) {
             case "jpg", "jpeg" -> "image/jpeg";
             case "png" -> "image/png";
@@ -164,7 +164,7 @@ public class FileUploadController {
 
     /**
      * Upload user avatar.
-     * 
+     *
      * @param file The avatar image file
      * @param locale The locale for internationalized messages
      * @return ResponseEntity containing the upload response
@@ -173,9 +173,9 @@ public class FileUploadController {
     public ResponseEntity<ApiResponse<FileUploadResponse>> uploadAvatar(
             @RequestParam("file") MultipartFile file,
             Locale locale) {
-        
+
         FileUploadResponse response = fileUploadService.uploadFile(file, "avatar");
-        
+
         return ResponseEntity.ok(
                 ApiResponse.success(response, StatusCode.FILE_UPLOAD_SUCCESS, messageSource, locale)
         );
@@ -183,7 +183,7 @@ public class FileUploadController {
 
     /**
      * Upload house images.
-     * 
+     *
      * @param files List of house image files
      * @param locale The locale for internationalized messages
      * @return ResponseEntity containing the upload responses
@@ -192,9 +192,9 @@ public class FileUploadController {
     public ResponseEntity<ApiResponse<List<FileUploadResponse>>> uploadHouseImages(
             @RequestParam("files") List<MultipartFile> files,
             Locale locale) {
-        
+
         List<FileUploadResponse> responses = fileUploadService.uploadMultipleFiles(files, "house-image");
-        
+
         return ResponseEntity.ok(
                 ApiResponse.success(responses, StatusCode.FILE_UPLOAD_SUCCESS, messageSource, locale)
         );
@@ -202,7 +202,7 @@ public class FileUploadController {
 
     /**
      * Upload proof of ownership document for house renter.
-     * 
+     *
      * @param file The proof of ownership document
      * @param locale The locale for internationalized messages
      * @return ResponseEntity containing the upload response
@@ -211,9 +211,9 @@ public class FileUploadController {
     public ResponseEntity<ApiResponse<FileUploadResponse>> uploadProofOfOwnership(
             @RequestParam("file") MultipartFile file,
             Locale locale) {
-        
+
         FileUploadResponse response = fileUploadService.uploadFile(file, "proof-of-ownership");
-        
+
         return ResponseEntity.ok(
                 ApiResponse.success(response, StatusCode.FILE_UPLOAD_SUCCESS, messageSource, locale)
         );
