@@ -92,7 +92,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/auth/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/auth/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/admin/login", apiPrefix), "POST"),
-                Pair.of(String.format("%s/files/", apiPrefix), "GET"),
+                Pair.of(String.format("%s/files/", apiPrefix), "GET")
 //                // Thêm các endpoint công khai
 //                Pair.of(String.format("%s/houses", apiPrefix), "GET")
 //                Pair.of(String.format("%s/houses/top", apiPrefix), "GET"),
