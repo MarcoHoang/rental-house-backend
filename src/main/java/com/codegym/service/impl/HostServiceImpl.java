@@ -15,6 +15,7 @@ import com.codegym.repository.HouseRepository;
 import com.codegym.repository.RentalRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.HostService;
+import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,7 @@ public class HostServiceImpl implements HostService {
     private final UserRepository userRepository;
     private final HouseRepository houseRepository;
     private final RentalRepository rentalRepository;
+    private final UserService userService;
 
     private Host findHostByUserIdOrThrow(Long userId) {
         User user = findUserByIdOrThrow(userId);
@@ -287,6 +289,19 @@ public class HostServiceImpl implements HostService {
                 .totalRevenue(totalRevenue)
                 .houses(houseDTOs)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(Long userId, String oldPassword, String newPassword, String confirmPassword) {
+        // Kiểm tra xem user có phải là host không
+        User currentUser = getCurrentAuthenticatedUser();
+        if (!currentUser.getId().equals(userId)) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION);
+        }
+
+        // Gọi UserService để thực hiện đổi mật khẩu
+        userService.changePassword(userId, oldPassword, newPassword, confirmPassword);
     }
 }
 

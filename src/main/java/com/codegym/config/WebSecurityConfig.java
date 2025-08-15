@@ -48,13 +48,14 @@ public class WebSecurityConfig {
                                         String.format("%s/auth/login", apiPrefix),
                                         String.format("%s/admin/login", apiPrefix), // Admin login
                                         String.format("%s/users/password-reset/**", apiPrefix),
-                                        String.format("%s/houses/**", apiPrefix),
                                         String.format("%s/houses/top", apiPrefix),
                                         String.format("%s/houses/search", apiPrefix),
                                         String.format("%s/houses/*/images", apiPrefix),
                                         String.format("%s/files/uploads/avatar", apiPrefix),
+                                        String.format("%s/houses", apiPrefix),
                                         String.format("%s/files/**", apiPrefix) // File access
                                 ).permitAll()
+
 
                                 // Người dùng (ROLE_USER) - cho phép cả ADMIN và HOST truy cập
                                 .requestMatchers(
@@ -86,6 +87,7 @@ public class WebSecurityConfig {
                                 // Chủ nhà (ROLE_HOST)
                                 .requestMatchers(
                                         String.format("%s/users/*/change-password", apiPrefix),
+                                        String.format("%s/hosts/change-password", apiPrefix),
                                         String.format("%s/users/is-host", apiPrefix),
                                         String.format("%s/users/host-info", apiPrefix),
                                         String.format("%s/houses/my-houses", apiPrefix),
