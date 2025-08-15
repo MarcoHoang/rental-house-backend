@@ -86,7 +86,7 @@ public class HouseServiceImpl implements HouseService {
         house.setArea(request.getArea());
         house.setLatitude(request.getLatitude());
         house.setLongitude(request.getLongitude());
-        house.setStatus(House.Status.AVAILABLE); // Mặc định là AVAILABLE khi tạo/sửa
+        house.setStatus(request.getStatus()); // Sử dụng trạng thái từ request
         house.setHouseType(request.getHouseType());
     }
 

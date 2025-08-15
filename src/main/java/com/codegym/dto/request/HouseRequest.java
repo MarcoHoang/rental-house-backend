@@ -1,6 +1,7 @@
 package com.codegym.dto.request;
 
 import com.codegym.entity.House.HouseType;
+import com.codegym.entity.House.Status;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -35,6 +36,9 @@ public class HouseRequest {
     
     @NotNull(message = "Loại nhà không được để trống")
     private HouseType houseType;
+    
+    @NotNull(message = "Trạng thái không được để trống")
+    private Status status;
     
     private Double latitude;
     private Double longitude;
