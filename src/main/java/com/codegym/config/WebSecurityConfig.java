@@ -53,6 +53,7 @@ public class WebSecurityConfig {
                                         String.format("%s/houses/*/images", apiPrefix),
                                         String.format("%s/files/uploads/avatar", apiPrefix),
                                         String.format("%s/houses", apiPrefix),
+                                        String.format("%s/houses/*", apiPrefix), // Thêm chi tiết nhà
                                         String.format("%s/files/**", apiPrefix) // File access
                                 ).permitAll()
 
@@ -94,14 +95,14 @@ public class WebSecurityConfig {
                                         String.format("%s/hosts/my-stats", apiPrefix),
                                         String.format("%s/hosts/my-profile", apiPrefix),
                                         String.format("%s/hosts/my-profile/**", apiPrefix),
-                                        String.format("%s/houses", apiPrefix), // Tạo nhà mới
+//                                        String.format("%s/houses", apiPrefix), // Tạo nhà mới
                                         String.format("%s/houses/*", apiPrefix), // Sửa/xóa nhà của mình
                                         String.format("%s/houses/*/status", apiPrefix), // Thay đổi trạng thái
                                         String.format("%s/renters/*/houses", apiPrefix),
                                         String.format("%s/renters/*/rentals", apiPrefix),
                                         String.format("%s/renters/*/income", apiPrefix),
                                         String.format("%s/reviews/*/hide", apiPrefix),
-                                        String.format("%s/house-images", apiPrefix),
+//                                        String.format("%s/house-images", apiPrefix),
                                         String.format("%s/renter-requests", apiPrefix),
                                         String.format("%s/notifications", apiPrefix),
                                         String.format("%s/renters/*/checkin", apiPrefix),
