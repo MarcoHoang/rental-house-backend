@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-public class HouseDataSeeder {
+public class  HouseDataSeeder {
 
     @Bean
     public CommandLineRunner seedHouses(

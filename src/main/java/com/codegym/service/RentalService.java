@@ -22,6 +22,8 @@ public interface RentalService {
 
     List<RentalDTO> getUserRentals(Long userId);
 
+    List<RentalDTO> getCurrentUserRentals();
+
     List<RentalDTO> getHostRentals(Long hostId);
 
     Map<String, Double> getHostIncome(Long hostId);

@@ -56,7 +56,7 @@ public class WebSecurityConfig {
                                         String.format("%s/files/**", apiPrefix) // File access
                                 ).permitAll()
 
-                                // Người dùng (ROLE_USER)
+                                // Người dùng (ROLE_USER) - cho phép cả ADMIN và HOST truy cập
                                 .requestMatchers(
                                         String.format("%s/users/*/profile", apiPrefix),
                                         String.format("%s/users/profile", apiPrefix),
@@ -66,7 +66,7 @@ public class WebSecurityConfig {
                                         String.format("%s/reviews", apiPrefix),
                                         String.format("%s/notifications", apiPrefix),
                                         String.format("%s/chat/**", apiPrefix)
-                                ).hasRole("USER")
+                                ).hasAnyRole("USER", "ADMIN", "HOST")
 
 //                         Quản trị viên (ROLE_ADMIN)
                                 .requestMatchers(
