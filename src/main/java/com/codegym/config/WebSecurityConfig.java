@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,7 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableMethodSecurity
 public class WebSecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
 
@@ -53,7 +55,6 @@ public class WebSecurityConfig {
                                         String.format("%s/houses/*/images", apiPrefix),
                                         String.format("%s/files/uploads/avatar", apiPrefix),
                                         String.format("%s/houses", apiPrefix),
-//                                        String.format("%s/houses/*", apiPrefix), // Thêm chi tiết nhà
                                         String.format("%s/files/**", apiPrefix) // File access
                                 ).permitAll()
 
@@ -70,6 +71,11 @@ public class WebSecurityConfig {
                                         String.format("%s/chat/**", apiPrefix)
                                 ).hasAnyRole("USER", "ADMIN", "HOST")
 
+                                // Cho phép tất cả user đã đăng nhập xem chi tiết nhà
+                                .requestMatchers(
+                                        String.format("%s/houses/*", apiPrefix)
+                                ).hasAnyRole("USER", "HOST", "ADMIN")
+
 //                         Quản trị viên (ROLE_ADMIN)
                                 .requestMatchers(
                                         String.format("%s/users", apiPrefix),
@@ -85,7 +91,7 @@ public class WebSecurityConfig {
 
 
 
-                                // Chủ nhà (ROLE_HOST)
+                                // Chủ nhà (ROLE_HOST) - các endpoint chỉ dành cho HOST
                                 .requestMatchers(
                                         String.format("%s/users/*/change-password", apiPrefix),
                                         String.format("%s/hosts/change-password", apiPrefix),
@@ -95,8 +101,8 @@ public class WebSecurityConfig {
                                         String.format("%s/hosts/my-stats", apiPrefix),
                                         String.format("%s/hosts/my-profile", apiPrefix),
                                         String.format("%s/hosts/my-profile/**", apiPrefix),
-                                        String.format("%s/houses", apiPrefix), // Tạo nhà mới
-                                        String.format("%s/houses/*", apiPrefix), // Sửa/xóa nhà của mình
+                                        String.format("%s/houses/*/edit", apiPrefix), // Sửa nhà của mình
+                                        String.format("%s/houses/*/delete", apiPrefix), // Xóa nhà của mình
                                         String.format("%s/houses/*/status", apiPrefix), // Thay đổi trạng thái
                                         String.format("%s/renters/*/houses", apiPrefix),
                                         String.format("%s/renters/*/rentals", apiPrefix),
@@ -110,10 +116,10 @@ public class WebSecurityConfig {
                                         String.format("%s/renters/*/statistics", apiPrefix)
                                 ).hasRole("HOST")
 
-                                // Admin chỉ có thể xóa nhà, không sửa
-                                .requestMatchers(
-                                        String.format("%s/houses/*", apiPrefix)
-                                ).hasRole("ADMIN")
+                                // Admin có thể xóa nhà thông qua endpoint riêng (nếu cần)
+                                // .requestMatchers(
+                                //         String.format("%s/admin/houses/*/delete", apiPrefix)
+                                // ).hasRole("ADMIN")
 
                                 .anyRequest().authenticated()
                 );
