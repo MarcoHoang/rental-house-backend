@@ -11,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Locale;
@@ -73,18 +74,19 @@ public class HouseController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<ApiResponse<HouseDTO>> createHouse(@RequestBody @Valid HouseRequest request, Locale locale) {
         HouseDTO created = houseService.createHouse(request);
         return new ResponseEntity<>(ApiResponse.success(created, StatusCode.CREATED_SUCCESS, messageSource, locale), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/edit")
     public ResponseEntity<ApiResponse<HouseDTO>> updateHouse(@PathVariable Long id, @RequestBody @Valid HouseRequest request, Locale locale) {
         HouseDTO updated = houseService.updateHouse(id, request);
         return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public ResponseEntity<ApiResponse<Void>> deleteHouse(@PathVariable Long id, Locale locale) {
         houseService.deleteHouse(id);
         return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
