@@ -30,7 +30,6 @@ public class HostController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<HostDTO>> getHostById(@PathVariable Long id, Locale locale) {
-        // Việc kiểm tra người dùng có quyền xem hay không sẽ được xử lý trong service
         HostDTO dto = hostService.getHostById(id);
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
     }
@@ -49,7 +48,6 @@ public class HostController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<HostDTO>> updateHost(@PathVariable Long id, @RequestBody @Valid HostDTO dto, Locale locale) {
-        // Việc kiểm tra người dùng có quyền cập nhật hay không sẽ được xử lý trong service
         HostDTO updated = hostService.updateHost(id, dto);
         return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }

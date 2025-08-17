@@ -310,19 +310,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserDetailAdminDTO findUserDetailById(Long userId) {
-        // 1. Tìm user
         User user = findUserByIdOrThrow(userId);
 
-        // 2. Lấy lịch sử thuê nhà bằng phương thức có sẵn
         List<Rental> rentalRecords = rentalRepository.findByRenterIdOrderByStartDateDesc(user.getId());
 
-        // 3. Tính tổng số tiền đã chi tiêu bằng phương thức mới thêm vào
         Double totalSpent = rentalRepository.sumTotalPriceByRenterId(user.getId());
         if (totalSpent == null) {
             totalSpent = 0.0;
         }
 
-        // 4. Chuyển đổi danh sách Rental sang DTO (giữ nguyên logic này)
         List<RentalHistoryDTO> rentalHistory;
         if (rentalRecords != null && !rentalRecords.isEmpty()) {
             rentalHistory = rentalRecords.stream()
@@ -338,7 +334,6 @@ public class UserServiceImpl implements UserService {
             rentalHistory = Collections.emptyList();
         }
 
-        // 5. Xây dựng và trả về DTO chi tiết (giữ nguyên logic này)
         return UserDetailAdminDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())

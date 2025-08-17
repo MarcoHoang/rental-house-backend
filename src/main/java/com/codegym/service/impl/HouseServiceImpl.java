@@ -106,7 +106,6 @@ public class HouseServiceImpl implements HouseService {
     @Override
     @Transactional
     public HouseDTO createHouse(HouseRequest request) {
-        // Lấy host hiện tại từ authentication
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(currentUsername)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
@@ -127,7 +126,6 @@ public class HouseServiceImpl implements HouseService {
         house.setId(null);
         House savedHouse = houseRepository.save(house);
 
-        // Lưu ảnh nếu có
         if (request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
             saveHouseImages(savedHouse, request.getImageUrls());
         }
@@ -140,7 +138,6 @@ public class HouseServiceImpl implements HouseService {
     public HouseDTO updateHouse(Long id, HouseRequest request) {
         House existingHouse = findHouseByIdOrThrow(id);
         
-        // Kiểm tra ownership - chỉ chủ nhà mới được sửa nhà của mình, admin không được sửa
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(currentUsername)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
@@ -160,7 +157,6 @@ public class HouseServiceImpl implements HouseService {
             existingHouse.setLongitude(latLng[1]);
         }
 
-        // Cập nhật ảnh nếu có
         if (request.getImageUrls() != null) {
             updateHouseImages(existingHouse, request.getImageUrls());
         }
@@ -174,18 +170,15 @@ public class HouseServiceImpl implements HouseService {
     public void deleteHouse(Long id) {
         House house = findHouseByIdOrThrow(id);
         
-        // Kiểm tra ownership và trạng thái nhà
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(currentUsername)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
         
-        // Admin có thể xóa bất kỳ nhà nào, nhưng không được xóa nhà đang được thuê
         if (currentUser.getRole().getName().equals(RoleName.ADMIN)) {
             if (house.getStatus() == House.Status.RENTED) {
                 throw new AppException(StatusCode.FORBIDDEN_ACTION, "Không thể xóa nhà đang được thuê");
             }
         } 
-        // Host chỉ được xóa nhà của mình
         else if (currentUser.getRole().getName().equals(RoleName.HOST)) {
             if (!house.getHost().getId().equals(currentUser.getId())) {
                 throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn không có quyền xóa nhà này");
@@ -220,7 +213,6 @@ public class HouseServiceImpl implements HouseService {
     public HouseDTO updateHouseStatus(Long id, String status) {
         House house = findHouseByIdOrThrow(id);
         
-        // Kiểm tra ownership - chỉ chủ nhà mới được thay đổi trạng thái nhà của mình
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(currentUsername)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
@@ -267,9 +259,6 @@ public class HouseServiceImpl implements HouseService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Lưu danh sách ảnh cho nhà
-     */
     private void saveHouseImages(House house, List<String> imageUrls) {
         for (int i = 0; i < imageUrls.size(); i++) {
             HouseImage houseImage = HouseImage.builder()
@@ -281,14 +270,9 @@ public class HouseServiceImpl implements HouseService {
         }
     }
 
-    /**
-     * Cập nhật ảnh cho nhà (xóa ảnh cũ, thêm ảnh mới)
-     */
     private void updateHouseImages(House house, List<String> newImageUrls) {
-        // Xóa tất cả ảnh cũ
         houseImageRepository.deleteByHouse(house);
         
-        // Thêm ảnh mới
         if (!newImageUrls.isEmpty()) {
             saveHouseImages(house, newImageUrls);
         }

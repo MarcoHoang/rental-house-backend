@@ -33,7 +33,6 @@ public class HostRequestController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<HostRequestDTO>> getByUserId(@PathVariable Long userId, Locale locale) {
-        // Việc kiểm tra người dùng có quyền xem hay không sẽ được xử lý trong service
         HostRequestDTO dto = hostRequestService.findByUserId(userId);
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
     }

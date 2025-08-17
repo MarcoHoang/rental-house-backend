@@ -220,16 +220,13 @@ public class HostServiceImpl implements HostService {
     @Override
     @Transactional
     public HostDTO updateCurrentHostProfile(HostDTO dto) {
-        // Lấy user hiện tại từ SecurityContext
         User currentUser = getCurrentAuthenticatedUser();
 
-        // Lấy host theo userId (fetch user luôn để tránh lazy)
         Host hostToUpdate = hostRepository.findByUserId(currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         StatusCode.HOST_NOT_FOUND, currentUser.getId()
                 ));
 
-        // ===== Update thông tin User =====
         if (dto.getFullName() != null) {
             currentUser.setFullName(dto.getFullName().trim());
         }
@@ -241,7 +238,6 @@ public class HostServiceImpl implements HostService {
         }
         userRepository.save(currentUser);
 
-        // ===== Update thông tin Host =====
         if (dto.getAddress() != null) {
             hostToUpdate.setAddress(dto.getAddress().trim());
         }
@@ -250,7 +246,6 @@ public class HostServiceImpl implements HostService {
         }
         hostRepository.save(hostToUpdate);
 
-        // Refresh lại dữ liệu host từ DB để lấy thông tin user mới nhất
         Host updatedHost = hostRepository.findById(hostToUpdate.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         StatusCode.HOST_NOT_FOUND, hostToUpdate.getId()

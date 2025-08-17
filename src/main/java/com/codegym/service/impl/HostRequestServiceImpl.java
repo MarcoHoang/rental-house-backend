@@ -61,7 +61,7 @@ public class HostRequestServiceImpl implements HostRequestService {
         
         return hostRequestRepository.findByUserId(currentUser.getId())
                 .map(this::mapToDTO)
-                .orElse(null); // Return null if no request exists
+                .orElse(null);
     }
 
     @Override
@@ -127,9 +127,8 @@ public class HostRequestServiceImpl implements HostRequestService {
             newHost.setUser(user);
             newHost.setApprovedDate(LocalDateTime.now());
 
-            // Lấy thông tin trực tiếp từ đối tượng request đã được lưu
             newHost.setNationalId(request.getNationalId());
-            newHost.setAddress(user.getAddress()); // Vẫn có thể lấy địa chỉ từ user
+            newHost.setAddress(user.getAddress());
             newHost.setProofOfOwnershipUrl(request.getProofOfOwnershipUrl());
 
             hostRepository.save(newHost);

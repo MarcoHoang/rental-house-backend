@@ -101,9 +101,9 @@ public class WebSecurityConfig {
                                         String.format("%s/hosts/my-stats", apiPrefix),
                                         String.format("%s/hosts/my-profile", apiPrefix),
                                         String.format("%s/hosts/my-profile/**", apiPrefix),
-                                        String.format("%s/houses/*/edit", apiPrefix), // Sửa nhà của mình
-                                        String.format("%s/houses/*/delete", apiPrefix), // Xóa nhà của mình
-                                        String.format("%s/houses/*/status", apiPrefix), // Thay đổi trạng thái
+                                        String.format("%s/houses/*/edit", apiPrefix),
+                                        String.format("%s/houses/*/delete", apiPrefix),
+                                        String.format("%s/houses/*/status", apiPrefix),
                                         String.format("%s/renters/*/houses", apiPrefix),
                                         String.format("%s/renters/*/rentals", apiPrefix),
                                         String.format("%s/renters/*/income", apiPrefix),

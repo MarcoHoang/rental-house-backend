@@ -24,14 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Implementation of FileUploadService for handling file upload operations.
- * Provides image processing, validation, and storage management.
- * 
- * @author CodeGym Team
- * @version 1.0
- * @since 2024
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -76,29 +68,23 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     public FileUploadResponse uploadFile(MultipartFile file, String uploadType) {
         try {
-            // Validate file
             if (!isValidFile(file)) {
                 throw new AppException(StatusCode.INVALID_FILE_TYPE);
             }
 
-            // Create upload directory if it doesn't exist
             Path uploadDir = Paths.get(uploadPath, uploadType);
             if (!Files.exists(uploadDir)) {
                 Files.createDirectories(uploadDir);
             }
 
-            // Generate unique filename
             String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
             String fileExtension = FilenameUtils.getExtension(originalFilename);
             String storedFilename = generateUniqueFilename(fileExtension);
 
-            // Create file path
             Path filePath = uploadDir.resolve(storedFilename);
 
-            // Process and save image based on upload type
             processAndSaveImage(file, filePath, uploadType);
 
-            // Generate file URL
             String fileUrl = generateFileUrl(uploadType, storedFilename);
 
             log.info("File uploaded successfully: {} -> {}", originalFilename, fileUrl);
@@ -136,13 +122,11 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     public boolean deleteFile(String fileUrl) {
         try {
-            // Extract filename from URL
             String filename = extractFilenameFromUrl(fileUrl);
             if (filename == null) {
                 return false;
             }
 
-            // Determine upload type from URL
             String uploadType = extractUploadTypeFromUrl(fileUrl);
             Path filePath = Paths.get(uploadPath, uploadType, filename);
 
@@ -170,12 +154,10 @@ public class FileUploadServiceImpl implements FileUploadService {
             return false;
         }
 
-        // Check file size
         if (file.getSize() > maxFileSize) {
             return false;
         }
 
-        // Check file type
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
         if (fileExtension == null) {
             return false;
@@ -185,13 +167,9 @@ public class FileUploadServiceImpl implements FileUploadService {
         return allowedExtensions.contains(fileExtension.toLowerCase());
     }
 
-    /**
-     * Process and save image with appropriate resizing based on upload type.
-     */
     private void processAndSaveImage(MultipartFile file, Path filePath, String uploadType) throws IOException {
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
         
-        // Handle PDF files (no image processing)
         if ("pdf".equalsIgnoreCase(fileExtension)) {
             Files.copy(file.getInputStream(), filePath);
             return;
@@ -220,35 +198,24 @@ public class FileUploadServiceImpl implements FileUploadService {
                 break;
                 
             case "proof-of-ownership":
-                // For proof of ownership, save original file without resizing
                 Files.copy(file.getInputStream(), filePath);
                 break;
                 
             default:
-                // Save original file without processing
                 Files.copy(file.getInputStream(), filePath);
                 break;
         }
     }
 
-    /**
-     * Generate a unique filename with UUID.
-     */
     private String generateUniqueFilename(String extension) {
         return UUID.randomUUID().toString() + "." + extension;
     }
 
-    /**
-     * Generate file URL for accessing the uploaded file.
-     */
     private String generateFileUrl(String uploadType, String filename) {
         String context = contextPath.isEmpty() ? "" : contextPath;
         return String.format("%s:%s%s/api/files/%s/%s", baseUrl, serverPort, context, uploadType, filename);
     }
 
-    /**
-     * Extract filename from file URL.
-     */
     private String extractFilenameFromUrl(String fileUrl) {
         if (fileUrl == null || fileUrl.isEmpty()) {
             return null;
@@ -258,9 +225,6 @@ public class FileUploadServiceImpl implements FileUploadService {
         return parts.length > 0 ? parts[parts.length - 1] : null;
     }
 
-    /**
-     * Extract upload type from file URL.
-     */
     private String extractUploadTypeFromUrl(String fileUrl) {
         if (fileUrl == null || fileUrl.isEmpty()) {
             return "general";

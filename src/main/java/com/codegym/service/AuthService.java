@@ -21,16 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service for handling user authentication and registration operations.
- * 
- * This service provides methods for user login, admin login, and user registration.
- * It handles password encryption, JWT token generation, and user validation.
- * 
- * @author CodeGym Team
- * @version 1.0
- * @since 2024
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -71,15 +61,6 @@ public class AuthService {
         }
     }
 
-    /**
-     * Authenticates an admin user with email and password, returning a JWT token.
-     *
-     * This method validates admin credentials and ensures the user has ADMIN role.
-     *
-     * @param request The login request containing email and password
-     * @return LoginResponse containing the JWT token
-     * @throws AppException if credentials are invalid or user is not an admin
-     */
     public LoginResponse adminLogin(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(StatusCode.INVALID_CREDENTIALS));
@@ -106,17 +87,6 @@ public class AuthService {
         }
     }
 
-    /**
-     * Registers a new user with the provided information.
-     * 
-     * This method validates that the email and phone are unique, creates a new user
-     * with USER role, encrypts the password, and saves the user to the database.
-     * 
-     * @param request The registration request containing user information
-     * @return UserDTO containing the created user's information
-     * @throws AppException if email or phone already exists
-     * @throws ResourceNotFoundException if USER role is not found
-     */
     @Transactional
     public UserDTO register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {

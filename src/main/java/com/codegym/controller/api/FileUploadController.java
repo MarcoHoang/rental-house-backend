@@ -41,14 +41,6 @@ public class FileUploadController {
     private final FileUploadService fileUploadService;
     private final MessageSource messageSource;
 
-    /**
-     * Upload a single file.
-     *
-     * @param file The file to upload
-     * @param uploadType The type of upload (avatar, house-image, etc.)
-     * @param locale The locale for internationalized messages
-     * @return ResponseEntity containing the upload response
-     */
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse<FileUploadResponse>> uploadFile(
             @RequestParam("file") MultipartFile file,
@@ -62,14 +54,6 @@ public class FileUploadController {
         );
     }
 
-    /**
-     * Upload multiple files.
-     *
-     * @param files List of files to upload
-     * @param uploadType The type of upload
-     * @param locale The locale for internationalized messages
-     * @return ResponseEntity containing the upload responses
-     */
     @PostMapping("/upload/multiple")
     public ResponseEntity<ApiResponse<List<FileUploadResponse>>> uploadMultipleFiles(
             @RequestParam("files") List<MultipartFile> files,
@@ -83,13 +67,6 @@ public class FileUploadController {
         );
     }
 
-    /**
-     * Delete a file.
-     *
-     * @param fileUrl The URL of the file to delete
-     * @param locale The locale for internationalized messages
-     * @return ResponseEntity indicating success or failure
-     */
     @DeleteMapping("/delete")
     public ResponseEntity<ApiResponse<Void>> deleteFile(
             @RequestParam("fileUrl") String fileUrl,
@@ -109,13 +86,6 @@ public class FileUploadController {
         }
     }
 
-    /**
-     * Serve a file by its upload type and filename.
-     *
-     * @param uploadType The type of upload (avatar, house-image, etc.)
-     * @param filename The filename to serve
-     * @return ResponseEntity containing the file resource
-     */
     @GetMapping("/{uploadType}/{filename:.+}")
     public ResponseEntity<Resource> serveFile(
             @PathVariable String uploadType,
@@ -143,12 +113,6 @@ public class FileUploadController {
         }
     }
 
-    /**
-     * Determine the content type based on file extension.
-     *
-     * @param filename The filename
-     * @return The appropriate content type
-     */
     private String determineContentType(String filename) {
         String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
 
@@ -162,13 +126,6 @@ public class FileUploadController {
         };
     }
 
-    /**
-     * Upload user avatar.
-     *
-     * @param file The avatar image file
-     * @param locale The locale for internationalized messages
-     * @return ResponseEntity containing the upload response
-     */
     @PostMapping("/upload/avatar")
     public ResponseEntity<ApiResponse<FileUploadResponse>> uploadAvatar(
             @RequestParam("file") MultipartFile file,
@@ -181,13 +138,6 @@ public class FileUploadController {
         );
     }
 
-    /**
-     * Upload house images.
-     *
-     * @param files List of house image files
-     * @param locale The locale for internationalized messages
-     * @return ResponseEntity containing the upload responses
-     */
     @PostMapping("/upload/house-images")
     public ResponseEntity<ApiResponse<List<FileUploadResponse>>> uploadHouseImages(
             @RequestParam("files") List<MultipartFile> files,
@@ -200,13 +150,6 @@ public class FileUploadController {
         );
     }
 
-    /**
-     * Upload proof of ownership document for house renter.
-     *
-     * @param file The proof of ownership document
-     * @param locale The locale for internationalized messages
-     * @return ResponseEntity containing the upload response
-     */
     @PostMapping("/upload/proof-of-ownership")
     public ResponseEntity<ApiResponse<FileUploadResponse>> uploadProofOfOwnership(
             @RequestParam("file") MultipartFile file,
