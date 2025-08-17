@@ -96,17 +96,32 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 // Thêm các endpoint công khai
                 Pair.of(String.format("%s/houses", apiPrefix), "GET"),
                 Pair.of(String.format("%s/houses/top", apiPrefix), "GET"),
-                Pair.of(String.format("%s/houses/search", apiPrefix), "GET"),
-                // Thêm endpoint xem chi tiết nhà (công khai)
-                Pair.of(String.format("%s/houses/", apiPrefix), "GET")
+                Pair.of(String.format("%s/houses/search", apiPrefix), "GET")
         );
 
+        String servletPath = request.getServletPath();
+        String method = request.getMethod();
+
         for (Pair<String, String> bypass : bypassTokens) {
-            if (request.getServletPath().contains(bypass.getFirst()) &&
-                    request.getMethod().equalsIgnoreCase(bypass.getSecond())) {
+            if (servletPath.contains(bypass.getFirst()) &&
+                    method.equalsIgnoreCase(bypass.getSecond())) {
+                
+                // Đặc biệt xử lý cho /houses để không bypass /houses/my-houses
+                if (bypass.getFirst().contains("/houses") && servletPath.contains("/my-houses")) {
+                    return false;
+                }
+                
                 return true;
             }
         }
+        
+        // Đặc biệt xử lý cho /houses/{id} - chỉ bypass cho GET request với pattern số
+        if (servletPath.matches(String.format("%s/houses/\\d+", apiPrefix.replace("/", "\\/")))) {
+            if (method.equalsIgnoreCase("GET")) {
+                return true;
+            }
+        }
+        
         return false;
     }
 }

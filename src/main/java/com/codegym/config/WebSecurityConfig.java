@@ -55,6 +55,7 @@ public class WebSecurityConfig {
                                         String.format("%s/houses/*/images", apiPrefix),
                                         String.format("%s/files/uploads/avatar", apiPrefix),
                                         String.format("%s/houses", apiPrefix),
+                                        String.format("%s/houses/*", apiPrefix), // Thêm chi tiết nhà
                                         String.format("%s/files/**", apiPrefix) // File access
                                 ).permitAll()
 
@@ -70,11 +71,6 @@ public class WebSecurityConfig {
                                         String.format("%s/notifications", apiPrefix),
                                         String.format("%s/chat/**", apiPrefix)
                                 ).hasAnyRole("USER", "ADMIN", "HOST")
-
-                                // Cho phép tất cả user đã đăng nhập xem chi tiết nhà
-                                .requestMatchers(
-                                        String.format("%s/houses/*", apiPrefix)
-                                ).hasAnyRole("USER", "HOST", "ADMIN")
 
 //                         Quản trị viên (ROLE_ADMIN)
                                 .requestMatchers(
