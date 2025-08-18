@@ -1,5 +1,6 @@
 package com.codegym.service.impl;
 
+import com.codegym.dto.request.CreateReviewRequest;
 import com.codegym.dto.response.ReviewDTO;
 import com.codegym.entity.House;
 import com.codegym.entity.Rental;
@@ -49,6 +50,8 @@ public class ReviewServiceImpl implements ReviewService {
                 .id(review.getId())
                 .reviewerId(review.getReviewer().getId())
                 .reviewerName(review.getReviewer().getUsername())
+                .reviewerFullName(review.getReviewer().getFullName())
+                .reviewerAvatarUrl(review.getReviewer().getAvatarUrl())
                 .houseId(review.getHouse().getId())
                 .rating(review.getRating())
                 .comment(review.getComment())
@@ -80,14 +83,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public ReviewDTO createReview(ReviewDTO reviewDTO) {
-        User reviewer = findUserByIdOrThrow(reviewDTO.getReviewerId());
-        House house = findHouseByIdOrThrow(reviewDTO.getHouseId());
+    public ReviewDTO createReview(CreateReviewRequest request) {
+        User reviewer = findUserByIdOrThrow(request.getReviewerId());
+        House house = findHouseByIdOrThrow(request.getHouseId());
 
-        boolean hasRentedAndCheckedOut = rentalRepository.existsByRenterIdAndHouseIdAndStatus(reviewer.getId(), house.getId(), Rental.Status.CHECKED_OUT);
-        if (!hasRentedAndCheckedOut) {
-            throw new AppException(StatusCode.CANNOT_REVIEW_NOT_RENTED);
-        }
+        // Tạm thời bỏ điều kiện phải thuê nhà và checkout
+        // boolean hasRentedAndCheckedOut = rentalRepository.existsByRenterIdAndHouseIdAndStatus(reviewer.getId(), house.getId(), Rental.Status.CHECKED_OUT);
+        // if (!hasRentedAndCheckedOut) {
+        //     throw new AppException(StatusCode.CANNOT_REVIEW_NOT_RENTED);
+        // }
 
         if (reviewRepository.existsByReviewerIdAndHouseId(reviewer.getId(), house.getId())) {
             throw new AppException(StatusCode.REVIEW_ALREADY_EXISTS);
@@ -96,8 +100,8 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = new Review();
         review.setReviewer(reviewer);
         review.setHouse(house);
-        review.setRating(reviewDTO.getRating());
-        review.setComment(reviewDTO.getComment());
+        review.setRating(request.getRating());
+        review.setComment(request.getComment());
         review.setIsVisible(true);
 
         return toDTO(reviewRepository.save(review));

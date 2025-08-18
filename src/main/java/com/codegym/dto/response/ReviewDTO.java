@@ -12,6 +12,8 @@ public class ReviewDTO {
     private Long id;
     private Long reviewerId;
     private String reviewerName;
+    private String reviewerFullName;  // Thêm fullName
+    private String reviewerAvatarUrl; // Thêm avatar URL
     private Long houseId;
     private Integer rating;
     private String comment;
