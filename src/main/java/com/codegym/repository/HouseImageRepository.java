@@ -9,4 +9,8 @@ import java.util.List;
 public interface HouseImageRepository extends JpaRepository<HouseImage, Long> {
     List<HouseImage> findByHouse(House house);
     void deleteByHouse(House house);
+
+    List<HouseImage> findByHouseOrderBySortOrderAsc(House house);
+
+    Integer findMaxSortOrderByHouse(House house);
 }

@@ -122,6 +122,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
         }
 
+        // Đặc biệt xử lý cho password-reset endpoints
+        if (servletPath.contains(String.format("%s/users/password-reset", apiPrefix))) {
+            // Cho phép cả GET và POST method cho password-reset
+            return true;
+        }
+
         return false;
     }
 }
