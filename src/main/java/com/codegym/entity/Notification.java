@@ -36,6 +36,7 @@ public class Notification extends BaseEntity {
         REVIEW_RECEIVED,
         LANDLORD_REQUEST_APPROVED,
         LANDLORD_REQUEST_REJECTED,
+        HOUSE_DELETED,
         GENERAL
     }
 }

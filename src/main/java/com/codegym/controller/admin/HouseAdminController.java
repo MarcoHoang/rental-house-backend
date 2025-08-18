@@ -67,7 +67,9 @@ public class HouseAdminController {
             @PathVariable Long houseId,
             Locale locale) {
 
+        // Xóa nhà (notification sẽ được tạo tự động trong service)
         houseService.deleteHouse(houseId);
+        
         return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
     }
 
