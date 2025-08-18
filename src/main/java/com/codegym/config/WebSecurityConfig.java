@@ -69,7 +69,8 @@ public class WebSecurityConfig {
                                         String.format("%s/rentals/*", apiPrefix),
                                         String.format("%s/reviews", apiPrefix),
                                         String.format("%s/notifications", apiPrefix),
-                                        String.format("%s/chat/**", apiPrefix)
+                                        String.format("%s/chat/**", apiPrefix),
+                                        String.format("%s/favorites/**", apiPrefix)
                                 ).hasAnyRole("USER", "ADMIN", "HOST")
 
 //                         Quản trị viên (ROLE_ADMIN)

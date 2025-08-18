@@ -30,6 +30,8 @@ public class HouseDTO {
 
     private List<String> imageUrls;
 
+    private Long favoriteCount; // Số lượng yêu thích
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
