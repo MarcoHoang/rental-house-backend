@@ -9,4 +9,9 @@ import java.util.List;
 public interface HouseRepository extends JpaRepository<House, Long> {
     List<House> findByHostId(Long hostId);
     List<House> findByHost(User host);
+    
+    // Dashboard statistics methods
+    long countByStatus(House.Status status);
+    
+    List<House> findTop5ByOrderByCreatedAtDesc();
 }

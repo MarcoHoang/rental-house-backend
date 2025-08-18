@@ -55,4 +55,15 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
     @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.house.host.id = :hostUserId")
     Double sumTotalPriceByHost(@Param("hostUserId") Long hostUserId);
 
+    // Dashboard statistics methods
+    long countByStatus(Rental.Status status);
+    
+    @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.status = :status")
+    Double sumTotalPriceByStatus(@Param("status") Rental.Status status);
+    
+    @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.status = :status AND r.createdAt >= :startDate")
+    Double sumTotalPriceByStatusAndDateAfter(@Param("status") Rental.Status status, @Param("startDate") LocalDateTime startDate);
+    
+    List<Rental> findTop5ByOrderByCreatedAtDesc();
+
 }

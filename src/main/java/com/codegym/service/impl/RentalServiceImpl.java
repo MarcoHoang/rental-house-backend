@@ -24,6 +24,7 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -452,4 +453,57 @@ public class RentalServiceImpl implements RentalService {
     public boolean existsOverlappingRental(Long houseId, LocalDateTime startDate, LocalDateTime endDate) {
         return rentalRepository.existsOverlappingRental(houseId, startDate, endDate);
     }
+
+    // Dashboard statistics methods
+    @Override
+    @Transactional(readOnly = true)
+    public long countAllRentals() {
+        return rentalRepository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countRentalsByStatus(String status) {
+        try {
+            Rental.Status rentalStatus = Rental.Status.valueOf(status.toUpperCase());
+            return rentalRepository.countByStatus(rentalStatus);
+        } catch (IllegalArgumentException e) {
+            return 0;
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public double calculateTotalRevenue() {
+        Double total = rentalRepository.sumTotalPriceByStatus(Rental.Status.CHECKED_OUT);
+        return total != null ? total : 0.0;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public double calculateMonthlyRevenue() {
+        LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        Double monthly = rentalRepository.sumTotalPriceByStatusAndDateAfter(Rental.Status.CHECKED_OUT, startOfMonth);
+        return monthly != null ? monthly : 0.0;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getRecentRentalsForDashboard(int limit) {
+        return rentalRepository.findTop5ByOrderByCreatedAtDesc().stream()
+                .map(rental -> {
+                    Map<String, Object> rentalData = new HashMap<>();
+                    rentalData.put("id", rental.getId());
+                    rentalData.put("houseTitle", rental.getHouse().getTitle());
+                    rentalData.put("renterName", rental.getRenter().getFullName());
+                    rentalData.put("totalPrice", rental.getTotalPrice());
+                    rentalData.put("status", rental.getStatus());
+                    rentalData.put("startDate", rental.getStartDate());
+                    rentalData.put("endDate", rental.getEndDate());
+                    rentalData.put("createdAt", rental.getCreatedAt());
+                    return rentalData;
+                })
+                .collect(Collectors.toList());
+    }
+
 }

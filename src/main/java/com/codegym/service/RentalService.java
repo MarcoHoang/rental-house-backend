@@ -49,4 +49,16 @@ public interface RentalService {
     Long getHostPendingRequestsCount(Long hostId);
     
     boolean existsOverlappingRental(Long houseId, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
+
+    // Dashboard statistics methods
+    long countAllRentals();
+    
+    long countRentalsByStatus(String status);
+    
+    double calculateTotalRevenue();
+    
+    double calculateMonthlyRevenue();
+    
+    List<Map<String, Object>> getRecentRentalsForDashboard(int limit);
+
 }

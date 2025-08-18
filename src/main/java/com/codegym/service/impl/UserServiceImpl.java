@@ -349,4 +349,23 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    // Dashboard statistics methods
+    @Override
+    @Transactional(readOnly = true)
+    public long countAllUsers() {
+        return userRepository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countHosts() {
+        return userRepository.countByRoleName(RoleName.HOST);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countAdmins() {
+        return userRepository.countByRoleName(RoleName.ADMIN);
+    }
+
 }
