@@ -3,6 +3,7 @@ package com.codegym.service;
 import com.codegym.dto.request.HouseRequest;
 import com.codegym.dto.response.HouseDTO;
 import java.util.List;
+import java.util.Map;
 
 public interface HouseService {
 
@@ -30,5 +31,12 @@ public interface HouseService {
 
     // Admin methods
     org.springframework.data.domain.Page<HouseDTO> getAllHousesForAdmin(org.springframework.data.domain.Pageable pageable);
+
+    // Dashboard statistics methods
+    long countAllHouses();
+    
+    long countHousesByStatus(String status);
+    
+    List<Map<String, Object>> getRecentHousesForDashboard(int limit);
 
 }

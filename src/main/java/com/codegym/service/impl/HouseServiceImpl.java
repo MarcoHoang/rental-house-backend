@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -389,4 +391,43 @@ public class HouseServiceImpl implements HouseService {
         org.springframework.data.domain.Page<House> housePage = houseRepository.findAll(pageable);
         return housePage.map(this::toDTO);
     }
+
+    // Dashboard statistics methods
+    @Override
+    @Transactional(readOnly = true)
+    public long countAllHouses() {
+        return houseRepository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countHousesByStatus(String status) {
+        try {
+            House.Status houseStatus = House.Status.valueOf(status.toUpperCase());
+            return houseRepository.countByStatus(houseStatus);
+        } catch (IllegalArgumentException e) {
+            return 0;
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getRecentHousesForDashboard(int limit) {
+        return houseRepository.findTop5ByOrderByCreatedAtDesc().stream()
+                .map(house -> {
+                    Map<String, Object> houseData = new HashMap<>();
+                    houseData.put("id", house.getId());
+                    houseData.put("title", house.getTitle());
+                    houseData.put("address", house.getAddress());
+                    houseData.put("price", house.getPrice());
+                    houseData.put("status", house.getStatus());
+                    houseData.put("hostName", house.getHost() != null ? house.getHost().getFullName() : "N/A");
+                    houseData.put("createdAt", house.getCreatedAt());
+                    houseData.put("imageUrl", house.getImages() != null && !house.getImages().isEmpty() 
+                        ? house.getImages().get(0).getImageUrl() : null);
+                    return houseData;
+                })
+                .collect(Collectors.toList());
+    }
+
 }

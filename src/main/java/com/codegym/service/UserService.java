@@ -38,4 +38,11 @@ public interface UserService {
 
     UserDetailAdminDTO findUserDetailById(Long userId);
 
+    // Dashboard statistics methods
+    long countAllUsers();
+    
+    long countHosts();
+    
+    long countAdmins();
+
 }
