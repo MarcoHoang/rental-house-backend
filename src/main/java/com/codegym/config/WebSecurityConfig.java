@@ -50,11 +50,11 @@ public class WebSecurityConfig {
                                         String.format("%s/auth/login", apiPrefix),
                                         String.format("%s/admin/login", apiPrefix), // Admin login
                                         String.format("%s/users/password-reset/**", apiPrefix),
+                                        String.format("%s/houses", apiPrefix),
                                         String.format("%s/houses/top", apiPrefix),
                                         String.format("%s/houses/search", apiPrefix),
                                         String.format("%s/houses/*/images", apiPrefix),
                                         String.format("%s/files/uploads/avatar", apiPrefix),
-                                        String.format("%s/houses", apiPrefix),
                                         String.format("%s/files/**", apiPrefix) // File access
                                 ).permitAll()
 
@@ -70,11 +70,6 @@ public class WebSecurityConfig {
                                         String.format("%s/notifications", apiPrefix),
                                         String.format("%s/chat/**", apiPrefix)
                                 ).hasAnyRole("USER", "ADMIN", "HOST")
-
-                                // Cho phép tất cả user đã đăng nhập xem chi tiết nhà
-                                .requestMatchers(
-                                        String.format("%s/houses/*", apiPrefix)
-                                ).hasAnyRole("USER", "HOST", "ADMIN")
 
 //                         Quản trị viên (ROLE_ADMIN)
                                 .requestMatchers(
@@ -101,9 +96,9 @@ public class WebSecurityConfig {
                                         String.format("%s/hosts/my-stats", apiPrefix),
                                         String.format("%s/hosts/my-profile", apiPrefix),
                                         String.format("%s/hosts/my-profile/**", apiPrefix),
-                                        String.format("%s/houses/*/edit", apiPrefix),
-                                        String.format("%s/houses/*/delete", apiPrefix),
-                                        String.format("%s/houses/*/status", apiPrefix),
+                                        String.format("%s/houses/*/edit", apiPrefix), // Sửa nhà của mình
+                                        String.format("%s/houses/*/delete", apiPrefix), // Xóa nhà của mình
+                                        String.format("%s/houses/*/status", apiPrefix), // Thay đổi trạng thái
                                         String.format("%s/renters/*/houses", apiPrefix),
                                         String.format("%s/renters/*/rentals", apiPrefix),
                                         String.format("%s/renters/*/income", apiPrefix),

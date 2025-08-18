@@ -60,6 +60,12 @@ public class RentalController {
         return ResponseEntity.ok(ApiResponse.success(rentals, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
+    @GetMapping("/user/me")
+    public ResponseEntity<ApiResponse<List<RentalDTO>>> getMyRentals(Locale locale) {
+        List<RentalDTO> rentals = rentalService.getCurrentUserRentals();
+        return ResponseEntity.ok(ApiResponse.success(rentals, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    }
+
     @GetMapping("/host/{hostId}")
     public ResponseEntity<ApiResponse<List<RentalDTO>>> getHostRentals(@PathVariable Long hostId, Locale locale) {
         List<RentalDTO> rentals = rentalService.getHostRentals(hostId);

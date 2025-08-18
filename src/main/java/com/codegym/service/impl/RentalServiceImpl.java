@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +161,17 @@ public class RentalServiceImpl implements RentalService {
     public List<RentalDTO> getUserRentals(Long userId) {
         findUserByIdOrThrow(userId);
         return rentalRepository.findByRenterIdOrderByStartDateDesc(userId)
+                .stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RentalDTO> getCurrentUserRentals() {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUserEmail));
+        
+        return rentalRepository.findByRenterIdOrderByStartDateDesc(currentUser.getId())
                 .stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 

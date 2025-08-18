@@ -35,6 +35,7 @@ public interface HostService {
 
     HostDetailAdminDTO getHostDetailsByUserId(Long userId);
 
+    void changePassword(Long userId, String oldPassword, String newPassword, String confirmPassword);
 
 }
 

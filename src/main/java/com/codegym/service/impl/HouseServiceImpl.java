@@ -46,7 +46,7 @@ public class HouseServiceImpl implements HouseService {
         return HouseDTO.builder()
                 .id(house.getId())
                 .hostId(house.getHost().getId())
-                .hostName(house.getHost().getUsername())
+                .hostName(house.getHost().getFullName())
                 .title(house.getTitle())
                 .description(house.getDescription())
                 .address(house.getAddress())
@@ -86,7 +86,7 @@ public class HouseServiceImpl implements HouseService {
         house.setArea(request.getArea());
         house.setLatitude(request.getLatitude());
         house.setLongitude(request.getLongitude());
-        house.setStatus(House.Status.AVAILABLE); // Mặc định là AVAILABLE khi tạo/sửa
+        house.setStatus(request.getStatus()); // Sử dụng trạng thái từ request
         house.setHouseType(request.getHouseType());
     }
 
@@ -117,10 +117,24 @@ public class HouseServiceImpl implements HouseService {
         House house = new House();
         updateEntityFromRequest(house, request, currentUser);
 
+        // Xử lý geocoding một cách graceful - nếu thất bại thì vẫn cho phép tạo nhà
         if (house.getLatitude() == null || house.getLongitude() == null) {
-            double[] latLng = geocodingService.getLatLngFromAddress(house.getAddress());
-            house.setLatitude(latLng[0]);
-            house.setLongitude(latLng[1]);
+            try {
+                double[] latLng = geocodingService.getLatLngFromAddress(house.getAddress());
+                house.setLatitude(latLng[0]);
+                house.setLongitude(latLng[1]);
+            } catch (Exception e) {
+                // Log lỗi geocoding nhưng không throw exception
+                // Cho phép tạo nhà với địa chỉ mà không cần tọa độ
+                System.err.println("Geocoding failed for address: " + house.getAddress() + ". Error: " + e.getMessage());
+                
+                // Đặt tọa độ về null để đánh dấu là không có tọa độ
+                house.setLatitude(null);
+                house.setLongitude(null);
+                
+                // Có thể log thêm thông tin để debug
+                System.err.println("House will be created without coordinates. Address: " + house.getAddress());
+            }
         }
 
         house.setId(null);
@@ -151,10 +165,24 @@ public class HouseServiceImpl implements HouseService {
 
         updateEntityFromRequest(existingHouse, request, existingHouse.getHost());
 
+        // Xử lý geocoding một cách graceful - nếu thất bại thì vẫn cho phép lưu nhà
         if (addressChanged || existingHouse.getLatitude() == null || existingHouse.getLongitude() == null) {
-            double[] latLng = geocodingService.getLatLngFromAddress(existingHouse.getAddress());
-            existingHouse.setLatitude(latLng[0]);
-            existingHouse.setLongitude(latLng[1]);
+            try {
+                double[] latLng = geocodingService.getLatLngFromAddress(existingHouse.getAddress());
+                existingHouse.setLatitude(latLng[0]);
+                existingHouse.setLongitude(latLng[1]);
+            } catch (Exception e) {
+                // Log lỗi geocoding nhưng không throw exception
+                // Cho phép lưu nhà với địa chỉ mà không cần tọa độ
+                System.err.println("Geocoding failed for address: " + existingHouse.getAddress() + ". Error: " + e.getMessage());
+                
+                // Đặt tọa độ về null để đánh dấu là không có tọa độ
+                existingHouse.setLatitude(null);
+                existingHouse.setLongitude(null);
+                
+                // Có thể log thêm thông tin để debug
+                System.err.println("House will be saved without coordinates. Address: " + existingHouse.getAddress());
+            }
         }
 
         if (request.getImageUrls() != null) {
@@ -276,5 +304,12 @@ public class HouseServiceImpl implements HouseService {
         if (!newImageUrls.isEmpty()) {
             saveHouseImages(house, newImageUrls);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public org.springframework.data.domain.Page<HouseDTO> getAllHousesForAdmin(org.springframework.data.domain.Pageable pageable) {
+        org.springframework.data.domain.Page<House> housePage = houseRepository.findAll(pageable);
+        return housePage.map(this::toDTO);
     }
 }
