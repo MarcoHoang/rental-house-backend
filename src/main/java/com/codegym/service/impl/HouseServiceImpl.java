@@ -11,6 +11,7 @@ import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HouseRepository;
 import com.codegym.repository.HouseImageRepository;
 import com.codegym.repository.UserRepository;
+import com.codegym.repository.FavoriteRepository;
 import com.codegym.service.HouseService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class HouseServiceImpl implements HouseService {
     private final HouseRepository houseRepository;
     private final HouseImageRepository houseImageRepository;
     private final UserRepository userRepository;
+    private final FavoriteRepository favoriteRepository;
     private final GeocodingService geocodingService;
 
     private House findHouseByIdOrThrow(Long id) {
@@ -45,9 +47,10 @@ public class HouseServiceImpl implements HouseService {
     private HouseDTO toDTO(House house) {
         return HouseDTO.builder()
                 .id(house.getId())
-                .hostId(house.getHost().getId())
-                .hostName(house.getHost().getFullName())
-                .hostAvatar(house.getHost().getAvatarUrl())
+                .hostId(house.getHost() != null ? house.getHost().getId() : null)
+                .hostName(house.getHost() != null ? house.getHost().getFullName() : null)
+                .hostPhone(house.getHost() != null ? house.getHost().getPhone() : null) // Lấy số điện thoại chủ nhà
+                .hostAvatar(house.getHost() != null ? house.getHost().getAvatarUrl() : null) // Lấy avatar chủ nhà
                 .title(house.getTitle())
                 .description(house.getDescription())
                 .address(house.getAddress())
@@ -60,6 +63,7 @@ public class HouseServiceImpl implements HouseService {
                 .imageUrls(house.getImages() != null
                         ? house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList())
                         : List.of())
+                .favoriteCount(favoriteRepository.countByHouseId(house.getId()))
                 .createdAt(house.getCreatedAt())
                 .updatedAt(house.getUpdatedAt())
                 .build();
@@ -235,6 +239,17 @@ public class HouseServiceImpl implements HouseService {
     @Transactional(readOnly = true)
     public List<HouseDTO> getTopHouses() {
         return houseRepository.findAll().stream().limit(5).map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HouseDTO> getTopHousesByFavorites(int limit) {
+        // Lấy tất cả nhà và sắp xếp theo số lượng yêu thích giảm dần
+        return houseRepository.findAll().stream()
+                .map(this::toDTO) // toDTO đã tự động set favoriteCount
+                .sorted((h1, h2) -> Long.compare(h2.getFavoriteCount(), h1.getFavoriteCount())) // Sắp xếp giảm dần
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
     @Override

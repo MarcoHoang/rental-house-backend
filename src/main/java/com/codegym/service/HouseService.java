@@ -20,6 +20,8 @@ public interface HouseService {
 
     List<HouseDTO> getTopHouses();
 
+    List<HouseDTO> getTopHousesByFavorites(int limit);
+
     HouseDTO updateHouseStatus(Long id, String status);
 
     List<String> getHouseImages(Long id);

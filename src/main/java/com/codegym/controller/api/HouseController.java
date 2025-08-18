@@ -43,6 +43,14 @@ public class HouseController {
         return ResponseEntity.ok(ApiResponse.success(houses, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
+    @GetMapping("/top-favorites")
+    public ResponseEntity<ApiResponse<List<HouseDTO>>> getTopHousesByFavorites(
+            @RequestParam(defaultValue = "5") int limit, 
+            Locale locale) {
+        List<HouseDTO> houses = houseService.getTopHousesByFavorites(limit);
+        return ResponseEntity.ok(ApiResponse.success(houses, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    }
+
     @PutMapping("/{id}/status")
     public ResponseEntity<ApiResponse<HouseDTO>> updateHouseStatus(@PathVariable Long id, @RequestParam String status, Locale locale) {
         HouseDTO updated = houseService.updateHouseStatus(id, status);

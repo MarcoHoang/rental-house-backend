@@ -15,7 +15,8 @@ public class HouseDTO {
     private Long id;
     private Long hostId;
     private String hostName;
-    private String hostAvatar;
+    private String hostPhone; // Số điện thoại chủ nhà
+    private String hostAvatar; // Avatar chủ nhà
 
     private String title;
     private String description;
@@ -30,6 +31,8 @@ public class HouseDTO {
     private HouseType houseType;
 
     private List<String> imageUrls;
+
+    private Long favoriteCount; // Số lượng yêu thích
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
