@@ -90,35 +90,29 @@ public class RentalServiceImpl implements RentalService {
         User renter = findUserByIdOrThrow(dto.getRenterId());
         House house = findHouseByIdOrThrow(dto.getHouseId());
 
-        // Validation: Kiểm tra nhà có khả dụng không
         if (house.getStatus() != House.Status.AVAILABLE) {
             throw new AppException(StatusCode.HOUSE_NOT_AVAILABLE);
         }
 
-        // Validation: Không cho phép chủ nhà thuê nhà của chính mình
         if (house.getHost().getId().equals(renter.getId())) {
             throw new AppException(StatusCode.CANNOT_RENT_OWN_HOUSE);
         }
 
-        // Validation: Kiểm tra ngày bắt đầu phải trong tương lai
         if (dto.getStartDate().isBefore(LocalDateTime.now())) {
             throw new AppException(StatusCode.INVALID_START_DATE);
         }
 
-        // Validation: Kiểm tra thời gian thuê tối thiểu (ít nhất 1 ngày)
         long daysBetween = java.time.Duration.between(dto.getStartDate(), dto.getEndDate()).toDays();
         if (daysBetween < 1) {
             throw new AppException(StatusCode.MINIMUM_RENTAL_PERIOD);
         }
 
-        // Validation: Kiểm tra trùng lịch
         boolean isOverlapping = rentalRepository.existsOverlappingRental(
                 house.getId(), dto.getStartDate(), dto.getEndDate());
         if (isOverlapping) {
             throw new AppException(StatusCode.RENTAL_PERIOD_OVERLAP);
         }
 
-        // Tính toán tổng tiền
         double totalPrice = calculateTotalPrice(house.getPrice(), dto.getStartDate(), dto.getEndDate());
 
         Rental rental = Rental.builder()
@@ -126,7 +120,7 @@ public class RentalServiceImpl implements RentalService {
                 .renter(renter)
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
-                .status(Rental.Status.PENDING)  // Thay đổi từ SCHEDULED thành PENDING
+                .status(Rental.Status.PENDING)
                 .totalPrice(totalPrice)
                 .build();
 
@@ -141,7 +135,6 @@ public class RentalServiceImpl implements RentalService {
         if (monthlyPrice == null) return 0.0;
         
         long hoursBetween = java.time.Duration.between(startDate, endDate).toHours();
-        // Tính theo giờ (giá tháng / 30 ngày / 24 giờ)
         double hourlyPrice = monthlyPrice / 30.0 / 24.0;
         return Math.ceil(hoursBetween * hourlyPrice);
     }
@@ -209,12 +202,10 @@ public class RentalServiceImpl implements RentalService {
     public RentalDTO cancel(Long id) {
         Rental rental = findRentalByIdOrThrow(id);
 
-        // Cho phép hủy khi đang ở trạng thái PENDING hoặc SCHEDULED
         if (rental.getStatus() != Rental.Status.PENDING && rental.getStatus() != Rental.Status.SCHEDULED) {
             throw new AppException(StatusCode.INVALID_CANCEL_STATUS);
         }
 
-        // Kiểm tra quyền: chỉ renter mới được cancel
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(currentUserEmail)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUserEmail));
@@ -223,7 +214,6 @@ public class RentalServiceImpl implements RentalService {
             throw new AppException(StatusCode.ACCESS_DENIED);
         }
 
-        // Nếu đang SCHEDULED, kiểm tra thời gian (không cho phép cancel trong vòng 1 ngày trước)
         if (rental.getStatus() == Rental.Status.SCHEDULED) {
             long hoursUntilStart = java.time.Duration.between(LocalDateTime.now(), rental.getStartDate()).toHours();
             if (hoursUntilStart < 24) {
@@ -233,7 +223,6 @@ public class RentalServiceImpl implements RentalService {
 
         rental.setStatus(Rental.Status.CANCELED);
 
-        // Nếu nhà đang ở trạng thái RENTED, chuyển về AVAILABLE
         House house = rental.getHouse();
         if (house.getStatus() == House.Status.RENTED) {
             house.setStatus(House.Status.AVAILABLE);
@@ -294,7 +283,6 @@ public class RentalServiceImpl implements RentalService {
         notificationRepository.save(notification);
     }
 
-    // New methods for rental request workflow
     @Override
     @Transactional
     public RentalDTO createRequest(CreateRentalRequest request) {
@@ -304,39 +292,32 @@ public class RentalServiceImpl implements RentalService {
         
         House house = findHouseByIdOrThrow(request.getHouseId());
 
-        // Validation: Kiểm tra nhà có khả dụng không
         if (house.getStatus() != House.Status.AVAILABLE) {
             throw new AppException(StatusCode.HOUSE_NOT_AVAILABLE);
         }
 
-        // Validation: Không cho phép chủ nhà thuê nhà của chính mình
         if (house.getHost().getId().equals(currentUser.getId())) {
             throw new AppException(StatusCode.CANNOT_RENT_OWN_HOUSE);
         }
 
-        // Validation: Kiểm tra ngày bắt đầu phải lớn hơn 2 tiếng so với hiện tại
-        LocalDateTime minimumStartTime = LocalDateTime.now().plusHours(2);
+        LocalDateTime minimumStartTime = LocalDateTime.now().plusDays(1);
         if (request.getStartDate().isBefore(minimumStartTime)) {
             throw new AppException(StatusCode.INVALID_START_DATE);
         }
 
-        // Validation: Kiểm tra thời gian thuê tối thiểu (ít nhất 2 tiếng)
         long hoursBetween = java.time.Duration.between(request.getStartDate(), request.getEndDate()).toHours();
-        if (hoursBetween < 2) {
+        if (hoursBetween < 24) {
             throw new AppException(StatusCode.MINIMUM_RENTAL_PERIOD);
         }
 
-        // Validation: Kiểm tra trùng lịch
         boolean isOverlapping = rentalRepository.existsOverlappingRental(
                 house.getId(), request.getStartDate(), request.getEndDate());
         if (isOverlapping) {
             throw new AppException(StatusCode.RENTAL_PERIOD_OVERLAP);
         }
 
-        // Tính toán tổng tiền
         double totalPrice = calculateTotalPrice(house.getPrice(), request.getStartDate(), request.getEndDate());
 
-        // Set giá trị mặc định cho guestCount nếu null
         Integer guestCount = request.getGuestCount() != null ? request.getGuestCount() : 1;
 
         Rental rental = Rental.builder()
@@ -375,7 +356,6 @@ public class RentalServiceImpl implements RentalService {
             throw new AppException(StatusCode.INVALID_APPROVE_STATUS);
         }
 
-        // Kiểm tra quyền: chỉ host mới được approve
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(currentUserEmail)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUserEmail));
@@ -388,12 +368,10 @@ public class RentalServiceImpl implements RentalService {
         rental.setApprovedAt(LocalDateTime.now());
         rental.setApprovedBy(currentUser);
 
-        // Tự động chuyển sang SCHEDULED sau khi approve
         rental.setStatus(Rental.Status.SCHEDULED);
 
         Rental savedRental = rentalRepository.save(rental);
         
-        // Gửi notification cho user
         createNotificationForUser(
             savedRental.getRenter(), 
             savedRental, 
@@ -413,7 +391,6 @@ public class RentalServiceImpl implements RentalService {
             throw new AppException(StatusCode.INVALID_REJECT_STATUS);
         }
 
-        // Kiểm tra quyền: chỉ host mới được reject
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(currentUserEmail)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUserEmail));
@@ -429,7 +406,6 @@ public class RentalServiceImpl implements RentalService {
 
         Rental savedRental = rentalRepository.save(rental);
         
-        // Gửi notification cho user
         createNotificationForUser(
             savedRental.getRenter(), 
             savedRental, 
