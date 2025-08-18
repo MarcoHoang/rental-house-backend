@@ -51,6 +51,7 @@ public class WebSecurityConfig {
                                         String.format("%s/admin/login", apiPrefix), // Admin login
                                         String.format("%s/users/password-reset/**", apiPrefix),
                                         String.format("%s/houses", apiPrefix),
+                                        String.format("%s/houses/*", apiPrefix),
                                         String.format("%s/houses/top", apiPrefix),
                                         String.format("%s/houses/search", apiPrefix),
                                         String.format("%s/houses/*/images", apiPrefix),

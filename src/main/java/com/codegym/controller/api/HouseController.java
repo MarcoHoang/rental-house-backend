@@ -50,7 +50,6 @@ public class HouseController {
     }
 
     @GetMapping("/{id}/map")
-    @PreAuthorize("hasAnyRole('USER', 'HOST', 'ADMIN')")
     public ResponseEntity<ApiResponse<HouseDTO>> getHouseMap(@PathVariable Long id, Locale locale) {
         HouseDTO dto = houseService.getHouseById(id);
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
@@ -63,7 +62,6 @@ public class HouseController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'HOST', 'ADMIN')")
     public ResponseEntity<ApiResponse<HouseDTO>> getHouseById(@PathVariable Long id, Locale locale) {
         HouseDTO dto = houseService.getHouseById(id);
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
