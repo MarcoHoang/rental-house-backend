@@ -61,15 +61,24 @@ public enum StatusCode {
     FILE_NOT_FOUND("46", "error.file.notFound"),
     FILE_DELETE_ERROR("47", "error.file.delete"),
 
-    // --- Rental Management (50-59) ---
+    // --- Rental Management (50-69) ---
     RENTAL_PERIOD_OVERLAP("50", "error.rental.periodOverlap"),
     CANNOT_UPDATE_ACTIVE_RENTAL("51", "error.rental.cannotUpdateActive"),
     INVALID_CHECKIN_STATUS("52", "error.rental.invalidCheckinStatus"),
     INVALID_CHECKOUT_STATUS("53", "error.rental.invalidCheckoutStatus"),
+    CANNOT_RENT_OWN_HOUSE("54", "error.rental.cannotRentOwnHouse"),
+    INVALID_START_DATE("55", "error.rental.invalidStartDate"),
+    MINIMUM_RENTAL_PERIOD("56", "error.rental.minimumRentalPeriod"),
+    PAYMENT_REQUIRED("57", "error.rental.paymentRequired"),
+    INSUFFICIENT_BALANCE("58", "error.rental.insufficientBalance"),
+    INVALID_CANCEL_STATUS("59", "error.rental.invalidCancelStatus"),
+    INVALID_APPROVE_STATUS("60", "error.rental.invalidApproveStatus"),
+    INVALID_REJECT_STATUS("61", "error.rental.invalidRejectStatus"),
+    CANNOT_CANCEL_WITHIN_24H("62", "error.rental.cannotCancelWithin24h"),
 
-    // --- Review Management (60-69) ---
-    CANNOT_REVIEW_NOT_RENTED("60", "error.review.notRented"),
-    REVIEW_ALREADY_EXISTS("61", "error.review.alreadyExists"),
+    // --- Review Management (70-79) ---
+    CANNOT_REVIEW_NOT_RENTED("70", "error.review.notRented"),
+    REVIEW_ALREADY_EXISTS("71", "error.review.alreadyExists"),
 
     // == SYSTEM & VALIDATION ERRORS (90-99) ==
     DATA_INTEGRITY_VIOLATION("90", "error.data.integrity"),

@@ -27,15 +27,18 @@ public class Notification extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rental_id")
+    private Rental rental;
+
     @Builder.Default
     private Boolean isRead = false;
 
     public enum Type {
-        RENTAL_CREATED,
-        RENTAL_CANCELED,
-        REVIEW_RECEIVED,
-        LANDLORD_REQUEST_APPROVED,
-        LANDLORD_REQUEST_REJECTED,
-        GENERAL
+        RENTAL_REQUEST,      // Thông báo cho host khi có yêu cầu thuê mới
+        RENTAL_APPROVED,     // Thông báo cho user khi yêu cầu được chấp nhận
+        RENTAL_REJECTED,     // Thông báo cho user khi yêu cầu bị từ chối
+        RENTAL_CANCELED,     // Thông báo khi rental bị hủy
+        GENERAL             // Thông báo chung
     }
 }

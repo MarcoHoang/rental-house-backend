@@ -67,10 +67,13 @@ public class WebSecurityConfig {
                                         String.format("%s/users/*/change-password", apiPrefix),
                                         String.format("%s/rentals", apiPrefix),
                                         String.format("%s/rentals/*", apiPrefix),
+                                        String.format("%s/rentals/request", apiPrefix), // Tạo yêu cầu thuê nhà
+                                        String.format("%s/rentals/check-availability", apiPrefix), // Kiểm tra khả dụng
+                                        String.format("%s/rentals/user/me", apiPrefix), // Lấy rental của user hiện tại
                                         String.format("%s/reviews", apiPrefix),
                                         String.format("%s/notifications", apiPrefix),
                                         String.format("%s/chat/**", apiPrefix)
-                                ).hasAnyRole("USER", "ADMIN", "HOST")
+                                ).authenticated()
 
 //                         Quản trị viên (ROLE_ADMIN)
                                 .requestMatchers(
@@ -109,7 +112,12 @@ public class WebSecurityConfig {
                                         String.format("%s/notifications", apiPrefix),
                                         String.format("%s/renters/*/checkin", apiPrefix),
                                         String.format("%s/renters/*/checkout", apiPrefix),
-                                        String.format("%s/renters/*/statistics", apiPrefix)
+                                        String.format("%s/renters/*/statistics", apiPrefix),
+                                        // Các endpoint mới cho rental request workflow
+                                        String.format("%s/rentals/*/approve", apiPrefix), // Approve rental request
+                                        String.format("%s/rentals/*/reject", apiPrefix), // Reject rental request
+                                        String.format("%s/rentals/host/*/pending", apiPrefix), // Lấy pending requests của host
+                                        String.format("%s/rentals/host/*/pending/count", apiPrefix) // Đếm pending requests
                                 ).hasRole("HOST")
 
                                 // Admin có thể xóa nhà thông qua endpoint riêng (nếu cần)

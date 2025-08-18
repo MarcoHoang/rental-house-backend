@@ -47,6 +47,7 @@ public class HouseServiceImpl implements HouseService {
                 .id(house.getId())
                 .hostId(house.getHost().getId())
                 .hostName(house.getHost().getFullName())
+                .hostAvatar(house.getHost().getAvatarUrl())
                 .title(house.getTitle())
                 .description(house.getDescription())
                 .address(house.getAddress())

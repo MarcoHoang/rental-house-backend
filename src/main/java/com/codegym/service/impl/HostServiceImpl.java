@@ -268,7 +268,7 @@ public class HostServiceImpl implements HostService {
         List<HouseDTO> houseDTOs = houseEntities.stream()
                 .map(this::toHouseDTO).collect(Collectors.toList());
 
-        Double revenue = rentalRepository.sumTotalPriceByHost(user);
+        Double revenue = rentalRepository.sumTotalPriceByHost(user.getId());
         BigDecimal totalRevenue = (revenue != null) ? BigDecimal.valueOf(revenue) : BigDecimal.ZERO;
 
         return HostDetailAdminDTO.builder()

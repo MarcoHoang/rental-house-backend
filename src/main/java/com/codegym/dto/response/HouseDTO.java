@@ -15,6 +15,7 @@ public class HouseDTO {
     private Long id;
     private Long hostId;
     private String hostName;
+    private String hostAvatar;
 
     private String title;
     private String description;

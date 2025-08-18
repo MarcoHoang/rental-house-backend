@@ -40,12 +40,19 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
 
     List<Rental> findByHouse_Host_IdAndStatus(Long hostId, Rental.Status status);
 
+    List<Rental> findByHouse_Host_IdAndStatusIn(Long hostId, List<Rental.Status> statuses);
+
+    List<Rental> findByRenterIdAndStatusIn(Long renterId, List<Rental.Status> statuses);
+
     boolean existsByRenterIdAndHouseIdAndStatus(Long renterId, Long houseId, Rental.Status status);
+
+    @Query("SELECT COUNT(r) FROM Rental r WHERE r.house.host.id = :hostId AND r.status = 'PENDING'")
+    Long countPendingRequestsByHost(@Param("hostId") Long hostId);
 
     @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.renter.id = :renterId")
     Double sumTotalPriceByRenterId(@Param("renterId") Long renterId);
 
-    @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.house.host = :hostUser")
-    Double sumTotalPriceByHost(@Param("hostUser") User hostUser);
+    @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.house.host.id = :hostUserId")
+    Double sumTotalPriceByHost(@Param("hostUserId") Long hostUserId);
 
 }

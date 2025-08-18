@@ -1,6 +1,9 @@
 package com.codegym.service;
 
+import com.codegym.dto.request.CreateRentalRequest;
 import com.codegym.dto.response.RentalDTO;
+import com.codegym.entity.Rental;
+
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +23,8 @@ public interface RentalService {
 
     RentalDTO checkout(Long id);
 
+    RentalDTO cancel(Long id);
+
     List<RentalDTO> getUserRentals(Long userId);
 
     List<RentalDTO> getCurrentUserRentals();
@@ -27,4 +32,21 @@ public interface RentalService {
     List<RentalDTO> getHostRentals(Long hostId);
 
     Map<String, Double> getHostIncome(Long hostId);
+
+    // New methods for rental request workflow
+    RentalDTO createRequest(CreateRentalRequest request);
+    
+    RentalDTO approveRequest(Long rentalId);
+    
+    RentalDTO rejectRequest(Long rentalId, String reason);
+    
+    List<RentalDTO> getHostPendingRequests(Long hostId);
+    
+    List<RentalDTO> getHostRequestsByStatus(Long hostId, List<Rental.Status> statuses);
+    
+    List<RentalDTO> getUserRequestsByStatus(Long userId, List<Rental.Status> statuses);
+    
+    Long getHostPendingRequestsCount(Long hostId);
+    
+    boolean existsOverlappingRental(Long houseId, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
 }
