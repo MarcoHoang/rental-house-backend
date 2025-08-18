@@ -12,4 +12,6 @@ public interface NotificationService {
     NotificationDTO markAsRead(Long id);
 
     void deleteById(Long id);
+    
+    void createHouseDeletedNotification(Long hostId, String houseTitle, Long houseId);
 }

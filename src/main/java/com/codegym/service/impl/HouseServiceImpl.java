@@ -6,15 +6,19 @@ import com.codegym.entity.House;
 import com.codegym.entity.HouseImage;
 import com.codegym.entity.User;
 import com.codegym.entity.RoleName;
+import com.codegym.entity.Notification;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HouseRepository;
 import com.codegym.repository.HouseImageRepository;
 import com.codegym.repository.UserRepository;
+import com.codegym.repository.NotificationRepository;
 import com.codegym.repository.FavoriteRepository;
 import com.codegym.service.HouseService;
+import com.codegym.service.NotificationService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,17 +26,21 @@ import com.codegym.service.GeocodingService;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HouseServiceImpl implements HouseService {
 
     private final HouseRepository houseRepository;
     private final HouseImageRepository houseImageRepository;
     private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
     private final FavoriteRepository favoriteRepository;
     private final GeocodingService geocodingService;
+    private final NotificationService notificationService;
 
     private House findHouseByIdOrThrow(Long id) {
         return houseRepository.findById(id)
@@ -201,29 +209,82 @@ public class HouseServiceImpl implements HouseService {
     @Override
     @Transactional
     public void deleteHouse(Long id) {
-        House house = findHouseByIdOrThrow(id);
-        
-        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = userRepository.findByEmail(currentUsername)
-                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
-        
-        if (currentUser.getRole().getName().equals(RoleName.ADMIN)) {
-            if (house.getStatus() == House.Status.RENTED) {
-                throw new AppException(StatusCode.FORBIDDEN_ACTION, "Không thể xóa nhà đang được thuê");
+        try {
+            log.info("Starting to delete house with ID: {}", id);
+
+            House house = findHouseByIdOrThrow(id);
+            log.info("Found house: {} (title: {})", id, house.getTitle());
+
+            String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+            log.info("Current user: {}", currentUsername);
+
+            User currentUser = userRepository.findByEmail(currentUsername)
+                    .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+
+            log.info("Current user role: {}", currentUser.getRole().getName());
+
+            // Lưu thông tin nhà trước khi xóa để tạo notification
+            Long hostId = house.getHost().getId();
+            String houseTitle = house.getTitle();
+            boolean isAdminDeleting = currentUser.getRole().getName().equals(RoleName.ADMIN);
+
+            // Debug logging chi tiết
+            log.info("House details - ID: {}, Title: '{}', Host ID: {}", id, houseTitle, hostId);
+            log.info("House title is null: {}, empty: {}", houseTitle == null, houseTitle != null && houseTitle.trim().isEmpty());
+
+            // Đảm bảo houseTitle có giá trị
+            if (houseTitle == null || houseTitle.trim().isEmpty()) {
+                houseTitle = "Nhà #" + id;
+                log.info("Using fallback house title: {}", houseTitle);
             }
-        } 
-        else if (currentUser.getRole().getName().equals(RoleName.HOST)) {
-            if (!house.getHost().getId().equals(currentUser.getId())) {
-                throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn không có quyền xóa nhà này");
+
+            log.info("Final house title for notification: '{}'", houseTitle);
+
+            if (isAdminDeleting) {
+                if (house.getStatus() == House.Status.RENTED) {
+                    throw new AppException(StatusCode.FORBIDDEN_ACTION, "Không thể xóa nhà đang được thuê");
+                }
             }
-            if (house.getStatus() == House.Status.RENTED) {
-                throw new AppException(StatusCode.FORBIDDEN_ACTION, "Không thể xóa nhà đang được thuê");
+            else if (currentUser.getRole().getName().equals(RoleName.HOST)) {
+                if (!house.getHost().getId().equals(currentUser.getId())) {
+                    throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn không có quyền xóa nhà này");
+                }
+                if (house.getStatus() == House.Status.RENTED) {
+                    throw new AppException(StatusCode.FORBIDDEN_ACTION, "Không thể xóa nhà đang được thuê");
+                }
+            } else {
+                throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn không có quyền xóa nhà");
             }
-        } else {
-            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn không có quyền xóa nhà");
+
+            // Kiểm tra và xóa các rental records liên quan trước
+            log.info("Checking for related rental records...");
+
+            // Không cần xóa images thủ công vì đã có cascade delete
+            log.info("House has {} images (will be deleted automatically by cascade)",
+                house.getImages() != null ? house.getImages().size() : 0);
+
+            log.info("Deleting house from repository");
+            houseRepository.delete(house);
+            log.info("House deleted successfully from repository");
+
+            // Tạo notification cho chủ nhà nếu admin xóa nhà
+            if (isAdminDeleting) {
+                try {
+                    log.info("Creating notification for host {} about deleted house {}", hostId, id);
+                    notificationService.createHouseDeletedNotification(hostId, houseTitle, id);
+                    log.info("House deleted by admin and notification sent to host {} - house: {}", hostId, houseTitle);
+                } catch (Exception e) {
+                    log.error("Failed to send notification for deleted house {}: {}", id, e.getMessage(), e);
+                    // Không throw exception để tránh rollback transaction
+                }
+            }
+
+            log.info("House deletion completed successfully for ID: {}", id);
+
+        } catch (Exception e) {
+            log.error("Error deleting house with ID {}: {}", id, e.getMessage(), e);
+            throw e;
         }
-        
-        houseRepository.delete(house);
     }
 
     @Override
