@@ -47,8 +47,10 @@ public class HouseServiceImpl implements HouseService {
     private HouseDTO toDTO(House house) {
         return HouseDTO.builder()
                 .id(house.getId())
-                .hostId(house.getHost().getId())
-                .hostName(house.getHost().getFullName())
+                .hostId(house.getHost() != null ? house.getHost().getId() : null)
+                .hostName(house.getHost() != null ? house.getHost().getFullName() : null)
+                .hostPhone(house.getHost() != null ? house.getHost().getPhone() : null) // Lấy số điện thoại chủ nhà
+                .hostAvatar(house.getHost() != null ? house.getHost().getAvatarUrl() : null) // Lấy avatar chủ nhà
                 .title(house.getTitle())
                 .description(house.getDescription())
                 .address(house.getAddress())

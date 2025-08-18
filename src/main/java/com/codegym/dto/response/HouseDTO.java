@@ -15,6 +15,8 @@ public class HouseDTO {
     private Long id;
     private Long hostId;
     private String hostName;
+    private String hostPhone; // Số điện thoại chủ nhà
+    private String hostAvatar; // Avatar chủ nhà
 
     private String title;
     private String description;

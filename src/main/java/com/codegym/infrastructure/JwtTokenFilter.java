@@ -1,7 +1,6 @@
 package com.codegym.infrastructure;
 
 import com.codegym.components.JwtTokenUtil;
-import com.codegym.entity.User;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -69,10 +68,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                         authorities = List.of(new SimpleGrantedAuthority(role));
                     }
 
-                    // Sử dụng userId thay vì userDetails để authentication.getName() trả về userId
-                    User user = (User) userDetails;
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(user.getId().toString(), null, authorities);
+                            new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
