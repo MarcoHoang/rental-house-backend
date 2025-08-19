@@ -5,6 +5,7 @@ import com.codegym.dto.response.ReviewDTO;
 import com.codegym.entity.House;
 import com.codegym.entity.Rental;
 import com.codegym.entity.Review;
+import com.codegym.entity.RoleName;
 import com.codegym.entity.User;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
@@ -15,6 +16,7 @@ import com.codegym.repository.UserRepository;
 import com.codegym.service.ReviewService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,26 @@ public class ReviewServiceImpl implements ReviewService {
     private Review findReviewByIdOrThrow(Long reviewId) {
         return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.REVIEW_NOT_FOUND, reviewId));
+    }
+
+    private User getCurrentUser() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+    }
+
+    private void checkReviewOwnership(Review review) {
+        User currentUser = getCurrentUser();
+        
+        // Admin có thể quản lý tất cả đánh giá
+        if (currentUser.getRole().getName().equals(RoleName.ADMIN)) {
+            return;
+        }
+        
+        // Người dùng thường chỉ có thể quản lý đánh giá của mình
+        if (!review.getReviewer().getId().equals(currentUser.getId())) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn không có quyền chỉnh sửa hoặc xóa đánh giá này");
+        }
     }
 
     private ReviewDTO toDTO(Review review) {
@@ -87,6 +109,14 @@ public class ReviewServiceImpl implements ReviewService {
         User reviewer = findUserByIdOrThrow(request.getReviewerId());
         House house = findHouseByIdOrThrow(request.getHouseId());
 
+        // Kiểm tra xem người dùng hiện tại có phải là người tạo đánh giá không
+        User currentUser = getCurrentUser();
+        
+        // Admin có thể tạo đánh giá cho bất kỳ ai, người dùng thường chỉ có thể tạo đánh giá cho chính mình
+        if (!currentUser.getRole().getName().equals(RoleName.ADMIN) && !currentUser.getId().equals(reviewer.getId())) {
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn chỉ có thể tạo đánh giá cho chính mình");
+        }
+
         // Tạm thời bỏ điều kiện phải thuê nhà và checkout
         // boolean hasRentedAndCheckedOut = rentalRepository.existsByRenterIdAndHouseIdAndStatus(reviewer.getId(), house.getId(), Rental.Status.CHECKED_OUT);
         // if (!hasRentedAndCheckedOut) {
@@ -111,6 +141,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO) {
         Review review = findReviewByIdOrThrow(id);
+        
+        // Kiểm tra quyền sở hữu đánh giá
+        checkReviewOwnership(review);
 
         review.setRating(reviewDTO.getRating());
         review.setComment(reviewDTO.getComment());
@@ -122,6 +155,10 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void deleteReview(Long id) {
         Review review = findReviewByIdOrThrow(id);
+        
+        // Kiểm tra quyền sở hữu đánh giá
+        checkReviewOwnership(review);
+        
         reviewRepository.delete(review);
     }
 
@@ -129,6 +166,10 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public ReviewDTO toggleVisibility(Long id) {
         Review review = findReviewByIdOrThrow(id);
+        
+        // Kiểm tra quyền sở hữu đánh giá
+        checkReviewOwnership(review);
+        
         review.setIsVisible(!review.getIsVisible());
         return toDTO(reviewRepository.save(review));
     }
