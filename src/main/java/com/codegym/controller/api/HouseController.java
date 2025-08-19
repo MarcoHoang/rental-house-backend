@@ -3,7 +3,9 @@ package com.codegym.controller.api;
 import com.codegym.dto.ApiResponse;
 import com.codegym.dto.request.HouseRequest;
 import com.codegym.dto.response.HouseDTO;
+import com.codegym.dto.response.GeocodingResponse;
 import com.codegym.service.HouseService;
+import com.codegym.service.GeocodingService;
 import com.codegym.utils.StatusCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/houses")
@@ -23,6 +26,7 @@ import java.util.Locale;
 public class HouseController {
 
     private final HouseService houseService;
+    private final GeocodingService geocodingService;
     private final MessageSource messageSource;
 
     @GetMapping
@@ -99,5 +103,60 @@ public class HouseController {
     public ResponseEntity<ApiResponse<Void>> deleteHouse(@PathVariable Long id, Locale locale) {
         houseService.deleteHouse(id);
         return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
+    }
+
+    /**
+     * Kiểm tra xem địa chỉ có thể geocode được không
+     */
+    @GetMapping("/validate-address")
+    public ResponseEntity<ApiResponse<GeocodingResponse>> validateAddress(@RequestParam String address, Locale locale) {
+        boolean isValid = geocodingService.isAddressValid(address);
+        String formattedAddress = null;
+        
+        if (isValid) {
+            formattedAddress = geocodingService.getFormattedAddress(address);
+        }
+        
+        GeocodingResponse response = GeocodingResponse.builder()
+                .isValid(isValid)
+                .formattedAddress(formattedAddress)
+                .originalAddress(address)
+                .build();
+        
+        return ResponseEntity.ok(ApiResponse.success(response, StatusCode.SUCCESS, messageSource, locale));
+    }
+
+    /**
+     * Lấy tọa độ từ địa chỉ
+     */
+    @GetMapping("/geocode")
+    public ResponseEntity<ApiResponse<GeocodingResponse>> geocodeAddress(@RequestParam String address, Locale locale) {
+        GeocodingResponse response = geocodingService.getGeocodingResponse(address);
+        
+        if (response.isValid()) {
+            return ResponseEntity.ok(ApiResponse.success(response, StatusCode.SUCCESS, messageSource, locale));
+        } else {
+            return ResponseEntity.ok(ApiResponse.success(response, StatusCode.GEOCODING_FAILED, messageSource, locale));
+        }
+    }
+
+    /**
+     * Xóa cache geocoding
+     */
+    @DeleteMapping("/geocode/cache")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> clearGeocodingCache(Locale locale) {
+        geocodingService.clearCache();
+        return ResponseEntity.ok(ApiResponse.success("Cache đã được xóa", StatusCode.SUCCESS, messageSource, locale));
+    }
+
+    /**
+     * Lấy thống kê cache geocoding
+     */
+    @GetMapping("/geocode/cache/stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> getGeocodingCacheStats(Locale locale) {
+        String stats = geocodingService.getCacheStats();
+        return ResponseEntity.ok(ApiResponse.success(stats, StatusCode.SUCCESS, messageSource, locale));
     }
 }

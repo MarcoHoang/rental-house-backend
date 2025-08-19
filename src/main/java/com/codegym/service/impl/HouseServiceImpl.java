@@ -2,6 +2,7 @@ package com.codegym.service.impl;
 
 import com.codegym.dto.request.HouseRequest;
 import com.codegym.dto.response.HouseDTO;
+import com.codegym.dto.response.GeocodingResponse;
 import com.codegym.entity.House;
 import com.codegym.entity.HouseImage;
 import com.codegym.entity.User;
@@ -135,20 +136,29 @@ public class HouseServiceImpl implements HouseService {
         // Xử lý geocoding một cách graceful - nếu thất bại thì vẫn cho phép tạo nhà
         if (house.getLatitude() == null || house.getLongitude() == null) {
             try {
-                double[] latLng = geocodingService.getLatLngFromAddress(house.getAddress());
-                house.setLatitude(latLng[0]);
-                house.setLongitude(latLng[1]);
+                log.info("Attempting to geocode address for new house: {}", house.getAddress());
+                GeocodingResponse response = geocodingService.getGeocodingResponse(house.getAddress());
+                
+                if (response.isValid() && response.getLatitude() != null && response.getLongitude() != null) {
+                    house.setLatitude(response.getLatitude());
+                    house.setLongitude(response.getLongitude());
+                    log.info("Successfully geocoded address. Coordinates: ({}, {})", 
+                            response.getLatitude(), response.getLongitude());
+                } else {
+                    log.warn("Geocoding failed for address: {}. Message: {}. House will be created without coordinates.", 
+                            house.getAddress(), response.getMessage());
+                    house.setLatitude(null);
+                    house.setLongitude(null);
+                }
             } catch (Exception e) {
                 // Log lỗi geocoding nhưng không throw exception
                 // Cho phép tạo nhà với địa chỉ mà không cần tọa độ
-                System.err.println("Geocoding failed for address: " + house.getAddress() + ". Error: " + e.getMessage());
+                log.warn("Geocoding failed for address: {}. Error: {}. House will be created without coordinates.", 
+                        house.getAddress(), e.getMessage());
                 
                 // Đặt tọa độ về null để đánh dấu là không có tọa độ
                 house.setLatitude(null);
                 house.setLongitude(null);
-                
-                // Có thể log thêm thông tin để debug
-                System.err.println("House will be created without coordinates. Address: " + house.getAddress());
             }
         }
 
@@ -183,20 +193,30 @@ public class HouseServiceImpl implements HouseService {
         // Xử lý geocoding một cách graceful - nếu thất bại thì vẫn cho phép lưu nhà
         if (addressChanged || existingHouse.getLatitude() == null || existingHouse.getLongitude() == null) {
             try {
-                double[] latLng = geocodingService.getLatLngFromAddress(existingHouse.getAddress());
-                existingHouse.setLatitude(latLng[0]);
-                existingHouse.setLongitude(latLng[1]);
+                log.info("Attempting to geocode address for updated house: {} (address changed: {})", 
+                        existingHouse.getAddress(), addressChanged);
+                GeocodingResponse response = geocodingService.getGeocodingResponse(existingHouse.getAddress());
+                
+                if (response.isValid() && response.getLatitude() != null && response.getLongitude() != null) {
+                    existingHouse.setLatitude(response.getLatitude());
+                    existingHouse.setLongitude(response.getLongitude());
+                    log.info("Successfully geocoded address. Coordinates: ({}, {})", 
+                            response.getLatitude(), response.getLongitude());
+                } else {
+                    log.warn("Geocoding failed for address: {}. Message: {}. House will be saved without coordinates.", 
+                            existingHouse.getAddress(), response.getMessage());
+                    existingHouse.setLatitude(null);
+                    existingHouse.setLongitude(null);
+                }
             } catch (Exception e) {
                 // Log lỗi geocoding nhưng không throw exception
                 // Cho phép lưu nhà với địa chỉ mà không cần tọa độ
-                System.err.println("Geocoding failed for address: " + existingHouse.getAddress() + ". Error: " + e.getMessage());
+                log.warn("Geocoding failed for address: {}. Error: {}. House will be saved without coordinates.", 
+                        existingHouse.getAddress(), e.getMessage());
                 
                 // Đặt tọa độ về null để đánh dấu là không có tọa độ
                 existingHouse.setLatitude(null);
                 existingHouse.setLongitude(null);
-                
-                // Có thể log thêm thông tin để debug
-                System.err.println("House will be saved without coordinates. Address: " + existingHouse.getAddress());
             }
         }
 
