@@ -39,4 +39,13 @@ public class ApiResponse<T> {
         String message = messageSource.getMessage(statusCode.getMessageKey(), null, locale);
         return new ApiResponse<>(statusCode.getCode(), message);
     }
+
+    public static <T> ApiResponse<T> error(String code, String message, MessageSource messageSource, Locale locale) {
+        return new ApiResponse<>(code, message);
+    }
+
+    public static <T> ApiResponse<T> error(StatusCode statusCode, MessageSource messageSource, Locale locale) {
+        String message = messageSource.getMessage(statusCode.getMessageKey(), null, locale);
+        return new ApiResponse<>(statusCode.getCode(), message);
+    }
 }

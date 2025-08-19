@@ -30,4 +30,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Dashboard statistics methods
     long countByRoleName(RoleName roleName);
+    
+    // Google OAuth methods
+    Optional<User> findByGoogleAccountId(String googleAccountId);
+    Optional<User> findByFacebookAccountId(String facebookAccountId);
 }

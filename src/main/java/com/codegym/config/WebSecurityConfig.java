@@ -48,6 +48,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(
                                         String.format("%s/auth/register", apiPrefix),
                                         String.format("%s/auth/login", apiPrefix),
+                                        String.format("%s/auth/google", apiPrefix), // Google OAuth login
                                         String.format("%s/admin/login", apiPrefix), // Admin login
                                         String.format("%s/users/password-reset/**", apiPrefix),
                                         String.format("%s/houses", apiPrefix),

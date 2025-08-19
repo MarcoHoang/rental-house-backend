@@ -80,6 +80,12 @@ public enum StatusCode {
     CANNOT_REVIEW_NOT_RENTED("70", "error.review.notRented"),
     REVIEW_ALREADY_EXISTS("71", "error.review.alreadyExists"),
 
+    // --- Favorite Management (80-89) ---
+    FAVORITE_NOT_FOUND("80", "error.favorite.notFound"),
+    FAVORITE_ALREADY_EXISTS("81", "error.favorite.alreadyExists"),
+    FAVORITE_NOT_EXISTS("82", "error.favorite.notExists"),
+    FAVORITE_TOGGLE_FAILED("83", "error.favorite.toggleFailed"),
+
     // == SYSTEM & VALIDATION ERRORS (90-99) ==
     DATA_INTEGRITY_VIOLATION("90", "error.data.integrity"),
     ACCESS_DENIED("91", "error.access.denied"),
@@ -91,7 +97,6 @@ public enum StatusCode {
     VALIDATION_ERROR("98", "error.validation"),
     INTERNAL_ERROR("99", "error.internal"),
 
-
     // == FIELD VALIDATION MESSAGES (Dùng cho @Valid) ==
     VALIDATION_USERNAME_NOT_BLANK("V01", "validation.username.notBlank"),
     VALIDATION_USERNAME_SIZE("V02", "validation.username.size"),
@@ -101,7 +106,28 @@ public enum StatusCode {
     VALIDATION_EMAIL_INVALID("V06", "validation.email.invalid"),
     VALIDATION_PASSWORD_NOT_BLANK("V07", "validation.password.notBlank"),
     VALIDATION_PASSWORD_SIZE("V08", "validation.password.size"),
-    VALIDATION_REJECT_REASON_NOT_BLANK("V09", "validation.reject.reason.notBlank");
+    VALIDATION_REJECT_REASON_NOT_BLANK("V09", "validation.reject.reason.notBlank"),
+
+    // == HOUSE VALIDATION ==
+    VALIDATION_HOUSE_TITLE_NOT_BLANK("V10", "validation.house.title.notBlank"),
+    VALIDATION_HOUSE_TITLE_SIZE("V11", "validation.house.title.size"),
+    VALIDATION_HOUSE_DESCRIPTION_SIZE("V12", "validation.house.description.size"),
+    VALIDATION_HOUSE_ADDRESS_NOT_BLANK("V13", "validation.house.address.notBlank"),
+    VALIDATION_HOUSE_ADDRESS_SIZE("V14", "validation.house.address.size"),
+    VALIDATION_HOUSE_PRICE_POSITIVE("V15", "validation.house.price.positive"),
+    VALIDATION_HOUSE_AREA_POSITIVE("V16", "validation.house.area.positive"),
+    VALIDATION_HOUSE_TYPE_NOT_NULL("V17", "validation.house.houseType.notNull"),
+
+    // == RENTAL VALIDATION ==
+    VALIDATION_RENTAL_START_DATE_NOT_NULL("V20", "validation.rental.startDate.notNull"),
+    VALIDATION_RENTAL_END_DATE_NOT_NULL("V21", "validation.rental.endDate.notNull"),
+    VALIDATION_RENTAL_GUEST_COUNT_POSITIVE("V22", "validation.rental.guestCount.positive"),
+    VALIDATION_RENTAL_MESSAGE_SIZE("V23", "validation.rental.messageToHost.size"),
+
+    // == REVIEW VALIDATION ==
+    VALIDATION_REVIEW_RATING_RANGE("V30", "validation.review.rating.range"),
+    VALIDATION_REVIEW_COMMENT_SIZE("V31", "validation.review.comment.size"),
+    VALIDATION_REVIEW_COMMENT_NOT_BLANK("V32", "validation.review.comment.notBlank");
 
     public static final StatusCode IMAGE_NOT_FOUND = null;
     public static final StatusCode INVALID_REQUEST = null ;

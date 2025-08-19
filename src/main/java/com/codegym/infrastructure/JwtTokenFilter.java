@@ -91,6 +91,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final List<Pair<String, String>> bypassTokens = Arrays.asList(
                 Pair.of(String.format("%s/auth/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/auth/login", apiPrefix), "POST"),
+                Pair.of(String.format("%s/auth/google", apiPrefix), "POST"), // Google OAuth login
                 Pair.of(String.format("%s/admin/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/files/", apiPrefix), "GET"),
                 // Thêm các endpoint công khai
