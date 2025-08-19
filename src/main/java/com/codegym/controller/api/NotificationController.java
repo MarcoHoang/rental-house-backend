@@ -47,33 +47,5 @@ public class NotificationController {
         return new ResponseEntity<>(ApiResponse.success(created, StatusCode.CREATED_SUCCESS, messageSource, locale), HttpStatus.CREATED);
     }
 
-    // Test endpoint để tạo notification HOUSE_DELETED
-    @PostMapping("/test-house-deleted")
-    public ResponseEntity<ApiResponse<String>> testHouseDeletedNotification(Locale locale) {
-        try {
-            // Sử dụng tên nhà thực tế thay vì "Test House"
-            String realHouseTitle = "Nhà nguyên căn 3 tầng, full nội thất, trung tâm Hà Nội";
-            notificationService.createHouseDeletedNotification(3L, realHouseTitle, 14L);
-            return ResponseEntity.ok(ApiResponse.success("Test notification created successfully with title: " + realHouseTitle, StatusCode.CREATED_SUCCESS, messageSource, locale));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponse<>(StatusCode.INTERNAL_ERROR.getCode(), "Failed to create test notification: " + e.getMessage(), null));
-        }
-    }
 
-    // Test endpoint để kiểm tra messageSource
-    @GetMapping("/test-message")
-    public ResponseEntity<ApiResponse<String>> testMessageSource(Locale locale) {
-        try {
-            String message = messageSource.getMessage(
-                "notification.house.deleted", 
-                new Object[]{"Nhà Test"}, 
-                locale
-            );
-            return ResponseEntity.ok(ApiResponse.success("Message: " + message, StatusCode.GET_DETAIL_SUCCESS, messageSource, locale));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponse<>(StatusCode.INTERNAL_ERROR.getCode(), "Failed to get message: " + e.getMessage(), null));
-        }
-    }
 }

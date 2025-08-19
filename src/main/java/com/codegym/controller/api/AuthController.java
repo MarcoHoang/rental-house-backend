@@ -1,6 +1,7 @@
 package com.codegym.controller.api;
 
 import com.codegym.dto.ApiResponse;
+import com.codegym.dto.request.GoogleLoginRequest;
 import com.codegym.dto.request.LoginRequest;
 import com.codegym.dto.request.RegisterRequest;
 import com.codegym.dto.response.LoginResponse;
@@ -44,6 +45,17 @@ public class AuthController {
         return new ResponseEntity<>(
                 ApiResponse.success(newUser, StatusCode.REGISTER_SUCCESS, messageSource, locale),
                 HttpStatus.CREATED
+        );
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<ApiResponse<LoginResponse>> googleLogin(
+            @Valid @RequestBody GoogleLoginRequest request,
+            Locale locale
+    ) {
+        LoginResponse loginResponse = authService.googleLogin(request);
+        return ResponseEntity.ok(
+                ApiResponse.success(loginResponse, StatusCode.LOGIN_SUCCESS, messageSource, locale)
         );
     }
 }

@@ -1,6 +1,7 @@
 package com.codegym.service;
 
 import com.codegym.components.JwtTokenUtil;
+import com.codegym.dto.request.GoogleLoginRequest;
 import com.codegym.dto.request.LoginRequest;
 import com.codegym.dto.request.RegisterRequest;
 import com.codegym.dto.response.LoginResponse;
@@ -32,6 +33,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
+    private final GoogleOAuthService googleOAuthService;
 
 
     public LoginResponse login(LoginRequest request) {
@@ -106,5 +108,45 @@ public class AuthService {
         log.info("New user registered: {}", savedUser.getEmail());
 
         return userMapper.toResponse(savedUser);
+    }
+
+    @Transactional
+    public LoginResponse googleLogin(GoogleLoginRequest request) {
+        try {
+            // Verify Google token
+            var payload = googleOAuthService.verifyGoogleToken(request);
+            
+            // Find or create user
+            User user = googleOAuthService.findOrCreateUser(payload);
+            
+            // Ensure user has a role (default to USER if not set)
+            if (user.getRole() == null) {
+                Role userRole = roleRepository.findByName(RoleName.USER)
+                        .orElseThrow(() -> new ResourceNotFoundException(StatusCode.ROLE_NOT_FOUND));
+                user.setRole(userRole);
+            }
+            
+            // Encode password if it's not already encoded (for new Google users)
+            if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+            
+            // Save user if it's new or updated
+            user = userRepository.save(user);
+            
+            // Generate JWT token
+            String token = jwtTokenUtil.generateToken(user);
+            UserDTO userDTO = userMapper.toResponse(user);
+            
+            return LoginResponse.builder()
+                    .token(token)
+                    .role(user.getRole().getName())
+                    .user(userDTO)
+                    .build();
+                    
+        } catch (Exception e) {
+            log.error("Error during Google login", e);
+            throw new AppException(StatusCode.INVALID_CREDENTIALS);
+        }
     }
 }

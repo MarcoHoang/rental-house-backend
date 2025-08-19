@@ -25,16 +25,17 @@ public class FavoriteController {
     private final MessageSource messageSource;
 
     @PostMapping("/{houseId}/toggle")
-//    @PreAuthorize("hasRole('USER') or hasRole('HOST')")
     public ResponseEntity<ApiResponse<Boolean>> toggleFavorite(@PathVariable Long houseId, Locale locale) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ApiResponse<>(StatusCode.UNAUTHORIZED.getCode(), "User not authenticated"));
-        }
-        
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            
+            if (authentication == null || !authentication.isAuthenticated() || 
+                "anonymousUser".equals(authentication.getName())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error(StatusCode.UNAUTHORIZED.getCode(), 
+                        "User not authenticated", messageSource, locale));
+            }
+            
             Long userId = Long.parseLong(authentication.getName());
             boolean isFavorite = favoriteService.toggleFavorite(userId, houseId);
             String message = isFavorite ? "Đã thêm vào danh sách yêu thích" : "Đã bỏ khỏi danh sách yêu thích";
@@ -42,33 +43,75 @@ public class FavoriteController {
             return ResponseEntity.ok(ApiResponse.success(isFavorite, StatusCode.SUCCESS, messageSource, locale));
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponse<>(StatusCode.VALIDATION_ERROR.getCode(), "Invalid user ID format"));
+                .body(ApiResponse.error(StatusCode.VALIDATION_ERROR.getCode(), 
+                    "Invalid user ID format", messageSource, locale));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(StatusCode.INTERNAL_ERROR.getCode(), 
+                    "Internal server error: " + e.getMessage(), messageSource, locale));
         }
     }
 
     @GetMapping("/check/{houseId}")
-//    @PreAuthorize("hasRole('USER') or hasRole('HOST')")
     public ResponseEntity<ApiResponse<Boolean>> checkFavorite(@PathVariable Long houseId, Locale locale) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = Long.parseLong(authentication.getName());
-        
-        boolean isFavorite = favoriteService.isFavorite(userId, houseId);
-        return ResponseEntity.ok(ApiResponse.success(isFavorite, StatusCode.SUCCESS, messageSource, locale));
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            
+            if (authentication == null || !authentication.isAuthenticated() || 
+                "anonymousUser".equals(authentication.getName())) {
+                // Return false for unauthenticated users instead of error
+                return ResponseEntity.ok(ApiResponse.success(false, StatusCode.SUCCESS, messageSource, locale));
+            }
+            
+            Long userId = Long.parseLong(authentication.getName());
+            boolean isFavorite = favoriteService.isFavorite(userId, houseId);
+            return ResponseEntity.ok(ApiResponse.success(isFavorite, StatusCode.SUCCESS, messageSource, locale));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(StatusCode.VALIDATION_ERROR.getCode(), 
+                    "Invalid user ID format", messageSource, locale));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(StatusCode.INTERNAL_ERROR.getCode(), 
+                    "Internal server error: " + e.getMessage(), messageSource, locale));
+        }
     }
 
     @GetMapping("/my-favorites")
-//    @PreAuthorize("hasRole('USER') or hasRole('HOST')")
     public ResponseEntity<ApiResponse<List<Long>>> getMyFavoriteHouseIds(Locale locale) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = Long.parseLong(authentication.getName());
-        
-        List<Long> favoriteHouseIds = favoriteService.getFavoriteHouseIds(userId);
-        return ResponseEntity.ok(ApiResponse.success(favoriteHouseIds, StatusCode.SUCCESS, messageSource, locale));
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            
+            if (authentication == null || !authentication.isAuthenticated() || 
+                "anonymousUser".equals(authentication.getName())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error(StatusCode.UNAUTHORIZED.getCode(), 
+                        "User not authenticated", messageSource, locale));
+            }
+            
+            Long userId = Long.parseLong(authentication.getName());
+            List<Long> favoriteHouseIds = favoriteService.getFavoriteHouseIds(userId);
+            return ResponseEntity.ok(ApiResponse.success(favoriteHouseIds, StatusCode.SUCCESS, messageSource, locale));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(StatusCode.VALIDATION_ERROR.getCode(), 
+                    "Invalid user ID format", messageSource, locale));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(StatusCode.INTERNAL_ERROR.getCode(), 
+                    "Internal server error: " + e.getMessage(), messageSource, locale));
+        }
     }
 
     @GetMapping("/{houseId}/count")
     public ResponseEntity<ApiResponse<Long>> getFavoriteCount(@PathVariable Long houseId, Locale locale) {
-        Long count = favoriteService.getFavoriteCount(houseId);
-        return ResponseEntity.ok(ApiResponse.success(count, StatusCode.SUCCESS, messageSource, locale));
+        try {
+            Long count = favoriteService.getFavoriteCount(houseId);
+            return ResponseEntity.ok(ApiResponse.success(count, StatusCode.SUCCESS, messageSource, locale));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(StatusCode.INTERNAL_ERROR.getCode(), 
+                    "Internal server error: " + e.getMessage(), messageSource, locale));
+        }
     }
 }
