@@ -103,6 +103,8 @@ public enum StatusCode {
     VALIDATION_PASSWORD_SIZE("V08", "validation.password.size"),
     VALIDATION_REJECT_REASON_NOT_BLANK("V09", "validation.reject.reason.notBlank");
 
+    public static final StatusCode IMAGE_NOT_FOUND = null;
+    public static final StatusCode INVALID_REQUEST = null ;
     private final String code;
     private final String messageKey;
 

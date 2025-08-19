@@ -1,5 +1,6 @@
 package com.codegym.service;
 
+import com.codegym.dto.request.CreateReviewRequest;
 import com.codegym.dto.response.ReviewDTO;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface ReviewService {
 
     List<ReviewDTO> getReviewsByHouseId(Long houseId);
 
-    ReviewDTO createReview(ReviewDTO reviewDTO);
+    ReviewDTO createReview(CreateReviewRequest request);
 
     ReviewDTO updateReview(Long id, ReviewDTO reviewDTO);
 

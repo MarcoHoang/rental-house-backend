@@ -1,6 +1,7 @@
 package com.codegym.controller.api;
 
 import com.codegym.dto.ApiResponse;
+import com.codegym.dto.request.CreateReviewRequest;
 import com.codegym.dto.response.ReviewDTO;
 import com.codegym.service.ReviewService;
 import com.codegym.utils.StatusCode;
@@ -48,8 +49,8 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ReviewDTO>> createReview(@Valid @RequestBody ReviewDTO reviewDTO, Locale locale) {
-        ReviewDTO created = reviewService.createReview(reviewDTO);
+    public ResponseEntity<ApiResponse<ReviewDTO>> createReview(@Valid @RequestBody CreateReviewRequest request, Locale locale) {
+        ReviewDTO created = reviewService.createReview(request);
         return new ResponseEntity<>(ApiResponse.success(created, StatusCode.CREATED_SUCCESS, messageSource, locale), HttpStatus.CREATED);
     }
 
