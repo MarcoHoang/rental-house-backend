@@ -1,6 +1,8 @@
 package com.codegym.controller.api;
 
 import com.codegym.dto.ApiResponse;
+import com.codegym.entity.User;
+import com.codegym.repository.UserRepository;
 import com.codegym.service.FavoriteService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.Locale;
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
+    private final UserRepository userRepository;
     private final MessageSource messageSource;
 
     @PostMapping("/{houseId}/toggle")
@@ -36,15 +39,14 @@ public class FavoriteController {
                         "User not authenticated", messageSource, locale));
             }
             
-            Long userId = Long.parseLong(authentication.getName());
-            boolean isFavorite = favoriteService.toggleFavorite(userId, houseId);
+            String userEmail = authentication.getName();
+            User user = userRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            boolean isFavorite = favoriteService.toggleFavorite(user.getId(), houseId);
             String message = isFavorite ? "Đã thêm vào danh sách yêu thích" : "Đã bỏ khỏi danh sách yêu thích";
             
             return ResponseEntity.ok(ApiResponse.success(isFavorite, StatusCode.SUCCESS, messageSource, locale));
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(StatusCode.VALIDATION_ERROR.getCode(), 
-                    "Invalid user ID format", messageSource, locale));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error(StatusCode.INTERNAL_ERROR.getCode(), 
@@ -63,13 +65,12 @@ public class FavoriteController {
                 return ResponseEntity.ok(ApiResponse.success(false, StatusCode.SUCCESS, messageSource, locale));
             }
             
-            Long userId = Long.parseLong(authentication.getName());
-            boolean isFavorite = favoriteService.isFavorite(userId, houseId);
+            String userEmail = authentication.getName();
+            User user = userRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            boolean isFavorite = favoriteService.isFavorite(user.getId(), houseId);
             return ResponseEntity.ok(ApiResponse.success(isFavorite, StatusCode.SUCCESS, messageSource, locale));
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(StatusCode.VALIDATION_ERROR.getCode(), 
-                    "Invalid user ID format", messageSource, locale));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error(StatusCode.INTERNAL_ERROR.getCode(), 
@@ -89,13 +90,12 @@ public class FavoriteController {
                         "User not authenticated", messageSource, locale));
             }
             
-            Long userId = Long.parseLong(authentication.getName());
-            List<Long> favoriteHouseIds = favoriteService.getFavoriteHouseIds(userId);
+            String userEmail = authentication.getName();
+            User user = userRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            List<Long> favoriteHouseIds = favoriteService.getFavoriteHouseIds(user.getId());
             return ResponseEntity.ok(ApiResponse.success(favoriteHouseIds, StatusCode.SUCCESS, messageSource, locale));
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(StatusCode.VALIDATION_ERROR.getCode(), 
-                    "Invalid user ID format", messageSource, locale));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error(StatusCode.INTERNAL_ERROR.getCode(), 
