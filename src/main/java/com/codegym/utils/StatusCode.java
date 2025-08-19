@@ -42,7 +42,9 @@ public enum StatusCode {
     RENTAL_NOT_FOUND("25", "error.rental.notFound"), // {0} = rentalId
     REVIEW_NOT_FOUND("26", "error.review.notFound"), // {0} = reviewId
     NOTIFICATION_NOT_FOUND("27", "error.notification.notFound"), // {0} = notificationId
-    RESOURCE_NOT_FOUND("28", "error.resource.notFound"), // {0} = resourceName
+    CONVERSATION_NOT_FOUND("28", "error.conversation.notFound"), // {0} = conversationId
+    CONVERSATION_SELF_CHAT("29", "error.conversation.self.chat"),
+    RESOURCE_NOT_FOUND("30", "error.resource.notFound"), // {0} = resourceName
 
     // --- Host Request (30-39) ---
     USER_ALREADY_HOST("30", "error.request.userAlreadyHost"),
@@ -91,6 +93,7 @@ public enum StatusCode {
     ACCESS_DENIED("91", "error.access.denied"),
     FORBIDDEN_ACTION("92", "error.forbidden"),
     PASSWORD_CONFIRMATION_MISMATCH("93", "error.password.mismatch"),
+    INVALID_INPUT("94", "error.validation"),
 
     // Validation & Internal
     PARAM_TYPE_MISMATCH("97", "error.param.typeMismatch"), // {0} = paramName, {1} = expectedType
