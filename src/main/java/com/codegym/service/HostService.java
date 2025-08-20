@@ -39,5 +39,8 @@ public interface HostService {
 
     void changePassword(Long userId, String oldPassword, String newPassword, String confirmPassword);
 
+    // Admin method để update status của host
+    HostDTO updateHostStatus(Long hostId, boolean active);
+
 }
 

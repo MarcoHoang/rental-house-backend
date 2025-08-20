@@ -26,6 +26,7 @@ public interface HostRequestService {
 
     // Thêm method tìm kiếm
     Page<HostRequestDTO> searchRequests(String keyword, String status, Pageable pageable);
+
 }
 
 

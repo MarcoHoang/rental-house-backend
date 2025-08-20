@@ -2,9 +2,11 @@ package com.codegym.controller.admin;
 
 import com.codegym.dto.ApiResponse;
 import com.codegym.dto.request.RejectRequestPayload;
+import com.codegym.dto.request.UpdateHostStatusRequest;
 import com.codegym.dto.response.HostDTO;
 import com.codegym.dto.response.HostDetailAdminDTO; // <-- Thêm import
 import com.codegym.dto.response.HostRequestDTO;
+import java.util.List;
 import com.codegym.service.HostRequestService;
 import com.codegym.service.HostService;
 import com.codegym.utils.StatusCode;
@@ -59,6 +61,16 @@ public class HostAdminController {
         return ResponseEntity.ok(ApiResponse.success(hostDetails, StatusCode.GET_DETAIL_SUCCESS, messageSource, locale));
     }
 
+    // === THÊM ENDPOINT UPDATE STATUS HOST ===
+    @PutMapping("/hosts/{hostId}/status")
+    public ResponseEntity<ApiResponse<HostDTO>> updateHostStatus(
+            @PathVariable Long hostId,
+            @RequestBody UpdateHostStatusRequest request,
+            Locale locale) {
+        HostDTO updatedHost = hostService.updateHostStatus(hostId, request.getActive());
+        return ResponseEntity.ok(ApiResponse.success(updatedHost, StatusCode.UPDATED_SUCCESS, messageSource, locale));
+    }
+
 
     // --- QUẢN LÝ CÁC YÊU CẦU LÀM HOST ---
     @GetMapping("/host-requests")
@@ -88,6 +100,17 @@ public class HostAdminController {
         HostRequestDTO requestDetails = requestService.findById(requestId);
         return ResponseEntity.ok(ApiResponse.success(requestDetails, StatusCode.GET_DETAIL_SUCCESS, messageSource, locale));
     }
+
+    // === THÊM ENDPOINT TẠO ĐƠN ĐĂNG KÝ ===
+    @PostMapping("/host-requests")
+    public ResponseEntity<ApiResponse<HostRequestDTO>> createRequest(
+            @RequestBody HostRequestDTO requestDTO,
+            Locale locale) {
+        HostRequestDTO createdRequest = requestService.createRequest(requestDTO);
+        return ResponseEntity.ok(ApiResponse.success(createdRequest, StatusCode.CREATED_SUCCESS, messageSource, locale));
+    }
+
+
 
     @PostMapping("/host-requests/{requestId}/approve")
     public ResponseEntity<ApiResponse<HostRequestDTO>> approveRequest(@PathVariable Long requestId, Locale locale) {

@@ -26,17 +26,22 @@ public class HouseAdminController {
     private final MessageSource messageSource;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<HouseDTO>>> getAllHouses(Locale locale) {
-        // Sắp xếp theo thời gian tạo mới nhất (mới nhất ở trên)
-        List<HouseDTO> houses = houseService.getAllHouses();
-        // Sắp xếp theo createdAt (mới nhất lên đầu)
-        houses.sort((a, b) -> {
-            if (a.getCreatedAt() == null && b.getCreatedAt() == null) return 0;
-            if (a.getCreatedAt() == null) return 1;
-            if (b.getCreatedAt() == null) return -1;
-            return b.getCreatedAt().compareTo(a.getCreatedAt());
-        });
-        return ResponseEntity.ok(ApiResponse.success(houses, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    public ResponseEntity<ApiResponse<Page<HouseDTO>>> getAllHouses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String[] sort,
+            Locale locale) {
+
+        String sortField = sort[0];
+        String sortDirection = sort.length > 1 ? sort[1] : "asc";
+
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Order order = new Sort.Order(direction, sortField);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(order));
+        Page<HouseDTO> housePage = houseService.getAllHousesWithPagination(pageable);
+        
+        return ResponseEntity.ok(ApiResponse.success(housePage, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     /**

@@ -31,6 +31,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -110,6 +112,12 @@ public class HouseServiceImpl implements HouseService {
     @Transactional(readOnly = true)
     public List<HouseDTO> getAllHouses() {
         return houseRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<HouseDTO> getAllHousesWithPagination(Pageable pageable) {
+        return houseRepository.findAll(pageable).map(this::toDTO);
     }
 
     @Override
