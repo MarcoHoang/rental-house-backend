@@ -184,8 +184,8 @@ public class HostStatisticsServiceImpl implements HostStatisticsService {
         BigDecimal totalDeductions = taxAmount.add(platformFee);
         BigDecimal netRevenue = totalRevenue.subtract(totalDeductions);
         
-        // Calculate occupancy rate
-        Double occupancyRate = calculateOccupancyRate(houses, dateRange);
+        // Calculate occupancy rate based on actual rental data
+        Double occupancyRate = calculateOccupancyRate(houses, currentRentals, dateRange);
         
         // Get top houses and least rented houses
         List<HostStatisticsDTO.HouseRentalStats> topHouses = getTopHouses(currentRentals);
@@ -215,15 +215,45 @@ public class HostStatisticsServiceImpl implements HostStatisticsService {
                 .build();
     }
 
-    private Double calculateOccupancyRate(List<House> houses, DateRange dateRange) {
+    private Double calculateOccupancyRate(List<House> houses, List<Rental> rentals, DateRange dateRange) {
         if (houses.isEmpty()) return 0.0;
         
-        long totalDays = java.time.temporal.ChronoUnit.DAYS.between(dateRange.startDate, dateRange.endDate) + 1;
-        long totalHouseDays = houses.size() * totalDays;
+        // Tính tỷ lệ lấp đầy dựa trên thời gian thực tế trong kỳ
+        // Logic: Tỷ lệ = (Tổng số ngày được thuê / Tổng số ngày có thể thuê) * 100
         
-        // This is a simplified calculation. In reality, you'd need to consider
-        // actual availability dates and booking periods
-        return Math.min(85.0, 85.0); // Mock value for now
+        long totalDays = java.time.temporal.ChronoUnit.DAYS.between(dateRange.startDate, dateRange.endDate) + 1;
+        long totalAvailableDays = houses.size() * totalDays;
+        
+        if (totalAvailableDays == 0) return 0.0;
+        
+        // Tính tổng số ngày được thuê
+        long totalRentedDays = 0;
+        for (Rental rental : rentals) {
+            if (rental.getHouse() != null && rental.getStartDate() != null && rental.getEndDate() != null) {
+                // Tính số ngày thuê trong kỳ
+                LocalDateTime rentalStart = rental.getStartDate();
+                LocalDateTime rentalEnd = rental.getEndDate();
+                
+                // Chuyển đổi sang LocalDate để so sánh
+                LocalDate startDate = rentalStart.toLocalDate();
+                LocalDate endDate = rentalEnd.toLocalDate();
+                
+                // Tính overlap với kỳ thống kê
+                LocalDate effectiveStart = startDate.isBefore(dateRange.startDate) ? dateRange.startDate : startDate;
+                LocalDate effectiveEnd = endDate.isAfter(dateRange.endDate) ? dateRange.endDate : endDate;
+                
+                if (!effectiveStart.isAfter(effectiveEnd)) {
+                    long rentalDays = java.time.temporal.ChronoUnit.DAYS.between(effectiveStart, effectiveEnd) + 1;
+                    totalRentedDays += rentalDays;
+                }
+            }
+        }
+        
+        // Tính tỷ lệ lấp đầy
+        double occupancyRate = (double) totalRentedDays / totalAvailableDays * 100;
+        
+        // Giới hạn tỷ lệ từ 0% đến 100%
+        return Math.min(100.0, Math.max(0.0, occupancyRate));
     }
 
     private List<HostStatisticsDTO.HouseRentalStats> getTopHouses(List<Rental> rentals) {
