@@ -13,6 +13,8 @@ public interface HostService {
 
     Page<HostDTO> getAllHosts(Pageable pageable);
 
+    // Thêm method tìm kiếm
+    Page<HostDTO> searchHosts(String keyword, Boolean active, Pageable pageable);
 
     HostDTO getHostById(Long id);
 

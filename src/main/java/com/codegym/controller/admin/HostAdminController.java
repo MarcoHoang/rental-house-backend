@@ -34,6 +34,16 @@ public class HostAdminController {
         return ResponseEntity.ok(ApiResponse.success(hosts, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
+    @GetMapping("/hosts/search")
+    public ResponseEntity<ApiResponse<Page<HostDTO>>> searchHosts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Boolean active,
+            Pageable pageable,
+            Locale locale) {
+        Page<HostDTO> hosts = hostService.searchHosts(keyword, active, pageable);
+        return ResponseEntity.ok(ApiResponse.success(hosts, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    }
+
     // === SỬA LỖI 1: TẠO ENDPOINT XEM CHI TIẾT HOST BẰNG USER ID ===
     @GetMapping("/hosts/user/{userId}")
     public ResponseEntity<ApiResponse<HostDetailAdminDTO>> getHostDetailsByUserId(@PathVariable Long userId, Locale locale) {
@@ -46,6 +56,16 @@ public class HostAdminController {
     @GetMapping("/host-requests")
     public ResponseEntity<ApiResponse<Page<HostRequestDTO>>> getPendingRequests(Pageable pageable, Locale locale) {
         Page<HostRequestDTO> requests = requestService.findPending(pageable);
+        return ResponseEntity.ok(ApiResponse.success(requests, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    }
+
+    @GetMapping("/host-requests/search")
+    public ResponseEntity<ApiResponse<Page<HostRequestDTO>>> searchRequests(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status,
+            Pageable pageable,
+            Locale locale) {
+        Page<HostRequestDTO> requests = requestService.searchRequests(keyword, status, pageable);
         return ResponseEntity.ok(ApiResponse.success(requests, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 

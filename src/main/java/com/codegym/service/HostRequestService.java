@@ -23,6 +23,9 @@ public interface HostRequestService {
     HostRequestDTO rejectRequest(Long id, String reason);
 
     HostRequestDTO findById(Long id);
+
+    // Thêm method tìm kiếm
+    Page<HostRequestDTO> searchRequests(String keyword, String status, Pageable pageable);
 }
 
 

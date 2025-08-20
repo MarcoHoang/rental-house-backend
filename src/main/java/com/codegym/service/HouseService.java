@@ -19,6 +19,9 @@ public interface HouseService {
 
     List<HouseDTO> searchHouses(String keyword);
 
+    // Admin search method
+    List<HouseDTO> searchHousesForAdmin(String keyword, String status, String houseType, Long hostId);
+
     List<HouseDTO> getTopHouses();
 
     List<HouseDTO> getTopHousesByFavorites(int limit);

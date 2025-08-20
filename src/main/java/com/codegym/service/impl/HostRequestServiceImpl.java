@@ -199,6 +199,28 @@ public class HostRequestServiceImpl implements HostRequestService {
                 .map(this::mapToDTO)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.REQUEST_NOT_FOUND, id));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<HostRequestDTO> searchRequests(String keyword, String status, Pageable pageable) {
+        HostRequest.Status statusEnum = null;
+        if (status != null && !status.isEmpty() && !status.equals("ALL")) {
+            try {
+                statusEnum = HostRequest.Status.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Nếu status không hợp lệ, tìm tất cả
+            }
+        }
+
+        Page<HostRequest> requests;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            requests = hostRequestRepository.findByKeywordAndStatus(keyword.trim(), statusEnum, pageable);
+        } else {
+            requests = hostRequestRepository.findByStatusOnly(statusEnum, pageable);
+        }
+
+        return requests.map(this::mapToDTO);
+    }
 }
 
 

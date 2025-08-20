@@ -312,10 +312,20 @@ public class HouseServiceImpl implements HouseService {
     @Override
     @Transactional(readOnly = true)
     public List<HouseDTO> searchHouses(String keyword) {
-        return houseRepository.findAll().stream()
-                .filter(h -> keyword == null || h.getTitle().toLowerCase().contains(keyword.toLowerCase()))
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllHouses();
+        }
+
+        String searchTerm = keyword.trim().toLowerCase();
+        List<House> houses = houseRepository.findByKeyword(searchTerm);
+        return houses.stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HouseDTO> searchHousesForAdmin(String keyword, String status, String houseType, Long hostId) {
+        List<House> houses = houseRepository.findByAdminFilters(keyword, status, houseType, hostId);
+        return houses.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Override

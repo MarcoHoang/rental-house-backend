@@ -121,6 +121,18 @@ public class HostServiceImpl implements HostService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<HostDTO> searchHosts(String keyword, Boolean active, Pageable pageable) {
+        Page<Host> hosts;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            hosts = hostRepository.findByKeywordAndActive(keyword.trim(), active, pageable);
+        } else {
+            hosts = hostRepository.findByActiveOnly(active, pageable);
+        }
+        return hosts.map(this::toDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public HostDTO getHostById(Long id) {
         Host host = findHostByIdOrThrow(id);
         return toDTO(host);

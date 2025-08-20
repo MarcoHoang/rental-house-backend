@@ -45,4 +45,7 @@ public interface UserService {
     
     long countAdmins();
 
+    // Search methods
+    List<UserDTO> searchUsers(String keyword, String role, Boolean active);
+
 }

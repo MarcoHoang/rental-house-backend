@@ -20,7 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("${api.prefix}/admin")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class AdminController {
