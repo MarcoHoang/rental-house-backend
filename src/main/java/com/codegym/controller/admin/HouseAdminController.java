@@ -6,6 +6,10 @@ import com.codegym.service.HouseService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +27,15 @@ public class HouseAdminController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<HouseDTO>>> getAllHouses(Locale locale) {
+        // Sắp xếp theo thời gian tạo mới nhất (mới nhất ở trên)
         List<HouseDTO> houses = houseService.getAllHouses();
+        // Sắp xếp theo createdAt (mới nhất lên đầu)
+        houses.sort((a, b) -> {
+            if (a.getCreatedAt() == null && b.getCreatedAt() == null) return 0;
+            if (a.getCreatedAt() == null) return 1;
+            if (b.getCreatedAt() == null) return -1;
+            return b.getCreatedAt().compareTo(a.getCreatedAt());
+        });
         return ResponseEntity.ok(ApiResponse.success(houses, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 

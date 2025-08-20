@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Locale;
@@ -30,7 +32,13 @@ public class HostAdminController {
     // --- QUẢN LÝ CÁC HOST ĐÃ ĐƯỢC DUYỆT ---
     @GetMapping("/hosts")
     public ResponseEntity<ApiResponse<Page<HostDTO>>> getAllHosts(Pageable pageable, Locale locale) {
-        Page<HostDTO> hosts = hostService.getAllHosts(pageable);
+        // Sắp xếp theo thời gian tạo mới nhất (mới nhất ở trên)
+        Pageable sortedPageable = PageRequest.of(
+            pageable.getPageNumber(), 
+            pageable.getPageSize(), 
+            Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+        Page<HostDTO> hosts = hostService.getAllHosts(sortedPageable);
         return ResponseEntity.ok(ApiResponse.success(hosts, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
@@ -54,8 +62,14 @@ public class HostAdminController {
 
     // --- QUẢN LÝ CÁC YÊU CẦU LÀM HOST ---
     @GetMapping("/host-requests")
-    public ResponseEntity<ApiResponse<Page<HostRequestDTO>>> getPendingRequests(Pageable pageable, Locale locale) {
-        Page<HostRequestDTO> requests = requestService.findPending(pageable);
+    public ResponseEntity<ApiResponse<Page<HostRequestDTO>>> getAllRequests(Pageable pageable, Locale locale) {
+        // Sắp xếp theo thời gian tạo mới nhất (mới nhất ở trên)
+        Pageable sortedPageable = PageRequest.of(
+            pageable.getPageNumber(), 
+            pageable.getPageSize(), 
+            Sort.by(Sort.Direction.DESC, "requestDate")
+        );
+        Page<HostRequestDTO> requests = requestService.findAll(sortedPageable);
         return ResponseEntity.ok(ApiResponse.success(requests, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 

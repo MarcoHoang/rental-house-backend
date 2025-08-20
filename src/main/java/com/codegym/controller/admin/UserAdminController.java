@@ -34,7 +34,7 @@ public class UserAdminController {
     public ResponseEntity<ApiResponse<Page<UserDTO>>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id,desc") String[] sort,
+            @RequestParam(defaultValue = "createdAt,desc") String[] sort,
             Locale locale) {
 
         String sortField = sort[0];

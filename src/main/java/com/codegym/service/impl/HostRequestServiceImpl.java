@@ -182,7 +182,7 @@ public class HostRequestServiceImpl implements HostRequestService {
                 .phone(user.getPhone())
                 .status(entity.getStatus().name())
                 .reason(entity.getReason())
-                .requestDate(entity.getRequestDate())
+                .requestDate(entity.getRequestDate() != null ? entity.getRequestDate() : LocalDateTime.now())
                 .processedDate(entity.getProcessedDate())
                 .nationalId(entity.getNationalId())
                 .proofOfOwnershipUrl(entity.getProofOfOwnershipUrl())
