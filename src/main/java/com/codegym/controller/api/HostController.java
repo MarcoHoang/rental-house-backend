@@ -3,9 +3,11 @@ package com.codegym.controller.api;
 import com.codegym.dto.ApiResponse;
 import com.codegym.dto.request.ChangePasswordRequest;
 import com.codegym.dto.response.HostDTO;
+import com.codegym.dto.response.HostStatisticsDTO;
 import com.codegym.dto.response.HouseDTO;
 import com.codegym.dto.response.RentalDTO;
 import com.codegym.service.HostService;
+import com.codegym.service.HostStatisticsService;
 import com.codegym.service.RentalService;
 import com.codegym.utils.StatusCode;
 import jakarta.validation.Valid;
@@ -26,6 +28,7 @@ public class HostController {
 
     private final HostService hostService;
     private final RentalService rentalService;
+    private final HostStatisticsService hostStatisticsService;
     private final MessageSource messageSource;
 
 
@@ -98,8 +101,32 @@ public class HostController {
             hostService.changePassword(currentHost.getId(), request.getOldPassword(), request.getNewPassword(), request.getConfirmPassword());
             return ResponseEntity.ok(ApiResponse.success(StatusCode.PASSWORD_CHANGED, messageSource, locale));
         } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            return ResponseEntity.badRequest().body(ApiResponse.error(StatusCode.VALIDATION_ERROR, messageSource, locale));
+        }
+    }
+
+    @GetMapping("/my-statistics")
+    public ResponseEntity<ApiResponse<HostStatisticsDTO>> getMyStatistics(
+            @RequestParam(defaultValue = "current_month") String period, 
+            Locale locale) {
+        try {
+            HostStatisticsDTO statistics = hostStatisticsService.getCurrentHostStatistics(period);
+            return ResponseEntity.ok(ApiResponse.success(statistics, StatusCode.SUCCESS, messageSource, locale));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(StatusCode.VALIDATION_ERROR, messageSource, locale));
+        }
+    }
+
+    @GetMapping("/{id}/statistics")
+    public ResponseEntity<ApiResponse<HostStatisticsDTO>> getHostStatistics(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "current_month") String period, 
+            Locale locale) {
+        try {
+            HostStatisticsDTO statistics = hostStatisticsService.getHostStatistics(id, period);
+            return ResponseEntity.ok(ApiResponse.success(statistics, StatusCode.SUCCESS, messageSource, locale));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(StatusCode.VALIDATION_ERROR, messageSource, locale));
         }
     }
 }

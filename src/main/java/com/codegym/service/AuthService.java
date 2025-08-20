@@ -55,6 +55,7 @@ public class AuthService {
             return LoginResponse.builder()
                     .token(token)
                     .role(user.getRole().getName())
+                    .roleName(user.getRole().getName().name())  // Thêm roleName
                     .user(userDTO)
                     .build();
         } catch (Exception e) {
@@ -81,6 +82,7 @@ public class AuthService {
             return LoginResponse.builder()
                     .token(token)
                     .role(user.getRole().getName())
+                    .roleName(user.getRole().getName().name())  // Thêm roleName
                     .user(userDTO)
                     .build();
         } catch (Exception e) {
@@ -141,6 +143,7 @@ public class AuthService {
             return LoginResponse.builder()
                     .token(token)
                     .role(user.getRole().getName())
+                    .roleName(user.getRole().getName().name())  // Thêm roleName
                     .user(userDTO)
                     .build();
                     
