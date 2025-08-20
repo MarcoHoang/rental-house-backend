@@ -95,7 +95,7 @@ public class GoogleOAuthService {
                 .email(email)
                 .username(email) // Use email as username for Google users
                 .fullName(name != null ? name : email.split("@")[0])
-                .phone("GOOGLE_" + System.currentTimeMillis()) // Temporary phone for Google users
+                .phone("0000000000") // Default phone for Google users - they need to update it
                 .password(randomPassword) // This will be encoded in the service
                 .googleAccountId(googleAccountId)
                 .avatarUrl(picture != null ? picture : "/images/default-avatar.png")
