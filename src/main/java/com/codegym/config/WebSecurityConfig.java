@@ -88,7 +88,8 @@ public class WebSecurityConfig {
                                         String.format("%s/dashboard/**", apiPrefix),
                                         String.format("%s/banners", apiPrefix),
                                         String.format("%s/admin/dashboard", apiPrefix),
-                                        String.format("%s/admin/users/**", apiPrefix)
+                                        String.format("%s/admin/users/**", apiPrefix),
+                                        String.format("%s/reviews/house/*/all", apiPrefix) // Admin cũng có thể lấy tất cả reviews
                                 ).hasRole("ADMIN")
 
 
@@ -118,6 +119,7 @@ public class WebSecurityConfig {
                                         String.format("%s/renters/*/rentals", apiPrefix),
                                         String.format("%s/renters/*/income", apiPrefix),
                                         String.format("%s/reviews/*/hide", apiPrefix),
+                                        String.format("%s/reviews/house/*/all", apiPrefix), // Lấy tất cả reviews (bao gồm ẩn)
                                         String.format("%s/house-images", apiPrefix),
                                         String.format("%s/renter-requests", apiPrefix),
                                         String.format("%s/notifications", apiPrefix),

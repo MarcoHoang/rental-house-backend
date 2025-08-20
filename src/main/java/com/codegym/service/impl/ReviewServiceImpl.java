@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,8 +64,14 @@ public class ReviewServiceImpl implements ReviewService {
             return;
         }
         
+        // Chủ nhà có thể quản lý đánh giá của nhà mình
+        if (currentUser.getRole().getName().equals(RoleName.HOST) && 
+            Objects.equals(review.getHouse().getHost().getId(), currentUser.getId())) {
+            return;
+        }
+        
         // Người dùng thường chỉ có thể quản lý đánh giá của mình
-        if (!review.getReviewer().getId().equals(currentUser.getId())) {
+        if (!Objects.equals(review.getReviewer().getId(), currentUser.getId())) {
             throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn không có quyền chỉnh sửa hoặc xóa đánh giá này");
         }
     }
@@ -103,6 +110,14 @@ public class ReviewServiceImpl implements ReviewService {
         findHouseByIdOrThrow(houseId);
         return reviewRepository.findByHouseIdAndIsVisibleTrueOrderByCreatedAtDesc(houseId)
                 .stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReviewDTO> getAllReviewsByHouseId(Long houseId) {
+        findHouseByIdOrThrow(houseId);
+        List<Review> reviews = reviewRepository.findByHouseIdOrderByCreatedAtDesc(houseId);
+        return reviews.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -191,6 +206,8 @@ public class ReviewServiceImpl implements ReviewService {
         checkReviewOwnership(review);
         
         review.setIsVisible(!review.getIsVisible());
-        return toDTO(reviewRepository.save(review));
+        Review savedReview = reviewRepository.save(review);
+        
+        return toDTO(savedReview);
     }
 }

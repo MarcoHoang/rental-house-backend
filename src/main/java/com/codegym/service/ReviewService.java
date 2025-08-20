@@ -12,6 +12,8 @@ public interface ReviewService {
 
     List<ReviewDTO> getReviewsByHouseId(Long houseId);
 
+    List<ReviewDTO> getAllReviewsByHouseId(Long houseId);
+
     ReviewDTO createReview(CreateReviewRequest request);
 
     ReviewDTO updateReview(Long id, ReviewDTO reviewDTO);

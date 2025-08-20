@@ -107,8 +107,8 @@ public class RentalServiceImpl implements RentalService {
             throw new AppException(StatusCode.INVALID_START_DATE);
         }
 
-        long daysBetween = java.time.Duration.between(dto.getStartDate(), dto.getEndDate()).toDays();
-        if (daysBetween < 1) {
+        long hoursBetween = java.time.Duration.between(dto.getStartDate(), dto.getEndDate()).toHours();
+        if (hoursBetween < 2) {
             throw new AppException(StatusCode.MINIMUM_RENTAL_PERIOD);
         }
 
@@ -135,13 +135,14 @@ public class RentalServiceImpl implements RentalService {
         return convertToDTO(savedRental);
     }
 
-    // Helper method để tính tổng tiền
-    private double calculateTotalPrice(Double monthlyPrice, LocalDateTime startDate, LocalDateTime endDate) {
-        if (monthlyPrice == null) return 0.0;
+    // Helper method để tính tổng tiền theo ngày
+    private double calculateTotalPrice(Double dailyPrice, LocalDateTime startDate, LocalDateTime endDate) {
+        if (dailyPrice == null) return 0.0;
         
         long hoursBetween = java.time.Duration.between(startDate, endDate).toHours();
-        double hourlyPrice = monthlyPrice / 30.0 / 24.0;
-        return Math.ceil(hoursBetween * hourlyPrice);
+        // Tính số ngày, nếu ít hơn hoặc bằng 24 giờ thì tính 1 ngày, nếu nhiều hơn thì làm tròn lên
+        long days = hoursBetween <= 24 ? 1 : (long) Math.ceil(hoursBetween / 24.0);
+        return days * dailyPrice;
     }
 
     @Override
@@ -330,7 +331,7 @@ public class RentalServiceImpl implements RentalService {
         }
 
         long hoursBetween = java.time.Duration.between(request.getStartDate(), request.getEndDate()).toHours();
-        if (hoursBetween < 24) {
+        if (hoursBetween < 2) {
             throw new AppException(StatusCode.MINIMUM_RENTAL_PERIOD);
         }
 

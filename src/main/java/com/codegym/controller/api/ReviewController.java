@@ -36,6 +36,12 @@ public class ReviewController {
         return ResponseEntity.ok(ApiResponse.success(reviews, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
+    @GetMapping("/house/{houseId}/all")
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getAllReviewsByHouseId(@PathVariable Long houseId, Locale locale) {
+        List<ReviewDTO> reviews = reviewService.getAllReviewsByHouseId(houseId);
+        return ResponseEntity.ok(ApiResponse.success(reviews, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    }
+
     @PutMapping("/{id}/toggle-visibility")
     public ResponseEntity<ApiResponse<ReviewDTO>> toggleReviewVisibility(@PathVariable Long id, Locale locale) {
         ReviewDTO dto = reviewService.toggleVisibility(id);
