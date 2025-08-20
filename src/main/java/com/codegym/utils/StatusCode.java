@@ -87,6 +87,7 @@ public enum StatusCode {
     FAVORITE_ALREADY_EXISTS("81", "error.favorite.alreadyExists"),
     FAVORITE_NOT_EXISTS("82", "error.favorite.notExists"),
     FAVORITE_TOGGLE_FAILED("83", "error.favorite.toggleFailed"),
+    HOST_CANNOT_FAVORITE_OWN_HOUSE("84", "error.favorite.hostCannotFavoriteOwnHouse"),
 
     // == SYSTEM & VALIDATION ERRORS (90-99) ==
     DATA_INTEGRITY_VIOLATION("90", "error.data.integrity"),

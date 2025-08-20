@@ -3,9 +3,12 @@ package com.codegym.service;
 import com.codegym.entity.Favorite;
 import com.codegym.entity.House;
 import com.codegym.entity.User;
+import com.codegym.entity.RoleName;
+import com.codegym.exception.AppException;
 import com.codegym.repository.FavoriteRepository;
 import com.codegym.repository.HouseRepository;
 import com.codegym.repository.UserRepository;
+import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,12 @@ public class FavoriteService {
         
         House house = houseRepository.findById(houseId)
                 .orElseThrow(() -> new RuntimeException("House not found"));
+
+        // Kiểm tra xem người dùng có phải là chủ nhà của căn nhà này không
+        if (user.getRole().getName().equals(RoleName.HOST) && 
+            house.getHost().getId().equals(user.getId())) {
+            throw new AppException(StatusCode.HOST_CANNOT_FAVORITE_OWN_HOUSE);
+        }
 
         // Kiểm tra xem đã yêu thích chưa
         if (favoriteRepository.existsByUserIdAndHouseId(userId, houseId)) {

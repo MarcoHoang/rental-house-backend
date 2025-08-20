@@ -2,6 +2,7 @@ package com.codegym.controller.api;
 
 import com.codegym.dto.ApiResponse;
 import com.codegym.entity.User;
+import com.codegym.exception.AppException;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.FavoriteService;
 import com.codegym.utils.StatusCode;
@@ -47,6 +48,12 @@ public class FavoriteController {
             String message = isFavorite ? "Đã thêm vào danh sách yêu thích" : "Đã bỏ khỏi danh sách yêu thích";
             
             return ResponseEntity.ok(ApiResponse.success(isFavorite, StatusCode.SUCCESS, messageSource, locale));
+        } catch (AppException e) {
+            // Xử lý AppException với thông báo cụ thể
+            String errorMessage = messageSource.getMessage(e.getStatusCode().getMessageKey(), null, locale);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(e.getStatusCode().getCode(), 
+                    errorMessage, messageSource, locale));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error(StatusCode.INTERNAL_ERROR.getCode(), 
