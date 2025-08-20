@@ -110,10 +110,14 @@ public class HostController {
             @RequestParam(defaultValue = "current_month") String period, 
             Locale locale) {
         try {
+            System.out.println("HostController.getMyStatistics - Starting with period: " + period);
             HostStatisticsDTO statistics = hostStatisticsService.getCurrentHostStatistics(period);
+            System.out.println("HostController.getMyStatistics - Statistics retrieved successfully: " + statistics);
             return ResponseEntity.ok(ApiResponse.success(statistics, StatusCode.SUCCESS, messageSource, locale));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error(StatusCode.VALIDATION_ERROR, messageSource, locale));
+            System.err.println("HostController.getMyStatistics - Error occurred: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(ApiResponse.error(StatusCode.VALIDATION_ERROR.getCode(), e.getMessage(), messageSource, locale));
         }
     }
 
@@ -126,7 +130,9 @@ public class HostController {
             HostStatisticsDTO statistics = hostStatisticsService.getHostStatistics(id, period);
             return ResponseEntity.ok(ApiResponse.success(statistics, StatusCode.SUCCESS, messageSource, locale));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error(StatusCode.VALIDATION_ERROR, messageSource, locale));
+            System.err.println("HostController.getHostStatistics - Error occurred: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(ApiResponse.error(StatusCode.VALIDATION_ERROR.getCode(), e.getMessage(), messageSource, locale));
         }
     }
 }

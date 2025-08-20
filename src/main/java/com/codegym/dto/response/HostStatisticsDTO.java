@@ -18,6 +18,7 @@ public class HostStatisticsDTO {
     private String period;
     
     // Thống kê tổng quan
+    private Integer totalHouses; // Số nhà đã đăng
     private Integer totalRentals;
     private BigDecimal totalRevenue;
     private BigDecimal netRevenue;

@@ -69,8 +69,8 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
     // Host statistics methods
     @Query("SELECT r FROM Rental r " +
            "WHERE r.house.host.id = :hostId " +
-           "AND r.startDate >= :startDate " +
-           "AND r.startDate <= :endDate " +
+           "AND DATE(r.startDate) >= :startDate " +
+           "AND DATE(r.startDate) <= :endDate " +
            "AND r.status IN ('APPROVED', 'SCHEDULED', 'CHECKED_IN', 'CHECKED_OUT') " +
            "ORDER BY r.startDate DESC")
     List<Rental> findByHouseHostIdAndDateRange(@Param("hostId") Long hostId,

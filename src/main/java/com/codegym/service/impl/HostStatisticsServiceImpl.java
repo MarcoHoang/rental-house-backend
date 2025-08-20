@@ -34,18 +34,23 @@ public class HostStatisticsServiceImpl implements HostStatisticsService {
     @Override
     public HostStatisticsDTO getHostStatistics(Long hostId, String period) {
         try {
+            System.out.println("HostStatisticsServiceImpl.getHostStatistics - Starting for hostId: " + hostId + ", period: " + period);
+            
             // Validate host exists
             User host = userRepository.findById(hostId)
                     .orElseThrow(() -> new RuntimeException("Host not found with ID: " + hostId));
+            System.out.println("HostStatisticsServiceImpl.getHostStatistics - Host found: " + host.getEmail());
 
             // Get date range based on period
             DateRange dateRange = getDateRange(period);
+            System.out.println("HostStatisticsServiceImpl.getHostStatistics - Date range: " + dateRange.startDate + " to " + dateRange.endDate);
             
             // Get all houses of the host
             List<House> hostHouses = houseRepository.findByHostId(hostId);
             if (hostHouses == null) {
                 hostHouses = new ArrayList<>();
             }
+            System.out.println("HostStatisticsServiceImpl.getHostStatistics - Found " + hostHouses.size() + " houses");
             
             // Get rentals in the period
             List<Rental> periodRentals = rentalRepository.findByHouseHostIdAndDateRange(
@@ -53,6 +58,7 @@ public class HostStatisticsServiceImpl implements HostStatisticsService {
             if (periodRentals == null) {
                 periodRentals = new ArrayList<>();
             }
+            System.out.println("HostStatisticsServiceImpl.getHostStatistics - Found " + periodRentals.size() + " rentals in period");
             
             // Get previous period rentals for comparison
             DateRange previousRange = getPreviousPeriod(dateRange);
@@ -61,9 +67,14 @@ public class HostStatisticsServiceImpl implements HostStatisticsService {
             if (previousRentals == null) {
                 previousRentals = new ArrayList<>();
             }
+            System.out.println("HostStatisticsServiceImpl.getHostStatistics - Found " + previousRentals.size() + " rentals in previous period");
             
-            return buildStatistics(hostId, period, hostHouses, periodRentals, previousRentals, dateRange);
+            HostStatisticsDTO result = buildStatistics(hostId, period, hostHouses, periodRentals, previousRentals, dateRange);
+            System.out.println("HostStatisticsServiceImpl.getHostStatistics - Built statistics successfully");
+            return result;
         } catch (Exception e) {
+            System.err.println("HostStatisticsServiceImpl.getHostStatistics - Error for hostId " + hostId + ": " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Error in getHostStatistics for hostId " + hostId + ": " + e.getMessage(), e);
         }
     }
@@ -71,8 +82,11 @@ public class HostStatisticsServiceImpl implements HostStatisticsService {
     @Override
     public HostStatisticsDTO getCurrentHostStatistics(String period) {
         try {
+            System.out.println("HostStatisticsServiceImpl.getCurrentHostStatistics - Starting with period: " + period);
+            
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
+            System.out.println("HostStatisticsServiceImpl.getCurrentHostStatistics - Username from auth: " + username);
             
             if (username == null || username.isEmpty()) {
                 throw new RuntimeException("Authentication username is null or empty");
@@ -83,12 +97,16 @@ public class HostStatisticsServiceImpl implements HostStatisticsService {
                     .orElseGet(() -> userRepository.findByEmail(username)
                             .orElseThrow(() -> new RuntimeException("User not found with username/email: " + username)));
             
+            System.out.println("HostStatisticsServiceImpl.getCurrentHostStatistics - Found user: " + currentUser.getId() + ", email: " + currentUser.getEmail());
+            
             if (currentUser == null) {
                 throw new RuntimeException("Current user is null after lookup");
             }
             
             return getHostStatistics(currentUser.getId(), period);
         } catch (Exception e) {
+            System.err.println("HostStatisticsServiceImpl.getCurrentHostStatistics - Error: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Error in getCurrentHostStatistics: " + e.getMessage(), e);
         }
     }
@@ -140,6 +158,7 @@ public class HostStatisticsServiceImpl implements HostStatisticsService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         Integer totalRentals = currentRentals.size();
+        Integer totalHouses = houses.size(); // Số nhà đã đăng
         
         // Calculate previous period stats for comparison
         BigDecimal previousRevenue = previousRentals.stream()
@@ -178,6 +197,7 @@ public class HostStatisticsServiceImpl implements HostStatisticsService {
         return HostStatisticsDTO.builder()
                 .hostId(hostId)
                 .period(period)
+                .totalHouses(totalHouses) // Thêm số nhà đã đăng
                 .totalRentals(totalRentals)
                 .totalRevenue(totalRevenue)
                 .netRevenue(netRevenue)
