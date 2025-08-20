@@ -108,15 +108,37 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional(readOnly = true)
     public List<ReviewDTO> getReviewsByHouseId(Long houseId) {
         findHouseByIdOrThrow(houseId);
-        return reviewRepository.findByHouseIdAndIsVisibleTrueOrderByCreatedAtDesc(houseId)
-                .stream().map(this::toDTO).collect(Collectors.toList());
+        List<Review> reviews = reviewRepository.findByHouseIdAndIsVisibleTrueOrderByCreatedAtDesc(houseId);
+        System.out.println("=== getReviewsByHouseId Debug ===");
+        System.out.println("House ID: " + houseId);
+        System.out.println("Found " + reviews.size() + " visible reviews");
+        return reviews.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ReviewDTO> getAllReviewsByHouseId(Long houseId) {
-        findHouseByIdOrThrow(houseId);
+        House house = findHouseByIdOrThrow(houseId);
+        User currentUser = getCurrentUser();
+        
+        System.out.println("=== getAllReviewsByHouseId Debug ===");
+        System.out.println("House ID: " + houseId);
+        System.out.println("House Host ID: " + house.getHost().getId());
+        System.out.println("Current User ID: " + currentUser.getId());
+        System.out.println("Current User Role: " + currentUser.getRole().getName());
+        System.out.println("Is Admin: " + currentUser.getRole().getName().equals(RoleName.ADMIN));
+        System.out.println("Is Host Owner: " + Objects.equals(house.getHost().getId(), currentUser.getId()));
+        
+        // Chỉ ADMIN hoặc chủ nhà của nhà này mới có thể xem tất cả reviews (bao gồm ẩn)
+        if (!currentUser.getRole().getName().equals(RoleName.ADMIN) && 
+            !Objects.equals(house.getHost().getId(), currentUser.getId())) {
+            System.out.println("Access denied - User is not admin and not house owner");
+            throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn không có quyền xem tất cả đánh giá của nhà này");
+        }
+        
+        System.out.println("Access granted - Fetching all reviews");
         List<Review> reviews = reviewRepository.findByHouseIdOrderByCreatedAtDesc(houseId);
+        System.out.println("Found " + reviews.size() + " reviews");
         return reviews.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
