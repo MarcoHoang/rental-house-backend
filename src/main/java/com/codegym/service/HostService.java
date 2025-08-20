@@ -13,6 +13,8 @@ public interface HostService {
 
     Page<HostDTO> getAllHosts(Pageable pageable);
 
+    // Thêm method tìm kiếm
+    Page<HostDTO> searchHosts(String keyword, Boolean active, Pageable pageable);
 
     HostDTO getHostById(Long id);
 
@@ -36,6 +38,9 @@ public interface HostService {
     HostDetailAdminDTO getHostDetailsByUserId(Long userId);
 
     void changePassword(Long userId, String oldPassword, String newPassword, String confirmPassword);
+
+    // Admin method để update status của host
+    HostDTO updateHostStatus(Long hostId, boolean active);
 
 }
 

@@ -121,6 +121,18 @@ public class HostServiceImpl implements HostService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<HostDTO> searchHosts(String keyword, Boolean active, Pageable pageable) {
+        Page<Host> hosts;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            hosts = hostRepository.findByKeywordAndActive(keyword.trim(), active, pageable);
+        } else {
+            hosts = hostRepository.findByActiveOnly(active, pageable);
+        }
+        return hosts.map(this::toDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public HostDTO getHostById(Long id) {
         Host host = findHostByIdOrThrow(id);
         return toDTO(host);
@@ -297,6 +309,21 @@ public class HostServiceImpl implements HostService {
 
         // Gọi UserService để thực hiện đổi mật khẩu
         userService.changePassword(userId, oldPassword, newPassword, confirmPassword);
+    }
+
+    @Override
+    @Transactional
+    public HostDTO updateHostStatus(Long hostId, boolean active) {
+        // Tìm host theo ID
+        Host host = findHostByIdOrThrow(hostId);
+        User user = host.getUser();
+        
+        // Cập nhật trạng thái active của user
+        user.setActive(active);
+        userRepository.save(user);
+        
+        // Trả về HostDTO đã cập nhật
+        return toDTO(host);
     }
 }
 

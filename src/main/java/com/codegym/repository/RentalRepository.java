@@ -76,4 +76,24 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
     List<Rental> findByHouseHostIdAndDateRange(@Param("hostId") Long hostId,
                                               @Param("startDate") java.time.LocalDate startDate,
                                               @Param("endDate") java.time.LocalDate endDate);
+
+    // Admin search methods
+    @Query("SELECT r FROM Rental r WHERE " +
+           "(:keyword IS NULL OR LOWER(r.house.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(r.renter.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(r.house.address) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(r.renter.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+           "AND (:status IS NULL OR r.status = :status) " +
+           "AND (:houseType IS NULL OR r.house.houseType = :houseType)")
+    org.springframework.data.domain.Page<Rental> findByKeywordAndStatusAndHouseType(@Param("keyword") String keyword,
+                                                                                    @Param("status") Rental.Status status,
+                                                                                    @Param("houseType") com.codegym.entity.House.HouseType houseType,
+                                                                                    org.springframework.data.domain.Pageable pageable);
+
+    @Query("SELECT r FROM Rental r WHERE " +
+           "(:status IS NULL OR r.status = :status) " +
+           "AND (:houseType IS NULL OR r.house.houseType = :houseType)")
+    org.springframework.data.domain.Page<Rental> findByStatusAndHouseType(@Param("status") Rental.Status status,
+                                                                         @Param("houseType") com.codegym.entity.House.HouseType houseType,
+                                                                         org.springframework.data.domain.Pageable pageable);
 }

@@ -368,4 +368,23 @@ public class UserServiceImpl implements UserService {
         return userRepository.countByRoleName(RoleName.ADMIN);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserDTO> searchUsers(String keyword, String role, Boolean active) {
+        List<User> users;
+        
+        // Nếu có keyword, tìm kiếm theo keyword
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String searchTerm = keyword.trim().toLowerCase();
+            users = userRepository.findByKeywordAndFilters(searchTerm, role, active);
+        } else {
+            // Nếu không có keyword, chỉ filter theo role và active
+            users = userRepository.findByFilters(role, active);
+        }
+        
+        return users.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
 }

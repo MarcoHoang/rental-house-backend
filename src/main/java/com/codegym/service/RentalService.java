@@ -3,6 +3,8 @@ package com.codegym.service;
 import com.codegym.dto.request.CreateRentalRequest;
 import com.codegym.dto.response.RentalDTO;
 import com.codegym.entity.Rental;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
@@ -60,5 +62,12 @@ public interface RentalService {
     double calculateMonthlyRevenue();
     
     List<Map<String, Object>> getRecentRentalsForDashboard(int limit);
+
+    // Admin methods
+    Page<RentalDTO> getAllRentalsForAdmin(Pageable pageable);
+    
+    Page<RentalDTO> searchRentalsForAdmin(String keyword, String status, String houseType, Pageable pageable);
+    
+    RentalDTO getRentalByIdForAdmin(Long id);
 
 }

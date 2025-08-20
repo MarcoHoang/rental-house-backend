@@ -18,6 +18,8 @@ import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.time.LocalDateTime;
@@ -55,25 +57,58 @@ public class RentalServiceImpl implements RentalService {
     private RentalDTO convertToDTO(Rental rental) {
         return RentalDTO.builder()
                 .id(rental.getId())
+                
+                // Thông tin nhà
                 .houseId(rental.getHouse().getId())
                 .houseTitle(rental.getHouse().getTitle())
                 .houseAddress(rental.getHouse().getAddress())
+                .houseType(rental.getHouse().getHouseType().name())
+                .houseDescription(rental.getHouse().getDescription())
+                .housePrice(rental.getHouse().getPrice())
+                .houseArea(rental.getHouse().getArea())
+                .houseStatus(rental.getHouse().getStatus().name())
+                
+                // Thông tin người thuê
                 .renterId(rental.getRenter().getId())
                 .renterName(rental.getRenter().getFullName())
+                .renterEmail(rental.getRenter().getEmail())
+                .renterPhone(rental.getRenter().getPhone())
+                .renterAddress(rental.getRenter().getAddress())
+                .renterAvatar(rental.getRenter().getAvatarUrl())
+                
+                // Thông tin chủ nhà
+                .hostId(rental.getHouse().getHost().getId())
+                .hostName(rental.getHouse().getHost().getFullName())
+                .hostEmail(rental.getHouse().getHost().getEmail())
+                .hostPhone(rental.getHouse().getHost().getPhone())
+                .hostAddress(rental.getHouse().getHost().getAddress())
+                .hostAvatar(rental.getHouse().getHost().getAvatarUrl())
+                
+                // Thông tin hợp đồng
                 .startDate(rental.getStartDate())
                 .endDate(rental.getEndDate())
                 .status(rental.getStatus())
                 .totalPrice(rental.getTotalPrice())
+                .monthlyRent(rental.getHouse().getPrice())
+                .duration(calculateDurationInMonths(rental.getStartDate(), rental.getEndDate()))
                 .guestCount(rental.getGuestCount())
                 .messageToHost(rental.getMessageToHost())
                 .rejectReason(rental.getRejectReason())
                 .cancelReason(rental.getCancelReason())
+                
+                // Thông tin xử lý
                 .approvedAt(rental.getApprovedAt())
+                .approvedByName(rental.getApprovedBy() != null ? rental.getApprovedBy().getFullName() : null)
                 .rejectedAt(rental.getRejectedAt())
+                .rejectedByName(rental.getRejectedBy() != null ? rental.getRejectedBy().getFullName() : null)
                 .canceledAt(rental.getCanceledAt())
                 .createdAt(rental.getCreatedAt())
                 .updatedAt(rental.getUpdatedAt())
                 .build();
+    }
+
+    private int calculateDurationInMonths(LocalDateTime startDate, LocalDateTime endDate) {
+        return (int) java.time.Duration.between(startDate, endDate).toDays() / 30;
     }
 
     @Override
@@ -542,6 +577,51 @@ public class RentalServiceImpl implements RentalService {
                     return rentalData;
                 })
                 .collect(Collectors.toList());
+    }
+
+    // Admin methods implementation
+    @Override
+    @Transactional(readOnly = true)
+    public Page<RentalDTO> getAllRentalsForAdmin(Pageable pageable) {
+        return rentalRepository.findAll(pageable).map(this::convertToDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<RentalDTO> searchRentalsForAdmin(String keyword, String status, String houseType, Pageable pageable) {
+        Rental.Status statusEnum = null;
+        if (status != null && !status.isEmpty() && !status.equals("ALL")) {
+            try {
+                statusEnum = Rental.Status.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Nếu status không hợp lệ, tìm tất cả
+            }
+        }
+
+        House.HouseType houseTypeEnum = null;
+        if (houseType != null && !houseType.isEmpty() && !houseType.equals("ALL")) {
+            try {
+                houseTypeEnum = House.HouseType.valueOf(houseType.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Nếu houseType không hợp lệ, tìm tất cả
+            }
+        }
+
+        Page<Rental> rentals;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            rentals = rentalRepository.findByKeywordAndStatusAndHouseType(keyword.trim(), statusEnum, houseTypeEnum, pageable);
+        } else {
+            rentals = rentalRepository.findByStatusAndHouseType(statusEnum, houseTypeEnum, pageable);
+        }
+
+        return rentals.map(this::convertToDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RentalDTO getRentalByIdForAdmin(Long id) {
+        Rental rental = findRentalByIdOrThrow(id);
+        return convertToDTO(rental);
     }
 
 }
