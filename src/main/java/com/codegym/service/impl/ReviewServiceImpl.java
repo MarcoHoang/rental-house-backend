@@ -14,6 +14,7 @@ import com.codegym.repository.RentalRepository;
 import com.codegym.repository.ReviewRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.ReviewService;
+import com.codegym.service.NotificationService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +32,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserRepository userRepository;
     private final HouseRepository houseRepository;
     private final RentalRepository rentalRepository;
+    private final NotificationService notificationService;
 
     private User findUserByIdOrThrow(Long userId) {
         return userRepository.findById(userId)
@@ -134,7 +136,25 @@ public class ReviewServiceImpl implements ReviewService {
         review.setComment(request.getComment());
         review.setIsVisible(true);
 
-        return toDTO(reviewRepository.save(review));
+        Review savedReview = reviewRepository.save(review);
+        
+        // Tạo thông báo cho host khi có đánh giá 1 sao
+        if (request.getRating() == 1) {
+            try {
+                notificationService.createReviewOneStarNotification(
+                    house.getHost().getId(),
+                    reviewer.getFullName(),
+                    house.getTitle(),
+                    savedReview.getId(),
+                    house.getId()
+                );
+            } catch (Exception e) {
+                // Log lỗi nhưng không throw để tránh rollback transaction chính
+                System.err.println("Failed to create review one star notification: " + e.getMessage());
+            }
+        }
+        
+        return toDTO(savedReview);
     }
 
     @Override

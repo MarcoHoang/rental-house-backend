@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.codegym.repository.UserRepository;
 
 import java.util.List;
 import java.util.Locale;
@@ -22,10 +23,22 @@ public class NotificationController {
 
     private final NotificationService notificationService;
     private final MessageSource messageSource;
+    private final UserRepository userRepository;
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<NotificationDTO>>> getByUser(@PathVariable Long userId, Locale locale) {
         List<NotificationDTO> notifications = notificationService.findByReceiverId(userId);
+        return ResponseEntity.ok(ApiResponse.success(notifications, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    }
+
+    @GetMapping("/my-notifications")
+    public ResponseEntity<ApiResponse<List<NotificationDTO>>> getMyNotifications(Locale locale) {
+        // Lấy user hiện tại từ SecurityContext
+        String currentUserEmail = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        com.codegym.entity.User currentUser = userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new com.codegym.exception.ResourceNotFoundException(com.codegym.utils.StatusCode.USER_NOT_FOUND, currentUserEmail));
+        
+        List<NotificationDTO> notifications = notificationService.findByReceiverId(currentUser.getId());
         return ResponseEntity.ok(ApiResponse.success(notifications, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
