@@ -23,8 +23,10 @@ public class RentalDTO {
     private Integer guestCount;
     private String messageToHost;
     private String rejectReason;
+    private String cancelReason;
     private LocalDateTime approvedAt;
     private LocalDateTime rejectedAt;
+    private LocalDateTime canceledAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

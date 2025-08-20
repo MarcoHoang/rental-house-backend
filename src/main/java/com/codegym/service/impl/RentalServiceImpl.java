@@ -65,8 +65,10 @@ public class RentalServiceImpl implements RentalService {
                 .guestCount(rental.getGuestCount())
                 .messageToHost(rental.getMessageToHost())
                 .rejectReason(rental.getRejectReason())
+                .cancelReason(rental.getCancelReason())
                 .approvedAt(rental.getApprovedAt())
                 .rejectedAt(rental.getRejectedAt())
+                .canceledAt(rental.getCanceledAt())
                 .createdAt(rental.getCreatedAt())
                 .updatedAt(rental.getUpdatedAt())
                 .build();
@@ -200,10 +202,12 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     @Transactional
-    public RentalDTO cancel(Long id) {
+    public RentalDTO cancel(Long id, String reason) {
         Rental rental = findRentalByIdOrThrow(id);
 
-        if (rental.getStatus() != Rental.Status.PENDING && rental.getStatus() != Rental.Status.SCHEDULED) {
+        if (rental.getStatus() != Rental.Status.PENDING && 
+            rental.getStatus() != Rental.Status.APPROVED && 
+            rental.getStatus() != Rental.Status.SCHEDULED) {
             throw new AppException(StatusCode.INVALID_CANCEL_STATUS);
         }
 
@@ -215,14 +219,15 @@ public class RentalServiceImpl implements RentalService {
             throw new AppException(StatusCode.ACCESS_DENIED);
         }
 
-        if (rental.getStatus() == Rental.Status.SCHEDULED) {
-            long hoursUntilStart = java.time.Duration.between(LocalDateTime.now(), rental.getStartDate()).toHours();
-            if (hoursUntilStart < 24) {
-                throw new AppException(StatusCode.CANNOT_CANCEL_WITHIN_24H);
-            }
+        // Kiểm tra thời gian hủy: phải trước 24 giờ so với thời gian bắt đầu thuê
+        long hoursUntilStart = java.time.Duration.between(LocalDateTime.now(), rental.getStartDate()).toHours();
+        if (hoursUntilStart < 24) {
+            throw new AppException(StatusCode.CANNOT_CANCEL_WITHIN_24H);
         }
 
         rental.setStatus(Rental.Status.CANCELED);
+        rental.setCancelReason(reason);
+        rental.setCanceledAt(LocalDateTime.now());
 
         House house = rental.getHouse();
         if (house.getStatus() == House.Status.RENTED) {

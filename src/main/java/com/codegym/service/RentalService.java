@@ -23,7 +23,7 @@ public interface RentalService {
 
     RentalDTO checkout(Long id);
 
-    RentalDTO cancel(Long id);
+    RentalDTO cancel(Long id, String reason);
 
     List<RentalDTO> getUserRentals(Long userId);
 

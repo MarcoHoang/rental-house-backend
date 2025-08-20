@@ -47,6 +47,12 @@ public class Rental extends BaseEntity {
     @Column(name = "reject_reason", length = 500)
     private String rejectReason;
 
+    @Column(name = "cancel_reason", length = 500)
+    private String cancelReason;
+
+    @Column(name = "canceled_at")
+    private LocalDateTime canceledAt;
+
     @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 

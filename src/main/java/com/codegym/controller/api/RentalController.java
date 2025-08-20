@@ -4,6 +4,7 @@ import com.codegym.dto.ApiResponse;
 import com.codegym.dto.response.RentalDTO;
 import com.codegym.dto.request.CreateRentalRequest;
 import com.codegym.dto.request.RejectRentalRequest;
+import com.codegym.dto.request.CancelRentalRequest;
 import com.codegym.service.RentalService;
 import com.codegym.utils.StatusCode;
 import jakarta.validation.Valid;
@@ -88,8 +89,8 @@ public class RentalController {
     }
 
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<ApiResponse<RentalDTO>> cancel(@PathVariable Long id, Locale locale) {
-        RentalDTO dto = rentalService.cancel(id);
+    public ResponseEntity<ApiResponse<RentalDTO>> cancel(@PathVariable Long id, @Valid @RequestBody CancelRentalRequest request, Locale locale) {
+        RentalDTO dto = rentalService.cancel(id, request.getReason());
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
