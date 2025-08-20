@@ -13,6 +13,7 @@ import com.codegym.repository.RentalRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.repository.NotificationRepository;
 import com.codegym.service.RentalService;
+import com.codegym.service.NotificationService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class RentalServiceImpl implements RentalService {
     private final HouseRepository houseRepository;
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
+    private final NotificationService notificationService;
 
     private User findUserByIdOrThrow(Long userId) {
         return userRepository.findById(userId)
@@ -235,7 +237,23 @@ public class RentalServiceImpl implements RentalService {
             houseRepository.save(house);
         }
 
-        return convertToDTO(rentalRepository.save(rental));
+        Rental savedRental = rentalRepository.save(rental);
+        
+        // Tạo thông báo cho host khi khách hủy thuê
+        try {
+            notificationService.createRentalCanceledNotification(
+                house.getHost().getId(),
+                currentUser.getFullName(),
+                house.getTitle(),
+                savedRental.getId(),
+                house.getId()
+            );
+        } catch (Exception e) {
+            // Log lỗi nhưng không throw để tránh rollback transaction chính
+            System.err.println("Failed to create rental canceled notification: " + e.getMessage());
+        }
+
+        return convertToDTO(savedRental);
     }
 
 
@@ -384,6 +402,20 @@ public class RentalServiceImpl implements RentalService {
             Notification.Type.RENTAL_APPROVED,
             "Yêu cầu thuê nhà của bạn đã được chấp nhận bởi " + savedRental.getHouse().getHost().getFullName()
         );
+
+        // Tạo thông báo cho host khi khách đặt thuê thành công
+        try {
+            notificationService.createRentalBookedNotification(
+                savedRental.getHouse().getHost().getId(),
+                savedRental.getRenter().getFullName(),
+                savedRental.getHouse().getTitle(),
+                savedRental.getId(),
+                savedRental.getHouse().getId()
+            );
+        } catch (Exception e) {
+            // Log lỗi nhưng không throw để tránh rollback transaction chính
+            System.err.println("Failed to create rental booked notification: " + e.getMessage());
+        }
 
         return convertToDTO(savedRental);
     }

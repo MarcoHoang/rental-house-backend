@@ -3,9 +3,13 @@ package com.codegym.service.impl;
 import com.codegym.dto.response.NotificationDTO;
 import com.codegym.entity.Notification;
 import com.codegym.entity.User;
+import com.codegym.entity.House;
+import com.codegym.entity.Review;
 import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.NotificationRepository;
 import com.codegym.repository.UserRepository;
+import com.codegym.repository.HouseRepository;
+import com.codegym.repository.ReviewRepository;
 import com.codegym.service.EmailService;
 import com.codegym.service.NotificationService;
 import com.codegym.utils.StatusCode;
@@ -26,6 +30,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final HouseRepository houseRepository;
+    private final ReviewRepository reviewRepository;
     private final EmailService emailService;
     private final MessageSource messageSource;
 
@@ -144,6 +150,182 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
+    @Override
+    @Transactional
+    public void createRentalBookedNotification(Long hostId, String userName, String houseName, Long rentalId, Long houseId) {
+        try {
+            log.info("Creating rental booked notification - hostId: {}, userName: {}, houseName: {}, rentalId: {}", 
+                    hostId, userName, houseName, rentalId);
+            
+            User host = findUserByIdOrThrow(hostId);
+            
+            String notificationContent;
+            try {
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                
+                notificationContent = messageSource.getMessage(
+                    "notification.rental.booked", 
+                    new Object[]{safeUserName, safeHouseName}, 
+                    Locale.getDefault()
+                );
+            } catch (Exception e) {
+                log.error("Failed to get message from messageSource: {}", e.getMessage());
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                notificationContent = safeUserName + " đã đặt thuê " + safeHouseName + " vào ngày " + 
+                    java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+            }
+            
+            Notification notification = Notification.builder()
+                    .receiver(host)
+                    .type(Notification.Type.RENTAL_BOOKED)
+                    .content(notificationContent)
+                    .isRead(false)
+                    .house(houseRepository.findById(houseId).orElse(null))
+                    .build();
+            
+            Notification savedNotification = notificationRepository.save(notification);
+            log.info("Created rental booked notification with ID: {} for host {} - user: {}, house: {}", 
+                    savedNotification.getId(), hostId, userName, houseName);
+            
+        } catch (Exception e) {
+            log.error("Failed to create rental booked notification for host {}: {}", hostId, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void createRentalCanceledNotification(Long hostId, String userName, String houseName, Long rentalId, Long houseId) {
+        try {
+            log.info("Creating rental canceled notification - hostId: {}, userName: {}, houseName: {}, rentalId: {}", 
+                    hostId, userName, houseName, rentalId);
+            
+            User host = findUserByIdOrThrow(hostId);
+            
+            String notificationContent;
+            try {
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                
+                notificationContent = messageSource.getMessage(
+                    "notification.rental.canceled", 
+                    new Object[]{safeUserName, safeHouseName}, 
+                    Locale.getDefault()
+                );
+            } catch (Exception e) {
+                log.error("Failed to get message from messageSource: {}", e.getMessage());
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                notificationContent = safeUserName + " đã hủy thuê " + safeHouseName + " vào ngày " + 
+                    java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+            }
+            
+            Notification notification = Notification.builder()
+                    .receiver(host)
+                    .type(Notification.Type.RENTAL_CANCELED)
+                    .content(notificationContent)
+                    .isRead(false)
+                    .house(houseRepository.findById(houseId).orElse(null))
+                    .build();
+            
+            Notification savedNotification = notificationRepository.save(notification);
+            log.info("Created rental canceled notification with ID: {} for host {} - user: {}, house: {}", 
+                    savedNotification.getId(), hostId, userName, houseName);
+            
+        } catch (Exception e) {
+            log.error("Failed to create rental canceled notification for host {}: {}", hostId, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void createReviewOneStarNotification(Long hostId, String userName, String houseName, Long reviewId, Long houseId) {
+        try {
+            log.info("Creating review one star notification - hostId: {}, userName: {}, houseName: {}, reviewId: {}", 
+                    hostId, userName, houseName, reviewId);
+            
+            User host = findUserByIdOrThrow(hostId);
+            
+            String notificationContent;
+            try {
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                
+                notificationContent = messageSource.getMessage(
+                    "notification.review.one.star", 
+                    new Object[]{safeUserName, safeHouseName}, 
+                    Locale.getDefault()
+                );
+            } catch (Exception e) {
+                log.error("Failed to get message from messageSource: {}", e.getMessage());
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                notificationContent = safeUserName + " đã nhận xét " + safeHouseName + " vào ngày " + 
+                    java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+            }
+            
+            Notification notification = Notification.builder()
+                    .receiver(host)
+                    .type(Notification.Type.REVIEW_ONE_STAR)
+                    .content(notificationContent)
+                    .isRead(false)
+                    .house(houseRepository.findById(houseId).orElse(null))
+                    .review(reviewRepository.findById(reviewId).orElse(null))
+                    .build();
+            
+            Notification savedNotification = notificationRepository.save(notification);
+            log.info("Created review one star notification with ID: {} for host {} - user: {}, house: {}", 
+                    savedNotification.getId(), hostId, userName, houseName);
+            
+        } catch (Exception e) {
+            log.error("Failed to create review one star notification for host {}: {}", hostId, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void createRentalRequestNotification(Long hostId, String userName, String houseName, Long rentalId, Long houseId) {
+        try {
+            log.info("Creating rental request notification - hostId: {}, userName: {}, houseName: {}, rentalId: {}", 
+                    hostId, userName, houseName, rentalId);
+            
+            User host = findUserByIdOrThrow(hostId);
+            
+            String notificationContent;
+            try {
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                
+                notificationContent = messageSource.getMessage(
+                    "notification.rental.request", 
+                    new Object[]{safeUserName, safeHouseName}, 
+                    Locale.getDefault()
+                );
+            } catch (Exception e) {
+                log.error("Failed to get message from messageSource: {}", e.getMessage());
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                notificationContent = "Bạn có một đơn thuê mới từ " + safeUserName + " cho nhà " + safeHouseName;
+            }
+            
+            Notification notification = Notification.builder()
+                    .receiver(host)
+                    .type(Notification.Type.RENTAL_REQUEST)
+                    .content(notificationContent)
+                    .isRead(false)
+                    .house(houseRepository.findById(houseId).orElse(null))
+                    .build();
+            
+            Notification savedNotification = notificationRepository.save(notification);
+            log.info("Created rental request notification with ID: {} for host {} - user: {}, house: {}", 
+                    savedNotification.getId(), hostId, userName, houseName);
+            
+        } catch (Exception e) {
+            log.error("Failed to create rental request notification for host {}: {}", hostId, e.getMessage(), e);
+        }
+    }
+
     private NotificationDTO toDTO(Notification n) {
         return NotificationDTO.builder()
                 .id(n.getId())
@@ -151,6 +333,8 @@ public class NotificationServiceImpl implements NotificationService {
                 .type(n.getType())
                 .content(n.getContent())
                 .isRead(n.getIsRead())
+                .houseId(n.getHouse() != null ? n.getHouse().getId() : null)
+                .reviewId(n.getReview() != null ? n.getReview().getId() : null)
                 .createdAt(n.getCreatedAt())
                 .build();
     }
