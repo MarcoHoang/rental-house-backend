@@ -96,10 +96,18 @@ public class WebSecurityConfig {
                                 .requestMatchers(
                                         String.format("%s/users/*/change-password", apiPrefix),
                                         String.format("%s/hosts/change-password", apiPrefix),
+                                        String.format("%s/hosts/change-password", apiPrefix), // PUT /hosts/change-password
                                         String.format("%s/users/is-host", apiPrefix),
                                         String.format("%s/users/host-info", apiPrefix),
                                         String.format("%s/houses/my-houses", apiPrefix),
                                         String.format("%s/hosts/my-stats", apiPrefix),
+                                        String.format("%s/hosts/my-statistics", apiPrefix),
+                                        String.format("%s/hosts/*/statistics", apiPrefix),
+                                        String.format("%s/hosts/*/houses", apiPrefix),
+                                        String.format("%s/hosts/*/rentals", apiPrefix),
+                                        String.format("%s/hosts/*/income", apiPrefix),
+                                        String.format("%s/hosts/*", apiPrefix), // GET /hosts/{id}
+                                        String.format("%s/hosts", apiPrefix), // POST /hosts (create host)
                                         String.format("%s/hosts/my-profile", apiPrefix),
                                         String.format("%s/hosts/my-profile/**", apiPrefix),
                                         String.format("%s/houses/*/edit", apiPrefix), // Sửa nhà của mình
