@@ -173,14 +173,37 @@ public class RentalServiceImpl implements RentalService {
         return convertToDTO(savedRental);
     }
 
-    // Helper method để tính tổng tiền theo ngày
+    // Helper method để tính tổng tiền theo logic mới
     private double calculateTotalPrice(Double dailyPrice, LocalDateTime startDate, LocalDateTime endDate) {
         if (dailyPrice == null) return 0.0;
         
-        long hoursBetween = java.time.Duration.between(startDate, endDate).toHours();
-        // Tính số ngày, nếu ít hơn hoặc bằng 24 giờ thì tính 1 ngày, nếu nhiều hơn thì làm tròn lên
-        long days = hoursBetween <= 24 ? 1 : (long) Math.ceil(hoursBetween / 24.0);
-        return days * dailyPrice;
+        long totalHours = java.time.Duration.between(startDate, endDate).toHours();
+        // Làm tròn lên số giờ
+        totalHours = totalHours <= 0 ? 1 : totalHours;
+        
+        double hourlyRate1 = dailyPrice / 20.0; // Giá giờ cho 6h đầu
+        double hourlyRate2 = dailyPrice / 25.0; // Giá giờ cho giờ thứ 7 trở đi
+        
+        double totalPrice = 0.0;
+        
+        if (totalHours <= 6) {
+            // ≤ 6h: mỗi giờ = giá ngày/20
+            totalPrice = totalHours * hourlyRate1;
+        } else if (totalHours < 24) {
+            // 6h < thời gian < 1 ngày: 6h đầu = giá ngày/20, từ h thứ 7 = giá ngày/25
+            totalPrice = (6 * hourlyRate1) + ((totalHours - 6) * hourlyRate2);
+        } else {
+            // ≥ 1 ngày: tính theo ngày + giờ lẻ = giá ngày/25
+            long fullDays = totalHours / 24;
+            long remainingHours = totalHours % 24;
+            
+            totalPrice = fullDays * dailyPrice;
+            if (remainingHours > 0) {
+                totalPrice += remainingHours * hourlyRate2;
+            }
+        }
+        
+        return totalPrice;
     }
 
     @Override
