@@ -30,6 +30,8 @@ public interface UserService {
 
     boolean verifyOtp(String otp);
 
+    boolean checkEmailExists(String email);
+
     void updateUserStatus(Long userId, boolean active);
 
     UserDTO getCurrentUserProfile();

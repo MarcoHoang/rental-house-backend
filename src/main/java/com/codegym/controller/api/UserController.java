@@ -88,6 +88,12 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
     }
 
+    @GetMapping("/check-email")
+    public ResponseEntity<ApiResponse<Boolean>> checkEmailExists(@RequestParam String email, Locale locale) {
+        boolean exists = userService.checkEmailExists(email);
+        return ResponseEntity.ok(ApiResponse.success(exists, StatusCode.SUCCESS, messageSource, locale));
+    }
+
     @PostMapping("/password-reset/request")
     public ResponseEntity<ApiResponse<Void>> requestPasswordReset(@RequestParam String email, Locale locale) {
         userService.requestPasswordReset(email);

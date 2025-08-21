@@ -308,6 +308,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public boolean checkEmailExists(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
     @Transactional
     public void updateUserStatus(Long userId, boolean active) {
         User userToUpdate = userRepository.findById(userId)

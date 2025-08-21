@@ -94,6 +94,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/auth/google", apiPrefix), "POST"), // Google OAuth login
                 Pair.of(String.format("%s/admin/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/files/", apiPrefix), "GET"),
+                Pair.of(String.format("%s/users/check-email", apiPrefix), "GET"),
                 // Thêm các endpoint công khai
                 Pair.of(String.format("%s/houses", apiPrefix), "GET"),
                 Pair.of(String.format("%s/houses/top", apiPrefix), "GET"),
