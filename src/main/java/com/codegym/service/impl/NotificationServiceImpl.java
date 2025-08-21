@@ -298,16 +298,24 @@ public class NotificationServiceImpl implements NotificationService {
                 String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
                 String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
                 
+                // Debug: Kiểm tra messageSource
+                log.info("Debug - safeUserName: {}, safeHouseName: {}", safeUserName, safeHouseName);
+                log.info("Debug - Locale.getDefault(): {}", Locale.getDefault());
+                
                 notificationContent = messageSource.getMessage(
                     "notification.review.medium.rating", 
                     new Object[]{safeUserName, safeHouseName}, 
                     Locale.getDefault()
                 );
+                
+                log.info("Debug - notificationContent after messageSource: {}", notificationContent);
+                
             } catch (Exception e) {
-                log.error("Failed to get message from messageSource: {}", e.getMessage());
+                log.error("Failed to get message from messageSource: {}", e.getMessage(), e);
                 String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
                 String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
                 notificationContent = safeUserName + " đã đánh giá " + safeHouseName + " 3 sao - Dịch vụ bình thường";
+                log.info("Debug - Using fallback notificationContent: {}", notificationContent);
             }
             
             Notification notification = Notification.builder()
