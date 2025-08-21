@@ -78,6 +78,7 @@ public class HostServiceImpl implements HostService {
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());
         dto.setAvatar(user.getAvatarUrl());
+        dto.setAvatarUrl(user.getAvatarUrl());
         dto.setActive(user.isActive());
 
         dto.setNationalId(host.getNationalId());
@@ -102,6 +103,7 @@ public class HostServiceImpl implements HostService {
                 .id(house.getId())
                 .hostId(house.getHost().getId())
                 .hostName(house.getHost().getUsername())
+                .hostAvatar(house.getHost().getAvatarUrl())
                 .title(house.getTitle())
                 .address(house.getAddress())
                 .price(house.getPrice())
@@ -247,8 +249,8 @@ public class HostServiceImpl implements HostService {
         if (dto.getPhone() != null) {
             currentUser.setPhone(dto.getPhone().trim());
         }
-        if (dto.getAvatar() != null && !dto.getAvatar().isBlank()) {
-            currentUser.setAvatarUrl(dto.getAvatar().trim());
+        if (dto.getAvatarUrl() != null && !dto.getAvatarUrl().isBlank()) {
+            currentUser.setAvatarUrl(dto.getAvatarUrl().trim());
         }
         userRepository.save(currentUser);
 

@@ -230,6 +230,7 @@ public class UserServiceImpl implements UserService {
                 .email(currentUser.getEmail())
                 .phone(currentUser.getPhone())
                 .avatar(currentUser.getAvatarUrl())
+                .avatarUrl(currentUser.getAvatarUrl())
                 .nationalId(host.getNationalId())
                 .proofOfOwnershipUrl(host.getProofOfOwnershipUrl())
                 .address(host.getAddress())
