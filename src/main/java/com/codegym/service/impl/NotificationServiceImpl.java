@@ -240,9 +240,53 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public void createReviewOneStarNotification(Long hostId, String userName, String houseName, Long reviewId, Long houseId) {
+    public void createReviewLowRatingNotification(Long hostId, String userName, String houseName, Long reviewId, Long houseId, Integer rating) {
         try {
-            log.info("Creating review one star notification - hostId: {}, userName: {}, houseName: {}, reviewId: {}", 
+            log.info("Creating review low rating notification - hostId: {}, userName: {}, houseName: {}, reviewId: {}, rating: {}", 
+                    hostId, userName, houseName, reviewId, rating);
+            
+            User host = findUserByIdOrThrow(hostId);
+            
+            String notificationContent;
+            try {
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                
+                notificationContent = messageSource.getMessage(
+                    "notification.review.low.rating", 
+                    new Object[]{safeUserName, safeHouseName, rating}, 
+                    Locale.getDefault()
+                );
+            } catch (Exception e) {
+                log.error("Failed to get message from messageSource: {}", e.getMessage());
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                notificationContent = safeUserName + " đã đánh giá " + safeHouseName + " " + rating + " sao - Cần cải thiện dịch vụ";
+            }
+            
+            Notification notification = Notification.builder()
+                    .receiver(host)
+                    .type(Notification.Type.REVIEW_LOW_RATING)
+                    .content(notificationContent)
+                    .isRead(false)
+                    .house(houseRepository.findById(houseId).orElse(null))
+                    .review(reviewRepository.findById(reviewId).orElse(null))
+                    .build();
+            
+            Notification savedNotification = notificationRepository.save(notification);
+            log.info("Created review low rating notification with ID: {} for host {} - user: {}, house: {}, rating: {}", 
+                    savedNotification.getId(), hostId, userName, houseName, rating);
+            
+        } catch (Exception e) {
+            log.error("Failed to create review low rating notification for host {}: {}", hostId, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void createReviewMediumRatingNotification(Long hostId, String userName, String houseName, Long reviewId, Long houseId) {
+        try {
+            log.info("Creating review medium rating notification - hostId: {}, userName: {}, houseName: {}, reviewId: {}", 
                     hostId, userName, houseName, reviewId);
             
             User host = findUserByIdOrThrow(hostId);
@@ -253,7 +297,7 @@ public class NotificationServiceImpl implements NotificationService {
                 String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
                 
                 notificationContent = messageSource.getMessage(
-                    "notification.review.one.star", 
+                    "notification.review.medium.rating", 
                     new Object[]{safeUserName, safeHouseName}, 
                     Locale.getDefault()
                 );
@@ -261,13 +305,12 @@ public class NotificationServiceImpl implements NotificationService {
                 log.error("Failed to get message from messageSource: {}", e.getMessage());
                 String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
                 String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
-                notificationContent = safeUserName + " đã nhận xét " + safeHouseName + " vào ngày " + 
-                    java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+                notificationContent = safeUserName + " đã đánh giá " + safeHouseName + " 3 sao - Dịch vụ bình thường";
             }
             
             Notification notification = Notification.builder()
                     .receiver(host)
-                    .type(Notification.Type.REVIEW_ONE_STAR)
+                    .type(Notification.Type.REVIEW_MEDIUM_RATING)
                     .content(notificationContent)
                     .isRead(false)
                     .house(houseRepository.findById(houseId).orElse(null))
@@ -275,11 +318,55 @@ public class NotificationServiceImpl implements NotificationService {
                     .build();
             
             Notification savedNotification = notificationRepository.save(notification);
-            log.info("Created review one star notification with ID: {} for host {} - user: {}, house: {}", 
+            log.info("Created review medium rating notification with ID: {} for host {} - user: {}, house: {}", 
                     savedNotification.getId(), hostId, userName, houseName);
             
         } catch (Exception e) {
-            log.error("Failed to create review one star notification for host {}: {}", hostId, e.getMessage(), e);
+            log.error("Failed to create review medium rating notification for host {}: {}", hostId, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void createReviewHighRatingNotification(Long hostId, String userName, String houseName, Long reviewId, Long houseId, Integer rating) {
+        try {
+            log.info("Creating review high rating notification - hostId: {}, userName: {}, houseName: {}, reviewId: {}, rating: {}", 
+                    hostId, userName, houseName, reviewId, rating);
+            
+            User host = findUserByIdOrThrow(hostId);
+            
+            String notificationContent;
+            try {
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                
+                notificationContent = messageSource.getMessage(
+                    "notification.review.high.rating", 
+                    new Object[]{safeUserName, safeHouseName, rating}, 
+                    Locale.getDefault()
+                );
+            } catch (Exception e) {
+                log.error("Failed to get message from messageSource: {}", e.getMessage());
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Khách hàng";
+                String safeHouseName = (houseName != null && !houseName.trim().isEmpty()) ? houseName.trim() : "Nhà #" + houseId;
+                notificationContent = safeUserName + " đã đánh giá " + safeHouseName + " " + rating + " sao - Dịch vụ xuất sắc, có khả năng thuê lại!";
+            }
+            
+            Notification notification = Notification.builder()
+                    .receiver(host)
+                    .type(Notification.Type.REVIEW_HIGH_RATING)
+                    .content(notificationContent)
+                    .isRead(false)
+                    .house(houseRepository.findById(houseId).orElse(null))
+                    .review(reviewRepository.findById(reviewId).orElse(null))
+                    .build();
+            
+            Notification savedNotification = notificationRepository.save(notification);
+            log.info("Created review high rating notification with ID: {} for host {} - user: {}, house: {}, rating: {}", 
+                    savedNotification.getId(), hostId, userName, houseName, rating);
+            
+        } catch (Exception e) {
+            log.error("Failed to create review high rating notification for host {}: {}", hostId, e.getMessage(), e);
         }
     }
 

@@ -175,20 +175,41 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review savedReview = reviewRepository.save(review);
         
-        // Tạo thông báo cho host khi có đánh giá 1 sao
-        if (request.getRating() == 1) {
-            try {
-                notificationService.createReviewOneStarNotification(
+        // Tạo thông báo cho host dựa trên mức đánh giá
+        try {
+            if (request.getRating() <= 2) {
+                // Đánh giá 1-2 sao: Nhà bị đánh giá tệ
+                notificationService.createReviewLowRatingNotification(
+                    house.getHost().getId(),
+                    reviewer.getFullName(),
+                    house.getTitle(),
+                    savedReview.getId(),
+                    house.getId(),
+                    request.getRating()
+                );
+            } else if (request.getRating() == 3) {
+                // Đánh giá 3 sao: Nhà được đánh giá bình thường
+                notificationService.createReviewMediumRatingNotification(
                     house.getHost().getId(),
                     reviewer.getFullName(),
                     house.getTitle(),
                     savedReview.getId(),
                     house.getId()
                 );
-            } catch (Exception e) {
-                // Log lỗi nhưng không throw để tránh rollback transaction chính
-                System.err.println("Failed to create review one star notification: " + e.getMessage());
+            } else if (request.getRating() >= 4) {
+                // Đánh giá 4-5 sao: Nhà được đánh giá cao, có khả năng thuê lại
+                notificationService.createReviewHighRatingNotification(
+                    house.getHost().getId(),
+                    reviewer.getFullName(),
+                    house.getTitle(),
+                    savedReview.getId(),
+                    house.getId(),
+                    request.getRating()
+                );
             }
+        } catch (Exception e) {
+            // Log lỗi nhưng không throw để tránh rollback transaction chính
+            System.err.println("Failed to create review notification: " + e.getMessage());
         }
         
         return toDTO(savedReview);
@@ -205,7 +226,46 @@ public class ReviewServiceImpl implements ReviewService {
         review.setRating(reviewDTO.getRating());
         review.setComment(reviewDTO.getComment());
 
-        return toDTO(reviewRepository.save(review));
+        Review savedReview = reviewRepository.save(review);
+        
+        // Tạo thông báo cho host dựa trên mức đánh giá khi cập nhật
+        try {
+            if (reviewDTO.getRating() <= 2) {
+                // Đánh giá 1-2 sao: Nhà bị đánh giá tệ
+                notificationService.createReviewLowRatingNotification(
+                    review.getHouse().getHost().getId(),
+                    review.getReviewer().getFullName(),
+                    review.getHouse().getTitle(),
+                    savedReview.getId(),
+                    review.getHouse().getId(),
+                    reviewDTO.getRating()
+                );
+            } else if (reviewDTO.getRating() == 3) {
+                // Đánh giá 3 sao: Nhà được đánh giá bình thường
+                notificationService.createReviewMediumRatingNotification(
+                    review.getHouse().getHost().getId(),
+                    review.getReviewer().getFullName(),
+                    review.getHouse().getTitle(),
+                    savedReview.getId(),
+                    review.getHouse().getId()
+                );
+            } else if (reviewDTO.getRating() >= 4) {
+                // Đánh giá 4-5 sao: Nhà được đánh giá cao, có khả năng thuê lại
+                notificationService.createReviewHighRatingNotification(
+                    review.getHouse().getHost().getId(),
+                    review.getReviewer().getFullName(),
+                    review.getHouse().getTitle(),
+                    savedReview.getId(),
+                    review.getHouse().getId(),
+                    reviewDTO.getRating()
+                );
+            }
+        } catch (Exception e) {
+            // Log lỗi nhưng không throw để tránh rollback transaction chính
+            System.err.println("Failed to create review update notification: " + e.getMessage());
+        }
+
+        return toDTO(savedReview);
     }
 
     @Override

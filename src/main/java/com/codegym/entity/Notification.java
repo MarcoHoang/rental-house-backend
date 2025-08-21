@@ -48,7 +48,9 @@ public class Notification extends BaseEntity {
         RENTAL_REJECTED,     // Thông báo cho user khi yêu cầu bị từ chối
         RENTAL_CANCELED,     // Thông báo cho host khi khách hủy thuê
         RENTAL_BOOKED,       // Thông báo cho host khi khách đặt thuê thành công
-        REVIEW_ONE_STAR,     // Thông báo cho host khi có đánh giá 1 sao
+        REVIEW_LOW_RATING,   // Thông báo cho host khi có đánh giá 1-2 sao
+        REVIEW_MEDIUM_RATING, // Thông báo cho host khi có đánh giá 3 sao
+        REVIEW_HIGH_RATING,  // Thông báo cho host khi có đánh giá 4-5 sao
         HOUSE_DELETED,       // Thông báo cho host khi nhà bị xóa
         GENERAL             // Thông báo chung
     }
