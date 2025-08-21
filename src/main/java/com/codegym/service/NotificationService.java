@@ -24,6 +24,18 @@ public interface NotificationService {
     // Thông báo khi khách hủy thuê nhà
     void createRentalCanceledNotification(Long hostId, String userName, String houseName, Long rentalId, Long houseId);
     
-    // Thông báo khi có đánh giá 1 sao
-    void createReviewOneStarNotification(Long hostId, String userName, String houseName, Long reviewId, Long houseId);
+    // Thông báo khi có đánh giá 1-2 sao (đánh giá tệ)
+    void createReviewLowRatingNotification(Long hostId, String userName, String houseName, Long reviewId, Long houseId, Integer rating);
+    
+    // Thông báo khi có đánh giá 3 sao (đánh giá bình thường)
+    void createReviewMediumRatingNotification(Long hostId, String userName, String houseName, Long reviewId, Long houseId);
+    
+    // Thông báo khi có đánh giá 4-5 sao (đánh giá cao)
+    void createReviewHighRatingNotification(Long hostId, String userName, String houseName, Long reviewId, Long houseId, Integer rating);
+    
+    // Thông báo khi đơn xin làm host được duyệt
+    void createHostRequestApprovedNotification(Long userId, String userName);
+    
+    // Thông báo khi đơn xin làm host bị từ chối
+    void createHostRequestRejectedNotification(Long userId, String userName, String reason);
 }
