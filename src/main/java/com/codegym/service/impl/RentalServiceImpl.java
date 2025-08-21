@@ -16,6 +16,7 @@ import com.codegym.service.RentalService;
 import com.codegym.service.NotificationService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.HashMap;
@@ -38,6 +40,7 @@ public class RentalServiceImpl implements RentalService {
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationService notificationService;
+    private final MessageSource messageSource;
 
     private User findUserByIdOrThrow(Long userId) {
         return userRepository.findById(userId)
@@ -336,7 +339,10 @@ public class RentalServiceImpl implements RentalService {
     private void createNotificationForHost(User host, Rental rental) {
         Notification notification = Notification.builder()
                 .receiver(host)
-                .content("Bạn có một đơn thuê mới từ " + rental.getRenter().getFullName() + " cho nhà " + rental.getHouse().getTitle())
+                .content(messageSource.getMessage("notification.rental.request", 
+                    new Object[]{rental.getRenter().getFullName(), rental.getHouse().getTitle()}, 
+                    "Bạn có một đơn thuê mới từ " + rental.getRenter().getFullName() + " cho nhà " + rental.getHouse().getTitle(), 
+                    Locale.getDefault()))
                 .type(Notification.Type.RENTAL_REQUEST)
                 .rental(rental)
                 .build();
@@ -436,7 +442,10 @@ public class RentalServiceImpl implements RentalService {
             savedRental.getRenter(), 
             savedRental, 
             Notification.Type.RENTAL_APPROVED,
-            "Yêu cầu thuê nhà của bạn đã được chấp nhận bởi " + savedRental.getHouse().getHost().getFullName()
+            messageSource.getMessage("notification.rental.approved", 
+                new Object[]{savedRental.getHouse().getTitle()}, 
+                "Yêu cầu thuê nhà của bạn đã được chấp nhận", 
+                Locale.getDefault())
         );
 
         // Tạo thông báo cho host khi khách đặt thuê thành công
@@ -484,7 +493,10 @@ public class RentalServiceImpl implements RentalService {
             savedRental.getRenter(), 
             savedRental, 
             Notification.Type.RENTAL_REJECTED,
-            "Yêu cầu thuê nhà của bạn đã bị từ chối. Lý do: " + reason
+            messageSource.getMessage("notification.rental.rejected", 
+                new Object[]{savedRental.getHouse().getTitle(), reason}, 
+                "Yêu cầu thuê nhà của bạn đã bị từ chối. Lý do: " + reason, 
+                Locale.getDefault())
         );
 
         return convertToDTO(savedRental);

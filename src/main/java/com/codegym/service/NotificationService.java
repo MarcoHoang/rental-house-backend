@@ -32,4 +32,10 @@ public interface NotificationService {
     
     // Thông báo khi có đánh giá 4-5 sao (đánh giá cao)
     void createReviewHighRatingNotification(Long hostId, String userName, String houseName, Long reviewId, Long houseId, Integer rating);
+    
+    // Thông báo khi đơn xin làm host được duyệt
+    void createHostRequestApprovedNotification(Long userId, String userName);
+    
+    // Thông báo khi đơn xin làm host bị từ chối
+    void createHostRequestRejectedNotification(Long userId, String userName, String reason);
 }

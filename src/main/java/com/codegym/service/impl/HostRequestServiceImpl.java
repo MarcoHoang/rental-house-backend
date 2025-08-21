@@ -9,8 +9,10 @@ import com.codegym.repository.HostRequestRepository;
 import com.codegym.repository.RoleRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.HostRequestService;
+import com.codegym.service.NotificationService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,6 +33,7 @@ public class HostRequestServiceImpl implements HostRequestService {
     private final HostRepository hostRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional(readOnly = true)
@@ -146,6 +150,17 @@ public class HostRequestServiceImpl implements HostRequestService {
             hostRepository.save(newHost);
         }
 
+        // Tạo thông báo cho user khi đơn xin làm host được duyệt
+        try {
+            notificationService.createHostRequestApprovedNotification(
+                user.getId(),
+                user.getFullName()
+            );
+        } catch (Exception e) {
+            // Log lỗi nhưng không throw để tránh rollback transaction chính
+            System.err.println("Failed to create host request approved notification: " + e.getMessage());
+        }
+
         return mapToDTO(request);
     }
 
@@ -162,7 +177,21 @@ public class HostRequestServiceImpl implements HostRequestService {
         request.setReason(reason);
         request.setProcessedDate(LocalDateTime.now());
 
-        return mapToDTO(hostRequestRepository.save(request));
+        HostRequest savedRequest = hostRequestRepository.save(request);
+
+        // Tạo thông báo cho user khi đơn xin làm host bị từ chối
+        try {
+            notificationService.createHostRequestRejectedNotification(
+                savedRequest.getUser().getId(),
+                savedRequest.getUser().getFullName(),
+                reason
+            );
+        } catch (Exception e) {
+            // Log lỗi nhưng không throw để tránh rollback transaction chính
+            System.err.println("Failed to create host request rejected notification: " + e.getMessage());
+        }
+
+        return mapToDTO(savedRequest);
     }
 
     private HostRequest findRequestByIdOrThrow(Long id) {

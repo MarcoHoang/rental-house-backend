@@ -166,7 +166,8 @@ public class NotificationServiceImpl implements NotificationService {
                 
                 notificationContent = messageSource.getMessage(
                     "notification.rental.booked", 
-                    new Object[]{safeUserName, safeHouseName}, 
+                    new Object[]{safeUserName, safeHouseName, 
+                        java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))}, 
                     Locale.getDefault()
                 );
             } catch (Exception e) {
@@ -210,7 +211,8 @@ public class NotificationServiceImpl implements NotificationService {
                 
                 notificationContent = messageSource.getMessage(
                     "notification.rental.canceled", 
-                    new Object[]{safeUserName, safeHouseName}, 
+                    new Object[]{safeUserName, safeHouseName, 
+                        java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))}, 
                     Locale.getDefault()
                 );
             } catch (Exception e) {
@@ -410,6 +412,87 @@ public class NotificationServiceImpl implements NotificationService {
             
         } catch (Exception e) {
             log.error("Failed to create rental request notification for host {}: {}", hostId, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void createHostRequestApprovedNotification(Long userId, String userName) {
+        try {
+            log.info("Creating host request approved notification - userId: {}, userName: {}", userId, userName);
+            
+            User user = findUserByIdOrThrow(userId);
+            
+            String notificationContent;
+            try {
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Bạn";
+                
+                notificationContent = messageSource.getMessage(
+                    "notification.host.request.approved", 
+                    new Object[]{safeUserName}, 
+                    Locale.getDefault()
+                );
+            } catch (Exception e) {
+                log.error("Failed to get message from messageSource: {}", e.getMessage());
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "Bạn";
+                notificationContent = "Chúc mừng " + safeUserName + "! Đơn xin làm chủ nhà của bạn đã được duyệt";
+            }
+            
+            Notification notification = Notification.builder()
+                    .receiver(user)
+                    .type(Notification.Type.HOST_REQUEST_APPROVED)
+                    .content(notificationContent)
+                    .isRead(false)
+                    .build();
+            
+            Notification savedNotification = notificationRepository.save(notification);
+            log.info("Created host request approved notification with ID: {} for user {} - {}", 
+                    savedNotification.getId(), userId, userName);
+            
+        } catch (Exception e) {
+            log.error("Failed to create host request approved notification for user {}: {}", userId, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void createHostRequestRejectedNotification(Long userId, String userName, String reason) {
+        try {
+            log.info("Creating host request rejected notification - userId: {}, userName: {}, reason: {}", 
+                    userId, userName, reason);
+            
+            User user = findUserByIdOrThrow(userId);
+            
+            String notificationContent;
+            try {
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "bạn";
+                String safeReason = (reason != null && !reason.trim().isEmpty()) ? reason.trim() : "Không có lý do cụ thể";
+                
+                notificationContent = messageSource.getMessage(
+                    "notification.host.request.rejected", 
+                    new Object[]{safeUserName, safeReason}, 
+                    Locale.getDefault()
+                );
+            } catch (Exception e) {
+                log.error("Failed to get message from messageSource: {}", e.getMessage());
+                String safeUserName = (userName != null && !userName.trim().isEmpty()) ? userName.trim() : "bạn";
+                String safeReason = (reason != null && !reason.trim().isEmpty()) ? reason.trim() : "Không có lý do cụ thể";
+                notificationContent = "Đơn xin làm chủ nhà của " + safeUserName + " đã bị từ chối. Lý do: " + safeReason;
+            }
+            
+            Notification notification = Notification.builder()
+                    .receiver(user)
+                    .type(Notification.Type.HOST_REQUEST_REJECTED)
+                    .content(notificationContent)
+                    .isRead(false)
+                    .build();
+            
+            Notification savedNotification = notificationRepository.save(notification);
+            log.info("Created host request rejected notification with ID: {} for user {} - {}, reason: {}", 
+                    savedNotification.getId(), userId, userName, reason);
+            
+        } catch (Exception e) {
+            log.error("Failed to create host request rejected notification for user {}: {}", userId, e.getMessage(), e);
         }
     }
 
