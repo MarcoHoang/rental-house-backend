@@ -28,7 +28,7 @@ public class HouseAdminController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<HouseDTO>>> getAllHouses(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "8") int size,
             @RequestParam(defaultValue = "createdAt,desc") String[] sort,
             Locale locale) {
 
