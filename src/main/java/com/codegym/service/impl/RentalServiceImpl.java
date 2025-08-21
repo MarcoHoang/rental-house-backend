@@ -360,7 +360,7 @@ public class RentalServiceImpl implements RentalService {
             throw new AppException(StatusCode.CANNOT_RENT_OWN_HOUSE);
         }
 
-        LocalDateTime minimumStartTime = LocalDateTime.now().plusDays(1);
+        LocalDateTime minimumStartTime = LocalDateTime.now().plusHours(2);
         if (request.getStartDate().isBefore(minimumStartTime)) {
             throw new AppException(StatusCode.INVALID_START_DATE);
         }
