@@ -15,6 +15,7 @@ public class HostDTO {
     private String email;
     private String phone;
     private String avatar;
+    private String avatarUrl;
     private String nationalId;
     private String proofOfOwnershipUrl;
     private String address;
