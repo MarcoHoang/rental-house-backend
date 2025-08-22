@@ -140,6 +140,16 @@ public class AuthService {
             // Save user if it's new or updated
             user = userRepository.save(user);
             
+            // Kiểm tra trạng thái active của user (giống như trong method login)
+            log.info("Google login attempt for user: {} (email: {}), active status: {}, isEnabled: {}", 
+                    user.getId(), user.getEmail(), user.isActive(), user.isEnabled());
+
+            if (!user.isEnabled()) {
+                log.warn("Google login blocked for user: {} (email: {}) - Account is locked", 
+                        user.getId(), user.getEmail());
+                throw new AppException(StatusCode.ACCOUNT_LOCKED);
+            }
+            
             // Generate JWT token
             String token = jwtTokenUtil.generateToken(user);
             UserDTO userDTO = userMapper.toResponse(user);
@@ -151,6 +161,10 @@ public class AuthService {
                     .user(userDTO)
                     .build();
                     
+        } catch (AppException e) {
+            // Nếu đã là AppException (như ACCOUNT_LOCKED), giữ nguyên
+            log.error("Error during Google login", e);
+            throw e;
         } catch (Exception e) {
             log.error("Error during Google login", e);
             throw new AppException(StatusCode.INVALID_CREDENTIALS);

@@ -41,7 +41,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleAppException(AppException ex, WebRequest request) {
         StatusCode statusCode = ex.getStatusCode();
         String message = messageUtil.getMessage(statusCode.getMessageKey(), ex.getArgs());
-        HttpStatus httpStatus = isConflictError(statusCode) ? HttpStatus.CONFLICT : HttpStatus.BAD_REQUEST;
+        HttpStatus httpStatus = getHttpStatusForStatusCode(statusCode);
         return buildErrorResponse(message, statusCode, httpStatus, request);
     }
 
@@ -93,6 +93,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError errorDetails = new ApiError(message, extractPath(request));
         ApiResponse<Object> response = new ApiResponse<>(statusCode.getCode(), message, errorDetails);
         return new ResponseEntity<>(response, httpStatus);
+    }
+
+    private HttpStatus getHttpStatusForStatusCode(StatusCode statusCode) {
+        // Xử lý các trường hợp đặc biệt
+        if (statusCode == StatusCode.ACCOUNT_LOCKED) {
+            return HttpStatus.FORBIDDEN; // 403 - Forbidden
+        }
+        if (statusCode == StatusCode.UNAUTHORIZED) {
+            return HttpStatus.UNAUTHORIZED; // 401 - Unauthorized
+        }
+        if (statusCode == StatusCode.INVALID_CREDENTIALS) {
+            return HttpStatus.UNAUTHORIZED; // 401 - Unauthorized
+        }
+        
+        // Xử lý các lỗi conflict
+        if (isConflictError(statusCode)) {
+            return HttpStatus.CONFLICT; // 409 - Conflict
+        }
+        
+        // Mặc định là BAD_REQUEST
+        return HttpStatus.BAD_REQUEST; // 400 - Bad Request
     }
 
     private boolean isConflictError(StatusCode statusCode) {
