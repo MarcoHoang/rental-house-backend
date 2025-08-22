@@ -48,7 +48,7 @@ jwt:
 file:
   upload:
     path: ${FILE_UPLOAD_PATH:uploads/}
-    allowed-types: jpg,jpeg,png,gif,webp,pdf
+    allowed-types: jpg,jpeg,png,pdf
     max-size: 10485760 # 10MB in bytes
     avatar:
       width: 200

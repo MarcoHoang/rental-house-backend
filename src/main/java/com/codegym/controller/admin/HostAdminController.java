@@ -131,7 +131,7 @@ public class HostAdminController {
     @PatchMapping("/hosts/user/{userId}/status") // <-- Dùng userId
     public ResponseEntity<ApiResponse<Void>> updateHostStatus(
             @PathVariable Long userId, // <-- Dùng userId
-            @RequestBody UserAdminController.StatusUpdateRequest request,
+            @RequestBody StatusUpdateRequest request,
             Locale locale
     ) {
         if (request.isActive()) {
@@ -140,6 +140,14 @@ public class HostAdminController {
             hostService.lockHostByUserId(userId); // <-- Gọi phương thức mới
         }
         return ResponseEntity.ok(ApiResponse.success(StatusCode.UPDATED_SUCCESS, messageSource, locale));
+    }
+
+    /**
+     * Lớp DTO nội bộ để nhận request body.
+     */
+    @lombok.Data
+    static class StatusUpdateRequest {
+        private boolean active;
     }
 
 }

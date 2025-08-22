@@ -23,10 +23,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
 
     @Value("${api.prefix}")
     private String apiPrefix;
@@ -60,6 +64,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
                 if (jwtTokenUtil.validateToken(token, userDetails)) {
+                    // Kiểm tra thêm xem user có bị khóa không
+                    if (!userDetails.isEnabled()) {
+                        logger.warn("User account is locked: {}", email);
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account is locked");
+                        return;
+                    }
+
                     Claims claims = jwtTokenUtil.extractClaims(token);
                     String role = claims.get("role", String.class);
 

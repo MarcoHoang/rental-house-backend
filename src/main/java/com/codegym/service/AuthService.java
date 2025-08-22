@@ -44,8 +44,12 @@ public class AuthService {
             throw new AppException(StatusCode.INVALID_CREDENTIALS);
         }
 
+        log.info("Login attempt for user: {} (email: {}), active status: {}, isEnabled: {}", 
+                user.getId(), user.getEmail(), user.isActive(), user.isEnabled());
 
         if (!user.isEnabled()) {
+            log.warn("Login blocked for user: {} (email: {}) - Account is locked", 
+                    user.getId(), user.getEmail());
             throw new AppException(StatusCode.ACCOUNT_LOCKED);
         }
 

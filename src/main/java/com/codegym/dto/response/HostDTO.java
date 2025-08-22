@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class HostDTO {
-    private Long id;
+    private Long id; // hostId
+    private Long userId; // userId
     private String fullName;
     private String username;
     private String email;
