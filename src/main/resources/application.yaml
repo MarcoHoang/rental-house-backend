@@ -11,12 +11,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-      show-sql: true
+      show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
-        use_sql_comments: true
+        format_sql: false
+        use_sql_comments: false
 
   servlet:
     multipart:
@@ -65,21 +65,21 @@ file:
 
 logging:
   level:
-    root: INFO
-    com.codegym: DEBUG
-    org.springframework.security: INFO
-    org.springframework.security.web: INFO
-    org.springframework.security.authentication: INFO
-    org.springframework.security.oauth2: INFO
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    root: WARN
+    com.codegym: INFO
+    org.springframework.security: WARN
+    org.springframework.security.web: WARN
+    org.springframework.security.authentication: WARN
+    org.springframework.security.oauth2: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{HH:mm:ss} %-5level %logger{20} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   file:
     name: logs/rental-house.log
-    max-size: 10MB
-    max-history: 30
+    max-size: 5MB
+    max-history: 7
 
 # Google API Configuration
 google:

@@ -18,6 +18,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.HashMap;
+import org.springframework.security.core.context.SecurityContextHolder;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/houses")
@@ -99,7 +102,8 @@ public class HouseController {
         return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<ApiResponse<Void>> deleteHouse(@PathVariable Long id, Locale locale) {
         houseService.deleteHouse(id);
         return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
@@ -158,5 +162,22 @@ public class HouseController {
     public ResponseEntity<ApiResponse<String>> getGeocodingCacheStats(Locale locale) {
         String stats = geocodingService.getCacheStats();
         return ResponseEntity.ok(ApiResponse.success(stats, StatusCode.SUCCESS, messageSource, locale));
+    }
+
+    /**
+     * Test endpoint để kiểm tra thông tin user hiện tại
+     */
+    @GetMapping("/test-current-user")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> testCurrentUser(Locale locale) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("email", currentUsername);
+        userInfo.put("authenticated", SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
+        userInfo.put("authorities", SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .map(Object::toString)
+                .collect(Collectors.toList()));
+        
+        return ResponseEntity.ok(ApiResponse.success(userInfo, StatusCode.SUCCESS, messageSource, locale));
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class HouseAdminController {
     private final MessageSource messageSource;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<HouseDTO>>> getAllHouses(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size,
@@ -48,6 +50,7 @@ public class HouseAdminController {
      * Tìm kiếm nhà theo từ khóa và bộ lọc
      */
     @GetMapping("/search")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<HouseDTO>>> searchHouses(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String status,
@@ -60,12 +63,14 @@ public class HouseAdminController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<HouseDTO>> getHouseById(@PathVariable Long id, Locale locale) {
         HouseDTO house = houseService.getHouseById(id);
         return ResponseEntity.ok(ApiResponse.success(house, StatusCode.SUCCESS, messageSource, locale));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteHouse(@PathVariable Long id, Locale locale) {
         houseService.deleteHouse(id);
         return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
