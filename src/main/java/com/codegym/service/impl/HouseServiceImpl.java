@@ -17,6 +17,7 @@ import com.codegym.repository.NotificationRepository;
 import com.codegym.repository.FavoriteRepository;
 import com.codegym.service.HouseService;
 import com.codegym.service.NotificationService;
+import com.codegym.service.HouseStatusSchedulerService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,7 @@ public class HouseServiceImpl implements HouseService {
     private final FavoriteRepository favoriteRepository;
     private final GeocodingService geocodingService;
     private final NotificationService notificationService;
+    private final HouseStatusSchedulerService houseStatusSchedulerService;
 
     private House findHouseByIdOrThrow(Long id) {
         return houseRepository.findById(id)
@@ -58,6 +60,10 @@ public class HouseServiceImpl implements HouseService {
     }
 
     private HouseDTO toDTO(House house) {
+        // Tính toán trạng thái hiển thị dựa trên điều kiện thời gian
+        String displayStatus = houseStatusSchedulerService.calculateDisplayStatus(house);
+        House.Status status = House.Status.valueOf(displayStatus);
+        
         return HouseDTO.builder()
                 .id(house.getId())
                 .hostId(house.getHost() != null ? house.getHost().getId() : null)
@@ -71,7 +77,7 @@ public class HouseServiceImpl implements HouseService {
                 .area(house.getArea())
                 .latitude(house.getLatitude())
                 .longitude(house.getLongitude())
-                .status(house.getStatus())
+                .status(status) // Sử dụng trạng thái hiển thị đã tính toán
                 .houseType(house.getHouseType())
                 .imageUrls(house.getImages() != null
                         ? house.getImages().stream().map(HouseImage::getImageUrl).collect(Collectors.toList())

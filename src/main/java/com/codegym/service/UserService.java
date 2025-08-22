@@ -24,9 +24,13 @@ public interface UserService {
 
     UserDTO updateProfile(Long id, UserDTO dto);
 
-    void resetPassword(String token, String newPassword);
+    void resetPassword(String otp, String newPassword);
 
     void requestPasswordReset(String email);
+
+    boolean verifyOtp(String otp);
+
+    boolean checkEmailExists(String email);
 
     void updateUserStatus(Long userId, boolean active);
 

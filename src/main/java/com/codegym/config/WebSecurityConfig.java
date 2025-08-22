@@ -51,6 +51,7 @@ public class WebSecurityConfig {
                                         String.format("%s/auth/google", apiPrefix), // Google OAuth login
                                         String.format("%s/admin/login", apiPrefix), // Admin login
                                         String.format("%s/users/password-reset/**", apiPrefix),
+                                        String.format("%s/users/check-email", apiPrefix), // Check email exis
                                         String.format("%s/houses", apiPrefix),
                                         String.format("%s/houses/*", apiPrefix),
                                         String.format("%s/houses/top", apiPrefix),
@@ -81,7 +82,7 @@ public class WebSecurityConfig {
 //                         Quản trị viên (ROLE_ADMIN)
                                 .requestMatchers(
                                         String.format("%s/users", apiPrefix),
-                                        String.format("%s/users/*", apiPrefix),
+                                        String.format("%s/users/{id:[0-9]+}", apiPrefix), // Chỉ match với ID số
                                         String.format("%s/renters", apiPrefix),
                                         String.format("%s/renters/*", apiPrefix),
                                         String.format("%s/renter-requests", apiPrefix),

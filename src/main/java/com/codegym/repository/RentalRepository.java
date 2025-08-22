@@ -96,4 +96,7 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
     org.springframework.data.domain.Page<Rental> findByStatusAndHouseType(@Param("status") Rental.Status status,
                                                                          @Param("houseType") com.codegym.entity.House.HouseType houseType,
                                                                          org.springframework.data.domain.Pageable pageable);
+
+    // Method for HouseStatusSchedulerService
+    List<Rental> findByStatusAndStartDateLessThanEqual(Rental.Status status, LocalDateTime startDate);
 }

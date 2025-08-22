@@ -8,7 +8,7 @@ import com.codegym.dto.response.HostDTO;
 import com.codegym.entity.*;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
-import com.codegym.repository.PasswordResetTokenRepository;
+import com.codegym.repository.PasswordResetOtpRepository;
 import com.codegym.repository.RentalRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.EmailService;
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final PasswordResetOtpRepository passwordResetOtpRepository;
     private final EmailService emailService;
     private final RentalRepository rentalRepository;
 
@@ -251,31 +251,33 @@ public class UserServiceImpl implements UserService {
 
         User user = userOpt.get();
 
-        passwordResetTokenRepository.deleteByUser(user);
+        // Xóa OTP cũ nếu có
+        passwordResetOtpRepository.deleteByUser(user);
 
-        String token = UUID.randomUUID().toString();
-        PasswordResetToken resetToken = new PasswordResetToken();
-        resetToken.setToken(token);
-        resetToken.setUser(user);
-        resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
-        passwordResetTokenRepository.save(resetToken);
+        // Tạo OTP 6 số
+        String otp = String.format("%06d", new Random().nextInt(1000000));
+        PasswordResetOtp resetOtp = new PasswordResetOtp();
+        resetOtp.setOtp(otp);
+        resetOtp.setUser(user);
+        resetOtp.setExpiryDate(LocalDateTime.now().plusMinutes(5)); // OTP hết hạn sau 5 phút
+        passwordResetOtpRepository.save(resetOtp);
 
-        emailService.sendResetPasswordEmail(email, token);
+        emailService.sendResetPasswordEmail(email, otp);
     }
 
 
     @Override
     @Transactional
-    public void resetPassword(String token, String newPassword) {
-        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+    public void resetPassword(String otp, String newPassword) {
+        PasswordResetOtp resetOtp = passwordResetOtpRepository.findByOtp(otp)
                 .orElseThrow(() -> new AppException(StatusCode.TOKEN_INVALID));
 
-        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            passwordResetTokenRepository.delete(resetToken);
+        if (resetOtp.getExpiryDate().isBefore(LocalDateTime.now())) {
+            passwordResetOtpRepository.delete(resetOtp);
             throw new AppException(StatusCode.TOKEN_INVALID);
         }
 
-        User user = resetToken.getUser();
+        User user = resetOtp.getUser();
 
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
             throw new AppException(StatusCode.DUPLICATE_OLD_PASSWORD);
@@ -283,7 +285,32 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        passwordResetTokenRepository.delete(resetToken);
+        passwordResetOtpRepository.delete(resetOtp);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean verifyOtp(String otp) {
+        Optional<PasswordResetOtp> otpOpt = passwordResetOtpRepository.findByOtp(otp);
+        
+        if (otpOpt.isEmpty()) {
+            return false;
+        }
+
+        PasswordResetOtp resetOtp = otpOpt.get();
+        
+        if (resetOtp.getExpiryDate().isBefore(LocalDateTime.now())) {
+            passwordResetOtpRepository.delete(resetOtp);
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean checkEmailExists(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 
     @Override
