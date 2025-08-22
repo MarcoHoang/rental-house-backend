@@ -93,4 +93,9 @@ public class User extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return active;
     }
+    
+    // Thêm method để debug
+    public boolean isActive() {
+        return active;
+    }
 }

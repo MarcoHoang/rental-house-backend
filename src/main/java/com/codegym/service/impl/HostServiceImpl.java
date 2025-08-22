@@ -18,6 +18,7 @@ import com.codegym.service.HostService;
 import com.codegym.service.UserService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HostServiceImpl implements HostService {
 
     private final HostRepository hostRepository;
@@ -41,9 +43,16 @@ public class HostServiceImpl implements HostService {
     private final UserService userService;
 
     private Host findHostByUserIdOrThrow(Long userId) {
-        User user = findUserByIdOrThrow(userId);
-        return hostRepository.findByUser(user)
+        Host host = hostRepository.findByUser(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, userId));
+        
+        // Đảm bảo user data được load
+        if (host.getUser() == null) {
+            log.warn("Host found but user data is null for userId: {}", userId);
+            throw new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, userId);
+        }
+        
+        return host;
     }
 
     private User getCurrentAuthenticatedUser() {
@@ -53,8 +62,16 @@ public class HostServiceImpl implements HostService {
     }
 
     private Host findHostByIdOrThrow(Long id) {
-        return hostRepository.findById(id)
+        Host host = hostRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, id));
+        
+        // Đảm bảo user data được load
+        if (host.getUser() == null) {
+            log.warn("Host found but user data is null for hostId: {}", id);
+            throw new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, id);
+        }
+        
+        return host;
     }
 
     private User findUserByIdOrThrow(Long id) {
@@ -70,8 +87,9 @@ public class HostServiceImpl implements HostService {
 
         HostDTO dto = new HostDTO();
 
-
-        dto.setId(user.getId());
+        // Set hostId và userId
+        dto.setId(host.getId()); // hostId
+        dto.setUserId(user.getId()); // userId
 
         dto.setFullName(user.getFullName());
         dto.setUsername(user.getUsername());
@@ -143,17 +161,21 @@ public class HostServiceImpl implements HostService {
     @Override
     @Transactional
     public HostDTO createHost(HostDTO dto) {
-        User user = findUserByIdOrThrow(dto.getId());
+        // Khi tạo host, dto.getUserId() sẽ là userId của user muốn trở thành host
+        User user = findUserByIdOrThrow(dto.getUserId());
 
-        if (hostRepository.existsById(dto.getId())) {
+        // Kiểm tra xem user đã là host chưa
+        if (hostRepository.findByUser(user.getId()).isPresent()) {
             throw new AppException(StatusCode.USER_ALREADY_HOST);
         }
 
         Host host = new Host();
-        host.setId(user.getId());
+        host.setUser(user);
         updateEntityFromDTO(host, dto, user);
 
         Host savedHost = hostRepository.save(host);
+        log.info("Created host with hostId: {} for user: {} (email: {})", 
+                savedHost.getId(), user.getId(), user.getEmail());
         return toDTO(savedHost);
     }
 
@@ -176,19 +198,27 @@ public class HostServiceImpl implements HostService {
     @Override
     @Transactional
     public void lockHostByUserId(Long userId) {
+        log.info("Locking host with userId: {}", userId);
         Host host = findHostByUserIdOrThrow(userId);
         User userToUpdate = host.getUser();
+        log.info("Found user: {} (email: {}), current active status: {}", 
+                userToUpdate.getId(), userToUpdate.getEmail(), userToUpdate.isActive());
         userToUpdate.setActive(false);
-        userRepository.save(userToUpdate);
+        User savedUser = userRepository.save(userToUpdate);
+        log.info("User locked successfully. New active status: {}", savedUser.isActive());
     }
 
     @Override
     @Transactional
     public void unlockHostByUserId(Long userId) {
+        log.info("Unlocking host with userId: {}", userId);
         Host host = findHostByUserIdOrThrow(userId);
         User userToUpdate = host.getUser();
+        log.info("Found user: {} (email: {}), current active status: {}", 
+                userToUpdate.getId(), userToUpdate.getEmail(), userToUpdate.isActive());
         userToUpdate.setActive(true);
-        userRepository.save(userToUpdate);
+        User savedUser = userRepository.save(userToUpdate);
+        log.info("User unlocked successfully. New active status: {}", savedUser.isActive());
     }
 
 
@@ -227,7 +257,7 @@ public class HostServiceImpl implements HostService {
     @Transactional(readOnly = true)
     public HostDTO getCurrentHostDetails() {
         User currentUser = getCurrentAuthenticatedUser();
-        Host host = hostRepository.findByUser(currentUser)
+        Host host = hostRepository.findByUser(currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, currentUser.getId()));
 
         return toDTO(host);
@@ -238,7 +268,7 @@ public class HostServiceImpl implements HostService {
     public HostDTO updateCurrentHostProfile(HostDTO dto) {
         User currentUser = getCurrentAuthenticatedUser();
 
-        Host hostToUpdate = hostRepository.findByUserId(currentUser.getId())
+        Host hostToUpdate = hostRepository.findByUser(currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         StatusCode.HOST_NOT_FOUND, currentUser.getId()
                 ));
@@ -262,12 +292,10 @@ public class HostServiceImpl implements HostService {
         }
         hostRepository.save(hostToUpdate);
 
-        Host updatedHost = hostRepository.findById(hostToUpdate.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        StatusCode.HOST_NOT_FOUND, hostToUpdate.getId()
-                ));
+        log.info("Updated host profile - hostId: {}, userId: {}, email: {}", 
+                hostToUpdate.getId(), currentUser.getId(), currentUser.getEmail());
 
-        return toDTO(updatedHost);
+        return toDTO(hostToUpdate);
     }
 
 
@@ -275,7 +303,7 @@ public class HostServiceImpl implements HostService {
     @Transactional(readOnly = true)
     public HostDetailAdminDTO getHostDetailsByUserId(Long userId) {
         User user = findUserByIdOrThrow(userId);
-        Host host = hostRepository.findByUser(user)
+        Host host = hostRepository.findByUser(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.HOST_NOT_FOUND, userId));
 
         List<House> houseEntities = houseRepository.findByHost(user);
@@ -316,13 +344,20 @@ public class HostServiceImpl implements HostService {
     @Override
     @Transactional
     public HostDTO updateHostStatus(Long hostId, boolean active) {
-        // Tìm host theo ID
+        log.info("Updating host status - hostId: {}, active: {}", hostId, active);
+        
+        // Tìm host theo hostId (id của bảng hosts)
         Host host = findHostByIdOrThrow(hostId);
         User user = host.getUser();
         
+        log.info("Found host: {} with user: {} (email: {}), current active status: {}", 
+                hostId, user.getId(), user.getEmail(), user.isActive());
+        
         // Cập nhật trạng thái active của user
         user.setActive(active);
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        
+        log.info("User status updated successfully. New active status: {}", savedUser.isActive());
         
         // Trả về HostDTO đã cập nhật
         return toDTO(host);
