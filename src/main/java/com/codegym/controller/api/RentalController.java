@@ -131,6 +131,12 @@ public class RentalController {
         return ResponseEntity.ok(ApiResponse.success(count, StatusCode.SUCCESS, messageSource, locale));
     }
 
+    @GetMapping("/host/me/pending/count")
+    public ResponseEntity<ApiResponse<Long>> getMyPendingRequestsCount(Locale locale) {
+        Long count = rentalService.getCurrentHostPendingRequestsCount();
+        return ResponseEntity.ok(ApiResponse.success(count, StatusCode.SUCCESS, messageSource, locale));
+    }
+
     @GetMapping("/check-availability")
     public ResponseEntity<ApiResponse<Map<String, Object>>> checkAvailability(
             @RequestParam Long houseId,

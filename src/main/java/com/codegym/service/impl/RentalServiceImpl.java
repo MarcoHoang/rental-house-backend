@@ -6,6 +6,7 @@ import com.codegym.entity.House;
 import com.codegym.entity.Rental;
 import com.codegym.entity.User;
 import com.codegym.entity.Notification;
+import com.codegym.entity.RoleName;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
 import com.codegym.repository.HouseRepository;
@@ -554,6 +555,21 @@ public class RentalServiceImpl implements RentalService {
     public Long getHostPendingRequestsCount(Long hostId) {
         findUserByIdOrThrow(hostId);
         return rentalRepository.countPendingRequestsByHost(hostId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getCurrentHostPendingRequestsCount() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
+        
+        // Kiểm tra xem user có phải là host không
+        if (!currentUser.getRole().getName().equals(RoleName.HOST)) {
+            throw new AppException(StatusCode.UNAUTHORIZED, "Người dùng không phải là chủ nhà");
+        }
+        
+        return rentalRepository.countPendingRequestsByHost(currentUser.getId());
     }
 
     @Override

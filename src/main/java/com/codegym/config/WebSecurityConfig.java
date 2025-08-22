@@ -129,7 +129,8 @@ public class WebSecurityConfig {
                                         String.format("%s/rentals/*/approve", apiPrefix), // Approve rental request
                                         String.format("%s/rentals/*/reject", apiPrefix), // Reject rental request
                                         String.format("%s/rentals/host/*/pending", apiPrefix), // Lấy pending requests của host
-                                        String.format("%s/rentals/host/*/pending/count", apiPrefix) // Đếm pending requests
+                                        String.format("%s/rentals/host/*/pending/count", apiPrefix), // Đếm pending requests
+                                        String.format("%s/rentals/host/me/pending/count", apiPrefix) // Đếm pending requests của host hiện tại
                                 ).hasRole("HOST")
 
                                 // Endpoint cho phép cả ADMIN và HOST truy cập
