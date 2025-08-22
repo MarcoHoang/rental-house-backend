@@ -137,15 +137,23 @@ public class HouseServiceImpl implements HouseService {
     @Transactional
     public HouseDTO createHouse(HouseRequest request) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("Creating house - Current user email: {}", currentUsername);
+        
         User currentUser = userRepository.findByEmail(currentUsername)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
         
+        log.info("Creating house - Current user details - ID: {}, Email: {}, Role: {}", 
+            currentUser.getId(), currentUser.getEmail(), currentUser.getRole().getName());
+        
         if (!currentUser.getRole().getName().equals(RoleName.HOST)) {
+            log.error("User is not a host - Role: {}", currentUser.getRole().getName());
             throw new AppException(StatusCode.FORBIDDEN_ACTION, "Chỉ chủ nhà mới được tạo nhà");
         }
 
         House house = new House();
         updateEntityFromRequest(house, request, currentUser);
+        
+        log.info("House created with host_id: {} (user_id: {})", house.getHost().getId(), currentUser.getId());
 
         // Xử lý geocoding một cách graceful - nếu thất bại thì vẫn cho phép tạo nhà
         if (house.getLatitude() == null || house.getLongitude() == null) {
@@ -178,6 +186,8 @@ public class HouseServiceImpl implements HouseService {
 
         house.setId(null);
         House savedHouse = houseRepository.save(house);
+        
+        log.info("House saved successfully - ID: {}, Host ID: {}", savedHouse.getId(), savedHouse.getHost().getId());
 
         if (request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
             saveHouseImages(savedHouse, request.getImageUrls());
@@ -252,12 +262,13 @@ public class HouseServiceImpl implements HouseService {
             log.info("Found house: {} (title: {})", id, house.getTitle());
 
             String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-            log.info("Current user: {}", currentUsername);
+            log.info("Current user email: {}", currentUsername);
 
             User currentUser = userRepository.findByEmail(currentUsername)
                     .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentUsername));
 
-            log.info("Current user role: {}", currentUser.getRole().getName());
+            log.info("Current user details - ID: {}, Email: {}, Role: {}", 
+                currentUser.getId(), currentUser.getEmail(), currentUser.getRole().getName());
 
             // Lưu thông tin nhà trước khi xóa để tạo notification
             Long hostId = house.getHost().getId();
@@ -266,7 +277,10 @@ public class HouseServiceImpl implements HouseService {
 
             // Debug logging chi tiết
             log.info("House details - ID: {}, Title: '{}', Host ID: {}", id, houseTitle, hostId);
-            log.info("House title is null: {}, empty: {}", houseTitle == null, houseTitle != null && houseTitle.trim().isEmpty());
+            log.info("House host details - ID: {}, Email: {}, FullName: {}", 
+                house.getHost().getId(), house.getHost().getEmail(), house.getHost().getFullName());
+            log.info("Current user vs House host - CurrentUserID: {}, HouseHostID: {}, Match: {}", 
+                currentUser.getId(), hostId, currentUser.getId().equals(hostId));
 
             // Đảm bảo houseTitle có giá trị
             if (houseTitle == null || houseTitle.trim().isEmpty()) {
@@ -277,18 +291,29 @@ public class HouseServiceImpl implements HouseService {
             log.info("Final house title for notification: '{}'", houseTitle);
 
             if (isAdminDeleting) {
+                log.info("Admin is deleting house - bypassing ownership check");
                 if (house.getStatus() == House.Status.RENTED) {
-                    throw new AppException(StatusCode.FORBIDDEN_ACTION, "Không thể xóa nhà đang được thuê");
+                    throw new AppException(StatusCode.FORBIDDEN_ACTION, "Không thể xóa nhà do đã có người đặt thuê trước");
                 }
             }
             else if (currentUser.getRole().getName().equals(RoleName.HOST)) {
+                log.info("Host is trying to delete house - checking ownership");
+                log.info("Checking host ownership - House host ID: {}, Current user ID: {}", 
+                    house.getHost().getId(), currentUser.getId());
+                log.info("House host email: {}, Current user email: {}", 
+                    house.getHost().getEmail(), currentUser.getEmail());
+                
                 if (!house.getHost().getId().equals(currentUser.getId())) {
+                    log.error("Host ownership mismatch - House host ID: {}, Current user ID: {}", 
+                        house.getHost().getId(), currentUser.getId());
                     throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn không có quyền xóa nhà này");
                 }
+                log.info("Host ownership verified - proceeding with deletion");
                 if (house.getStatus() == House.Status.RENTED) {
-                    throw new AppException(StatusCode.FORBIDDEN_ACTION, "Không thể xóa nhà đang được thuê");
+                    throw new AppException(StatusCode.FORBIDDEN_ACTION, "Không thể xóa nhà do đã có người đặt thuê trước");
                 }
             } else {
+                log.error("User has no permission to delete house - Role: {}", currentUser.getRole().getName());
                 throw new AppException(StatusCode.FORBIDDEN_ACTION, "Bạn không có quyền xóa nhà");
             }
 

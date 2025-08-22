@@ -106,6 +106,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         if (statusCode == StatusCode.INVALID_CREDENTIALS) {
             return HttpStatus.UNAUTHORIZED; // 401 - Unauthorized
         }
+        if (statusCode == StatusCode.FORBIDDEN_ACTION) {
+            return HttpStatus.FORBIDDEN; // 403 - Forbidden
+        }
+        if (statusCode == StatusCode.ACCESS_DENIED) {
+            return HttpStatus.FORBIDDEN; // 403 - Forbidden
+        }
         
         // Xử lý các lỗi conflict
         if (isConflictError(statusCode)) {
