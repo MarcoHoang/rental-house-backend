@@ -15,5 +15,7 @@ public class NotificationDTO {
     private Notification.Type type;
     private String content;
     private Boolean isRead;
+    private Long houseId;
+    private Long reviewId;
     private LocalDateTime createdAt;
 }

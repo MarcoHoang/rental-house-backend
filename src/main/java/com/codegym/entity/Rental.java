@@ -38,12 +38,42 @@ public class Rental extends BaseEntity {
 
     private Double totalPrice;
 
+    @Column(name = "guest_count")
+    private Integer guestCount;
+
+    @Column(name = "message_to_host", length = 1000)
+    private String messageToHost;
+
+    @Column(name = "reject_reason", length = 500)
+    private String rejectReason;
+
+    @Column(name = "cancel_reason", length = 500)
+    private String cancelReason;
+
+    @Column(name = "canceled_at")
+    private LocalDateTime canceledAt;
+
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approved_by")
+    private User approvedBy;
+
+    @Column(name = "rejected_at")
+    private LocalDateTime rejectedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rejected_by")
+    private User rejectedBy;
+
     public enum Status {
-        SCHEDULED,
-        PENDING,
-        APPROVED,
-        CHECKED_IN,
-        CHECKED_OUT,
-        CANCELED
+        PENDING,      // Chờ host duyệt
+        APPROVED,     // Host đã đồng ý
+        REJECTED,     // Host từ chối
+        SCHEDULED,    // Đã confirm (sau khi approved)
+        CHECKED_IN,   // Đã nhận phòng
+        CHECKED_OUT,  // Đã trả phòng
+        CANCELED      // Đã hủy
     }
 }

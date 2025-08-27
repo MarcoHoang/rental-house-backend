@@ -19,7 +19,6 @@ public class UserDetailAdminDTO {
     private LocalDate birthDate;
     private String address;
 
-    // Thông tin bổ sung
-    private Double totalSpent; // <-- ĐÃ SỬA: từ BigDecimal sang Double
+    private Double totalSpent;
     private List<RentalHistoryDTO> rentalHistory;
 }

@@ -88,6 +88,12 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
     }
 
+    @GetMapping("/check-email")
+    public ResponseEntity<ApiResponse<Boolean>> checkEmailExists(@RequestParam String email, Locale locale) {
+        boolean exists = userService.checkEmailExists(email);
+        return ResponseEntity.ok(ApiResponse.success(exists, StatusCode.SUCCESS, messageSource, locale));
+    }
+
     @PostMapping("/password-reset/request")
     public ResponseEntity<ApiResponse<Void>> requestPasswordReset(@RequestParam String email, Locale locale) {
         userService.requestPasswordReset(email);
@@ -95,9 +101,15 @@ public class UserController {
                 ApiResponse.success(StatusCode.SEND_SUCCESS, messageSource, locale));
     }
 
+    @PostMapping("/password-reset/verify")
+    public ResponseEntity<ApiResponse<Boolean>> verifyOtp(@RequestParam String otp, Locale locale) {
+        boolean isValid = userService.verifyOtp(otp);
+        return ResponseEntity.ok(ApiResponse.success(isValid, StatusCode.SUCCESS, messageSource, locale));
+    }
+
     @PostMapping("/password-reset/confirm")
-    public ResponseEntity<ApiResponse<Void>> resetPassword(@RequestParam String token, @RequestParam String newPassword, Locale locale) {
-        userService.resetPassword(token, newPassword);
+    public ResponseEntity<ApiResponse<Void>> resetPassword(@RequestParam String otp, @RequestParam String newPassword, Locale locale) {
+        userService.resetPassword(otp, newPassword);
         return ResponseEntity.ok(ApiResponse.success(StatusCode.PASSWORD_CHANGED, messageSource, locale));
     }
 

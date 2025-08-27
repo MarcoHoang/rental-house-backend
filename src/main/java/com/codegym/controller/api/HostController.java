@@ -1,10 +1,13 @@
 package com.codegym.controller.api;
 
 import com.codegym.dto.ApiResponse;
+import com.codegym.dto.request.ChangePasswordRequest;
 import com.codegym.dto.response.HostDTO;
+import com.codegym.dto.response.HostStatisticsDTO;
 import com.codegym.dto.response.HouseDTO;
 import com.codegym.dto.response.RentalDTO;
 import com.codegym.service.HostService;
+import com.codegym.service.HostStatisticsService;
 import com.codegym.service.RentalService;
 import com.codegym.utils.StatusCode;
 import jakarta.validation.Valid;
@@ -25,12 +28,12 @@ public class HostController {
 
     private final HostService hostService;
     private final RentalService rentalService;
+    private final HostStatisticsService hostStatisticsService;
     private final MessageSource messageSource;
 
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<HostDTO>> getHostById(@PathVariable Long id, Locale locale) {
-        // Việc kiểm tra người dùng có quyền xem hay không sẽ được xử lý trong service
         HostDTO dto = hostService.getHostById(id);
         return ResponseEntity.ok(ApiResponse.success(dto, StatusCode.SUCCESS, messageSource, locale));
     }
@@ -49,7 +52,6 @@ public class HostController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<HostDTO>> updateHost(@PathVariable Long id, @RequestBody @Valid HostDTO dto, Locale locale) {
-        // Việc kiểm tra người dùng có quyền cập nhật hay không sẽ được xử lý trong service
         HostDTO updated = hostService.updateHost(id, dto);
         return ResponseEntity.ok(ApiResponse.success(updated, StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
@@ -58,18 +60,6 @@ public class HostController {
     public ResponseEntity<ApiResponse<Void>> deleteHost(@PathVariable Long id, Locale locale) {
         hostService.deleteHost(id);
         return ResponseEntity.ok(ApiResponse.success(StatusCode.DELETED_SUCCESS, messageSource, locale));
-    }
-
-    @PostMapping("/{id}/lock")
-    public ResponseEntity<ApiResponse<Void>> lockHost(@PathVariable Long id, Locale locale) {
-        hostService.lockHost(id);
-        return ResponseEntity.ok(ApiResponse.success(StatusCode.UPDATED_SUCCESS, messageSource, locale));
-    }
-
-    @PostMapping("/{id}/unlock")
-    public ResponseEntity<ApiResponse<Void>> unlockHost(@PathVariable Long id, Locale locale) {
-        hostService.unlockHost(id);
-        return ResponseEntity.ok(ApiResponse.success(StatusCode.UPDATED_SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/{id}/houses")
@@ -88,5 +78,61 @@ public class HostController {
     public ResponseEntity<ApiResponse<Map<String, Double>>> getHostIncome(@PathVariable Long id, Locale locale) {
         Map<String, Double> income = rentalService.getHostIncome(id);
         return ResponseEntity.ok(ApiResponse.success(income, StatusCode.SUCCESS, messageSource, locale));
+    }
+
+    @GetMapping("/my-profile")
+    public ResponseEntity<ApiResponse<HostDTO>> getMyProfile(Locale locale) {
+        HostDTO hostDetails = hostService.getCurrentHostDetails();
+        return ResponseEntity.ok(ApiResponse.success(hostDetails, StatusCode.SUCCESS, messageSource, locale));
+    }
+
+    @PutMapping("/my-profile")
+    public ResponseEntity<ApiResponse<HostDTO>> updateMyProfile(@RequestBody @Valid HostDTO dto, Locale locale) {
+        HostDTO updatedHost = hostService.updateCurrentHostProfile(dto);
+        return ResponseEntity.ok(ApiResponse.success(updatedHost, StatusCode.UPDATED_SUCCESS, messageSource, locale));
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody @Valid ChangePasswordRequest request, Locale locale) {
+        try {
+
+            HostDTO currentHost = hostService.getCurrentHostDetails();
+            
+            hostService.changePassword(currentHost.getId(), request.getOldPassword(), request.getNewPassword(), request.getConfirmPassword());
+            return ResponseEntity.ok(ApiResponse.success(StatusCode.PASSWORD_CHANGED, messageSource, locale));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(StatusCode.VALIDATION_ERROR, messageSource, locale));
+        }
+    }
+
+    @GetMapping("/my-statistics")
+    public ResponseEntity<ApiResponse<HostStatisticsDTO>> getMyStatistics(
+            @RequestParam(defaultValue = "current_month") String period, 
+            Locale locale) {
+        try {
+            System.out.println("HostController.getMyStatistics - Starting with period: " + period);
+            HostStatisticsDTO statistics = hostStatisticsService.getCurrentHostStatistics(period);
+            System.out.println("HostController.getMyStatistics - Statistics retrieved successfully: " + statistics);
+            return ResponseEntity.ok(ApiResponse.success(statistics, StatusCode.SUCCESS, messageSource, locale));
+        } catch (Exception e) {
+            System.err.println("HostController.getMyStatistics - Error occurred: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(ApiResponse.error(StatusCode.VALIDATION_ERROR.getCode(), e.getMessage(), messageSource, locale));
+        }
+    }
+
+    @GetMapping("/{id}/statistics")
+    public ResponseEntity<ApiResponse<HostStatisticsDTO>> getHostStatistics(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "current_month") String period, 
+            Locale locale) {
+        try {
+            HostStatisticsDTO statistics = hostStatisticsService.getHostStatistics(id, period);
+            return ResponseEntity.ok(ApiResponse.success(statistics, StatusCode.SUCCESS, messageSource, locale));
+        } catch (Exception e) {
+            System.err.println("HostController.getHostStatistics - Error occurred: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(ApiResponse.error(StatusCode.VALIDATION_ERROR.getCode(), e.getMessage(), messageSource, locale));
+        }
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,7 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableMethodSecurity
 public class WebSecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
 
@@ -46,30 +48,41 @@ public class WebSecurityConfig {
                                 .requestMatchers(
                                         String.format("%s/auth/register", apiPrefix),
                                         String.format("%s/auth/login", apiPrefix),
+                                        String.format("%s/auth/google", apiPrefix), // Google OAuth login
                                         String.format("%s/admin/login", apiPrefix), // Admin login
                                         String.format("%s/users/password-reset/**", apiPrefix),
+                                        String.format("%s/users/check-email", apiPrefix), // Check email exis
                                         String.format("%s/houses", apiPrefix),
+                                        String.format("%s/houses/*", apiPrefix),
                                         String.format("%s/houses/top", apiPrefix),
-                                        String.format("%s/houses/**", apiPrefix),
+                                        String.format("%s/houses/search", apiPrefix),
+                                        String.format("%s/houses/*/images", apiPrefix),
+                                        String.format("%s/files/uploads/avatar", apiPrefix),
                                         String.format("%s/files/**", apiPrefix) // File access
                                 ).permitAll()
 
-                                // Người dùng (ROLE_USER)
+
+                                // Người dùng (ROLE_USER) - cho phép cả ADMIN và HOST truy cập
                                 .requestMatchers(
                                         String.format("%s/users/*/profile", apiPrefix),
                                         String.format("%s/users/profile", apiPrefix),
                                         String.format("%s/users/*/change-password", apiPrefix),
                                         String.format("%s/rentals", apiPrefix),
                                         String.format("%s/rentals/*", apiPrefix),
+                                        String.format("%s/rentals/request", apiPrefix), // Tạo yêu cầu thuê nhà
+                                        String.format("%s/rentals/check-availability", apiPrefix), // Kiểm tra khả dụng
+                                        String.format("%s/rentals/user/me", apiPrefix), // Lấy rental của user hiện tại
                                         String.format("%s/reviews", apiPrefix),
                                         String.format("%s/notifications", apiPrefix),
-                                        String.format("%s/chat/**", apiPrefix)
-                                ).hasRole("USER")
+                                        String.format("%s/notifications/my-notifications", apiPrefix),
+                                        String.format("%s/chat/**", apiPrefix),
+                                        String.format("%s/favorites/**", apiPrefix)
+                                ).hasAnyRole("USER", "ADMIN", "HOST")
 
 //                         Quản trị viên (ROLE_ADMIN)
                                 .requestMatchers(
                                         String.format("%s/users", apiPrefix),
-                                        String.format("%s/users/*", apiPrefix),
+                                        String.format("%s/users/{id:[0-9]+}", apiPrefix), // Chỉ match với ID số
                                         String.format("%s/renters", apiPrefix),
                                         String.format("%s/renters/*", apiPrefix),
                                         String.format("%s/renter-requests", apiPrefix),
@@ -81,34 +94,54 @@ public class WebSecurityConfig {
 
 
 
-                                // Chủ nhà (ROLE_HOST)
+                                // Chủ nhà (ROLE_HOST) - các endpoint chỉ dành cho HOST
                                 .requestMatchers(
                                         String.format("%s/users/*/change-password", apiPrefix),
+                                        String.format("%s/hosts/change-password", apiPrefix),
+                                        String.format("%s/hosts/change-password", apiPrefix), // PUT /hosts/change-password
                                         String.format("%s/users/is-host", apiPrefix),
                                         String.format("%s/users/host-info", apiPrefix),
                                         String.format("%s/houses/my-houses", apiPrefix),
                                         String.format("%s/hosts/my-stats", apiPrefix),
+                                        String.format("%s/hosts/my-statistics", apiPrefix),
+                                        String.format("%s/hosts/*/statistics", apiPrefix),
+                                        String.format("%s/hosts/*/houses", apiPrefix),
+                                        String.format("%s/hosts/*/rentals", apiPrefix),
+                                        String.format("%s/hosts/*/income", apiPrefix),
+                                        String.format("%s/hosts/*", apiPrefix), // GET /hosts/{id}
+                                        String.format("%s/hosts", apiPrefix), // POST /hosts (create host)
+                                        String.format("%s/hosts/my-profile", apiPrefix),
+                                        String.format("%s/hosts/my-profile/**", apiPrefix),
+                                        String.format("%s/houses/*/edit", apiPrefix), // Sửa nhà của mình
+                                        String.format("%s/houses/*/delete", apiPrefix), // Xóa nhà của mình
+                                        String.format("%s/houses/*/status", apiPrefix), // Thay đổi trạng thái
                                         String.format("%s/renters/*/houses", apiPrefix),
                                         String.format("%s/renters/*/rentals", apiPrefix),
                                         String.format("%s/renters/*/income", apiPrefix),
                                         String.format("%s/reviews/*/hide", apiPrefix),
                                         String.format("%s/house-images", apiPrefix),
-                                        String.format("%s/houses/*/status", apiPrefix),
                                         String.format("%s/renter-requests", apiPrefix),
                                         String.format("%s/notifications", apiPrefix),
                                         String.format("%s/renters/*/checkin", apiPrefix),
                                         String.format("%s/renters/*/checkout", apiPrefix),
-                                        String.format("%s/renters/*/statistics", apiPrefix)
+                                        String.format("%s/renters/*/statistics", apiPrefix),
+                                        // Các endpoint mới cho rental request workflow
+                                        String.format("%s/rentals/*/approve", apiPrefix), // Approve rental request
+                                        String.format("%s/rentals/*/reject", apiPrefix), // Reject rental request
+                                        String.format("%s/rentals/host/*/pending", apiPrefix), // Lấy pending requests của host
+                                        String.format("%s/rentals/host/*/pending/count", apiPrefix), // Đếm pending requests
+                                        String.format("%s/rentals/host/me/pending/count", apiPrefix) // Đếm pending requests của host hiện tại
                                 ).hasRole("HOST")
 
-                                // Các hành động chung cho cả chủ nhà và người dùng
+                                // Endpoint cho phép cả ADMIN và HOST truy cập
                                 .requestMatchers(
-                                        String.format("%s/houses", apiPrefix),
-                                        String.format("%s/houses/*", apiPrefix),
-                                        String.format("%s/houses/*/status", apiPrefix),
-                                        String.format("%s/house-images", apiPrefix),
-                                        String.format("%s/house-images/*", apiPrefix)
-                                ).hasAnyRole("USER", "HOST")
+                                        String.format("%s/reviews/house/*/all", apiPrefix) // Lấy tất cả reviews (bao gồm ẩn) - cho cả HOST và ADMIN
+                                ).hasAnyRole("ADMIN", "HOST")
+
+                                // Admin có thể xóa nhà thông qua endpoint riêng (nếu cần)
+                                // .requestMatchers(
+                                //         String.format("%s/admin/houses/*/delete", apiPrefix)
+                                // ).hasRole("ADMIN")
 
                                 .anyRequest().authenticated()
                 );

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Locale;
 
 @RestController
@@ -32,8 +33,8 @@ public class UserAdminController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<UserDTO>>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id,desc") String[] sort,
+            @RequestParam(defaultValue = "8") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String[] sort,
             Locale locale) {
 
         String sortField = sort[0];
@@ -46,6 +47,20 @@ public class UserAdminController {
         Page<UserDTO> userPage = userService.getAllUsers(pageable);
 
         return ResponseEntity.ok(ApiResponse.success(userPage, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
+    }
+
+    /**
+     * Tìm kiếm người dùng theo từ khóa
+     */
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<UserDTO>>> searchUsers(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) Boolean active,
+            Locale locale) {
+
+        List<UserDTO> users = userService.searchUsers(keyword, role, active);
+        return ResponseEntity.ok(ApiResponse.success(users, StatusCode.GET_LIST_SUCCESS, messageSource, locale));
     }
 
     @GetMapping("/{userId}")

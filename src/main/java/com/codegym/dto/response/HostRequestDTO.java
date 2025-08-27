@@ -17,8 +17,15 @@ public class HostRequestDTO {
     
     private String userEmail;
     private String username;
+    private String fullName;
+    private String phone;
     private String status;
     private String reason;
     private LocalDateTime requestDate;
     private LocalDateTime processedDate;
+    private String nationalId;
+    private String proofOfOwnershipUrl;
+    private String idFrontPhotoUrl;
+    private String idBackPhotoUrl;
+    private String address;
 }

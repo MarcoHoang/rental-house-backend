@@ -44,6 +44,7 @@ public class User extends BaseEntity implements UserDetails {
     private boolean active;
 
     @Column(name = "img")
+    @Builder.Default
     private String avatarUrl = "/images/default-avatar.png";
 
     @Column(name = "full_name")
@@ -90,6 +91,11 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
+        return active;
+    }
+    
+    // Thêm method để debug
+    public boolean isActive() {
         return active;
     }
 }

@@ -9,16 +9,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class HostDTO {
-    private Long id;
+    private Long id; // hostId
+    private Long userId; // userId
     private String fullName;
     private String username;
     private String email;
     private String phone;
     private String avatar;
+    private String avatarUrl;
     private String nationalId;
     private String proofOfOwnershipUrl;
     private String address;
     private LocalDateTime approvedDate;
     private boolean approved;
+    private boolean active;
+
 }
+
 

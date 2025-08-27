@@ -31,6 +31,7 @@ public class House extends BaseEntity {
     @Column(nullable = false)
     private String address;
 
+    // Giá thuê theo ngày (VNĐ/ngày)
     private Double price;
 
     private double area;

@@ -19,23 +19,12 @@ public class ApiResponse<T> {
     private String message;
     private T data;
 
-    /**
-     * Constructor để tạo một response hoàn chỉnh có dữ liệu.
-     * @param code Mã trạng thái (ví dụ: "00", "10")
-     * @param message Thông điệp cuối cùng đã được dịch để hiển thị cho người dùng.
-     * @param data Dữ liệu trả về (có thể là một đối tượng, danh sách, hoặc null).
-     */
     public ApiResponse(String code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
     }
 
-    /**
-     * Constructor để tạo một response không có dữ liệu (ví dụ: xóa thành công).
-     * @param code Mã trạng thái (ví dụ: "00")
-     * @param message Thông điệp cuối cùng đã được dịch để hiển thị cho người dùng.
-     */
     public ApiResponse(String code, String message) {
         this.code = code;
         this.message = message;
@@ -46,10 +35,16 @@ public class ApiResponse<T> {
         return new ApiResponse<>(statusCode.getCode(), message, data);
     }
 
-    /**
-     * Factory method để tạo response thành công KHÔNG CÓ DỮ LIỆU.
-     */
     public static <T> ApiResponse<T> success(StatusCode statusCode, MessageSource messageSource, Locale locale) {
+        String message = messageSource.getMessage(statusCode.getMessageKey(), null, locale);
+        return new ApiResponse<>(statusCode.getCode(), message);
+    }
+
+    public static <T> ApiResponse<T> error(String code, String message, MessageSource messageSource, Locale locale) {
+        return new ApiResponse<>(code, message);
+    }
+
+    public static <T> ApiResponse<T> error(StatusCode statusCode, MessageSource messageSource, Locale locale) {
         String message = messageSource.getMessage(statusCode.getMessageKey(), null, locale);
         return new ApiResponse<>(statusCode.getCode(), message);
     }

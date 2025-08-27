@@ -1,6 +1,7 @@
 package com.codegym.service;
 
 import com.codegym.components.JwtTokenUtil;
+import com.codegym.dto.request.GoogleLoginRequest;
 import com.codegym.dto.request.LoginRequest;
 import com.codegym.dto.request.RegisterRequest;
 import com.codegym.dto.response.LoginResponse;
@@ -21,16 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service for handling user authentication and registration operations.
- * 
- * This service provides methods for user login, admin login, and user registration.
- * It handles password encryption, JWT token generation, and user validation.
- * 
- * @author CodeGym Team
- * @version 1.0
- * @since 2024
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -42,6 +33,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
+    private final GoogleOAuthService googleOAuthService;
 
 
     public LoginResponse login(LoginRequest request) {
@@ -52,8 +44,12 @@ public class AuthService {
             throw new AppException(StatusCode.INVALID_CREDENTIALS);
         }
 
+        log.info("Login attempt for user: {} (email: {}), active status: {}, isEnabled: {}", 
+                user.getId(), user.getEmail(), user.isActive(), user.isEnabled());
 
         if (!user.isEnabled()) {
+            log.warn("Login blocked for user: {} (email: {}) - Account is locked", 
+                    user.getId(), user.getEmail());
             throw new AppException(StatusCode.ACCOUNT_LOCKED);
         }
 
@@ -63,6 +59,7 @@ public class AuthService {
             return LoginResponse.builder()
                     .token(token)
                     .role(user.getRole().getName())
+                    .roleName(user.getRole().getName().name())  // Thêm roleName
                     .user(userDTO)
                     .build();
         } catch (Exception e) {
@@ -71,15 +68,6 @@ public class AuthService {
         }
     }
 
-    /**
-     * Authenticates an admin user with email and password, returning a JWT token.
-     *
-     * This method validates admin credentials and ensures the user has ADMIN role.
-     *
-     * @param request The login request containing email and password
-     * @return LoginResponse containing the JWT token
-     * @throws AppException if credentials are invalid or user is not an admin
-     */
     public LoginResponse adminLogin(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(StatusCode.INVALID_CREDENTIALS));
@@ -98,6 +86,7 @@ public class AuthService {
             return LoginResponse.builder()
                     .token(token)
                     .role(user.getRole().getName())
+                    .roleName(user.getRole().getName().name())  // Thêm roleName
                     .user(userDTO)
                     .build();
         } catch (Exception e) {
@@ -106,17 +95,6 @@ public class AuthService {
         }
     }
 
-    /**
-     * Registers a new user with the provided information.
-     * 
-     * This method validates that the email and phone are unique, creates a new user
-     * with USER role, encrypts the password, and saves the user to the database.
-     * 
-     * @param request The registration request containing user information
-     * @return UserDTO containing the created user's information
-     * @throws AppException if email or phone already exists
-     * @throws ResourceNotFoundException if USER role is not found
-     */
     @Transactional
     public UserDTO register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -136,5 +114,60 @@ public class AuthService {
         log.info("New user registered: {}", savedUser.getEmail());
 
         return userMapper.toResponse(savedUser);
+    }
+
+    @Transactional
+    public LoginResponse googleLogin(GoogleLoginRequest request) {
+        try {
+            // Verify Google token
+            var payload = googleOAuthService.verifyGoogleToken(request);
+            
+            // Find or create user
+            User user = googleOAuthService.findOrCreateUser(payload);
+            
+            // Ensure user has a role (default to USER if not set)
+            if (user.getRole() == null) {
+                Role userRole = roleRepository.findByName(RoleName.USER)
+                        .orElseThrow(() -> new ResourceNotFoundException(StatusCode.ROLE_NOT_FOUND));
+                user.setRole(userRole);
+            }
+            
+            // Encode password if it's not already encoded (for new Google users)
+            if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+            
+            // Save user if it's new or updated
+            user = userRepository.save(user);
+            
+            // Kiểm tra trạng thái active của user (giống như trong method login)
+            log.info("Google login attempt for user: {} (email: {}), active status: {}, isEnabled: {}", 
+                    user.getId(), user.getEmail(), user.isActive(), user.isEnabled());
+
+            if (!user.isEnabled()) {
+                log.warn("Google login blocked for user: {} (email: {}) - Account is locked", 
+                        user.getId(), user.getEmail());
+                throw new AppException(StatusCode.ACCOUNT_LOCKED);
+            }
+            
+            // Generate JWT token
+            String token = jwtTokenUtil.generateToken(user);
+            UserDTO userDTO = userMapper.toResponse(user);
+            
+            return LoginResponse.builder()
+                    .token(token)
+                    .role(user.getRole().getName())
+                    .roleName(user.getRole().getName().name())  // Thêm roleName
+                    .user(userDTO)
+                    .build();
+                    
+        } catch (AppException e) {
+            // Nếu đã là AppException (như ACCOUNT_LOCKED), giữ nguyên
+            log.error("Error during Google login", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Error during Google login", e);
+            throw new AppException(StatusCode.INVALID_CREDENTIALS);
+        }
     }
 }

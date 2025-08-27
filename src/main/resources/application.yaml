@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT}
+  port: 8080
 
 spring:
   datasource:
@@ -11,12 +11,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-      show-sql: true
+      show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
-        use_sql_comments: true
+        format_sql: false
+        use_sql_comments: false
 
   servlet:
     multipart:
@@ -25,16 +25,20 @@ spring:
       enabled: true
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    host: ${EMAIL_HOST:smtp.gmail.com}
+    port: ${EMAIL_PORT:587}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+      mail.smtp.ssl.trust: smtp.gmail.com
 
 api:
   prefix: api
+
+app:
+  base-url: ${APP_BASE_URL:http://localhost}
 
 jwt:
   expiration: 36000
@@ -44,7 +48,7 @@ jwt:
 file:
   upload:
     path: ${FILE_UPLOAD_PATH:uploads/}
-    allowed-types: jpg,jpeg,png,gif,webp,pdf
+    allowed-types: jpg,jpeg,png,pdf
     max-size: 10485760 # 10MB in bytes
     avatar:
       width: 200
@@ -61,18 +65,26 @@ file:
 
 logging:
   level:
-    root: INFO
-    com.codegym: DEBUG
-    org.springframework.security: INFO
-    org.springframework.security.web: INFO
-    org.springframework.security.authentication: INFO
-    org.springframework.security.oauth2: INFO
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    root: WARN
+    com.codegym: INFO
+    org.springframework.security: WARN
+    org.springframework.security.web: WARN
+    org.springframework.security.authentication: WARN
+    org.springframework.security.oauth2: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{HH:mm:ss} %-5level %logger{20} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   file:
     name: logs/rental-house.log
-    max-size: 10MB
-    max-history: 30
+    max-size: 5MB
+    max-history: 7
+
+# Google API Configuration
+google:
+  oauth:
+    client-id: ${GOOGLE_OAUTH_CLIENT_ID:733951522739-l866o9ncig1ipqa5p15j5lod8l605m08.apps.googleusercontent.com}
+  api:
+    key: ${GOOGLE_API_KEY:}
+

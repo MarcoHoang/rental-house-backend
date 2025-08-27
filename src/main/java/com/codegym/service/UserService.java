@@ -24,9 +24,13 @@ public interface UserService {
 
     UserDTO updateProfile(Long id, UserDTO dto);
 
-    void resetPassword(String token, String newPassword);
+    void resetPassword(String otp, String newPassword);
 
     void requestPasswordReset(String email);
+
+    boolean verifyOtp(String otp);
+
+    boolean checkEmailExists(String email);
 
     void updateUserStatus(Long userId, boolean active);
 
@@ -37,5 +41,15 @@ public interface UserService {
     HostDTO getCurrentUserHostInfo();
 
     UserDetailAdminDTO findUserDetailById(Long userId);
+
+    // Dashboard statistics methods
+    long countAllUsers();
+    
+    long countHosts();
+    
+    long countAdmins();
+
+    // Search methods
+    List<UserDTO> searchUsers(String keyword, String role, Boolean active);
 
 }

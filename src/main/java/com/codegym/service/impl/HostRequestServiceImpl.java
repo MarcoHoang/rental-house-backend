@@ -9,8 +9,10 @@ import com.codegym.repository.HostRequestRepository;
 import com.codegym.repository.RoleRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.HostRequestService;
+import com.codegym.service.NotificationService;
 import com.codegym.utils.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +33,7 @@ public class HostRequestServiceImpl implements HostRequestService {
     private final HostRepository hostRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional(readOnly = true)
@@ -60,36 +65,55 @@ public class HostRequestServiceImpl implements HostRequestService {
         
         return hostRequestRepository.findByUserId(currentUser.getId())
                 .map(this::mapToDTO)
-                .orElse(null); // Return null if no request exists
+                .orElse(null);
     }
 
     @Override
     @Transactional
     public HostRequestDTO createRequest(HostRequestDTO dto) {
-        // Validate user exists and is active
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, dto.getUserId()));
 
-        if (!user.isActive()) {
-            throw new AppException(StatusCode.ACCOUNT_LOCKED);
+        if (user.getRole().getName() == RoleName.HOST) {
+            throw new AppException(StatusCode.USER_ALREADY_HOST, "Bạn đã là một chủ nhà.");
         }
 
-        // Check if user is already a host
-        if (hostRepository.existsById(dto.getUserId())) {
-            throw new AppException(StatusCode.USER_ALREADY_HOST);
+        Optional<HostRequest> existingRequestOpt = hostRequestRepository.findByUserId(user.getId());
+
+        HostRequest requestToSave;
+
+        if (existingRequestOpt.isPresent()) {
+            requestToSave = existingRequestOpt.get();
+
+            if (requestToSave.getStatus() == HostRequest.Status.PENDING) {
+                throw new AppException(StatusCode.PENDING_REQUEST_EXISTS, "Bạn đã có một đơn đăng ký đang chờ duyệt.");
+            }
+
+            requestToSave.setStatus(HostRequest.Status.PENDING);
+            requestToSave.setRequestDate(LocalDateTime.now());
+            requestToSave.setProcessedDate(null);
+            requestToSave.setReason(null);
+
+        } else {
+            requestToSave = new HostRequest();
+            requestToSave.setUser(user);
+            requestToSave.setStatus(HostRequest.Status.PENDING);
         }
-
-        // Check if there's already a pending request
-        if (hostRequestRepository.existsByUserIdAndStatus(dto.getUserId(), HostRequest.Status.PENDING)) {
-            throw new AppException(StatusCode.PENDING_REQUEST_EXISTS);
+        requestToSave.setNationalId(dto.getNationalId());
+        requestToSave.setProofOfOwnershipUrl(dto.getProofOfOwnershipUrl());
+        requestToSave.setIdFrontPhotoUrl(dto.getIdFrontPhotoUrl());
+        requestToSave.setIdBackPhotoUrl(dto.getIdBackPhotoUrl());
+        
+        // Cập nhật thông tin user nếu có thay đổi
+        if (dto.getAddress() != null && !dto.getAddress().equals(user.getAddress())) {
+            user.setAddress(dto.getAddress());
+            userRepository.save(user);
         }
-
-        HostRequest entity = new HostRequest();
-        entity.setUser(user);
-        entity.setRequestDate(LocalDateTime.now());
-        entity.setStatus(HostRequest.Status.PENDING);
-
-        HostRequest savedEntity = hostRequestRepository.save(entity);
+        if (dto.getPhone() != null && !dto.getPhone().equals(user.getPhone())) {
+            user.setPhone(dto.getPhone());
+            userRepository.save(user);
+        }
+        HostRequest savedEntity = hostRequestRepository.save(requestToSave);
         return mapToDTO(savedEntity);
     }
 
@@ -108,19 +132,33 @@ public class HostRequestServiceImpl implements HostRequestService {
 
         User user = request.getUser();
         
-        // Update user role to HOST
         Role hostRole = roleRepository.findByName(RoleName.HOST)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.ROLE_NOT_FOUND));
         user.setRole(hostRole);
         userRepository.save(user);
 
-        // Create Host record if not exists
         if (!hostRepository.existsById(user.getId())) {
             Host newHost = new Host();
             newHost.setId(user.getId());
             newHost.setUser(user);
             newHost.setApprovedDate(LocalDateTime.now());
+
+            newHost.setNationalId(request.getNationalId());
+            newHost.setAddress(user.getAddress());
+            newHost.setProofOfOwnershipUrl(request.getProofOfOwnershipUrl());
+
             hostRepository.save(newHost);
+        }
+
+        // Tạo thông báo cho user khi đơn xin làm host được duyệt
+        try {
+            notificationService.createHostRequestApprovedNotification(
+                user.getId(),
+                user.getFullName()
+            );
+        } catch (Exception e) {
+            // Log lỗi nhưng không throw để tránh rollback transaction chính
+            System.err.println("Failed to create host request approved notification: " + e.getMessage());
         }
 
         return mapToDTO(request);
@@ -139,7 +177,21 @@ public class HostRequestServiceImpl implements HostRequestService {
         request.setReason(reason);
         request.setProcessedDate(LocalDateTime.now());
 
-        return mapToDTO(hostRequestRepository.save(request));
+        HostRequest savedRequest = hostRequestRepository.save(request);
+
+        // Tạo thông báo cho user khi đơn xin làm host bị từ chối
+        try {
+            notificationService.createHostRequestRejectedNotification(
+                savedRequest.getUser().getId(),
+                savedRequest.getUser().getFullName(),
+                reason
+            );
+        } catch (Exception e) {
+            // Log lỗi nhưng không throw để tránh rollback transaction chính
+            System.err.println("Failed to create host request rejected notification: " + e.getMessage());
+        }
+
+        return mapToDTO(savedRequest);
     }
 
     private HostRequest findRequestByIdOrThrow(Long id) {
@@ -155,10 +207,17 @@ public class HostRequestServiceImpl implements HostRequestService {
                 .userId(user.getId())
                 .userEmail(user.getEmail())
                 .username(user.getUsername())
+                .fullName(user.getFullName())
+                .phone(user.getPhone())
                 .status(entity.getStatus().name())
                 .reason(entity.getReason())
-                .requestDate(entity.getRequestDate())
+                .requestDate(entity.getRequestDate() != null ? entity.getRequestDate() : LocalDateTime.now())
                 .processedDate(entity.getProcessedDate())
+                .nationalId(entity.getNationalId())
+                .proofOfOwnershipUrl(entity.getProofOfOwnershipUrl())
+                .idFrontPhotoUrl(entity.getIdFrontPhotoUrl())
+                .idBackPhotoUrl(entity.getIdBackPhotoUrl())
+                .address(user.getAddress())
                 .build();
     }
 
@@ -169,5 +228,29 @@ public class HostRequestServiceImpl implements HostRequestService {
                 .map(this::mapToDTO)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.REQUEST_NOT_FOUND, id));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<HostRequestDTO> searchRequests(String keyword, String status, Pageable pageable) {
+        HostRequest.Status statusEnum = null;
+        if (status != null && !status.isEmpty() && !status.equals("ALL")) {
+            try {
+                statusEnum = HostRequest.Status.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Nếu status không hợp lệ, tìm tất cả
+            }
+        }
+
+        Page<HostRequest> requests;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            requests = hostRequestRepository.findByKeywordAndStatus(keyword.trim(), statusEnum, pageable);
+        } else {
+            requests = hostRequestRepository.findByStatusOnly(statusEnum, pageable);
+        }
+
+        return requests.map(this::mapToDTO);
+    }
+
 }
+
 

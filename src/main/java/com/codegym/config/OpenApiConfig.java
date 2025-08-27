@@ -14,16 +14,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-/**
- * Configuration class for OpenAPI/Swagger documentation.
- * 
- * This class configures the API documentation with proper security schemes,
- * server information, and metadata about the Rental House API.
- * 
- * @author CodeGym Team
- * @version 1.0
- * @since 2024
- */
 @Configuration
 public class OpenApiConfig {
 
@@ -83,6 +73,7 @@ public class OpenApiConfig {
                 .description("Enter JWT token in the format: Bearer <token>");
     }
 }
+
 
 
 

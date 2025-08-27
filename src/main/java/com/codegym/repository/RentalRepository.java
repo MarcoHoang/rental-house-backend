@@ -1,6 +1,7 @@
 package com.codegym.repository;
 
 import com.codegym.entity.Rental;
+import com.codegym.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,9 +40,63 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
 
     List<Rental> findByHouse_Host_IdAndStatus(Long hostId, Rental.Status status);
 
+    List<Rental> findByHouse_Host_IdAndStatusIn(Long hostId, List<Rental.Status> statuses);
+
+    List<Rental> findByRenterIdAndStatusIn(Long renterId, List<Rental.Status> statuses);
+
     boolean existsByRenterIdAndHouseIdAndStatus(Long renterId, Long houseId, Rental.Status status);
+
+    @Query("SELECT COUNT(r) FROM Rental r WHERE r.house.host.id = :hostId AND r.status = 'PENDING'")
+    Long countPendingRequestsByHost(@Param("hostId") Long hostId);
 
     @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.renter.id = :renterId")
     Double sumTotalPriceByRenterId(@Param("renterId") Long renterId);
 
+    @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.house.host.id = :hostUserId")
+    Double sumTotalPriceByHost(@Param("hostUserId") Long hostUserId);
+
+    // Dashboard statistics methods
+    long countByStatus(Rental.Status status);
+    
+    @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.status = :status")
+    Double sumTotalPriceByStatus(@Param("status") Rental.Status status);
+    
+    @Query("SELECT SUM(r.totalPrice) FROM Rental r WHERE r.status = :status AND r.createdAt >= :startDate")
+    Double sumTotalPriceByStatusAndDateAfter(@Param("status") Rental.Status status, @Param("startDate") LocalDateTime startDate);
+    
+    List<Rental> findTop5ByOrderByCreatedAtDesc();
+
+    // Host statistics methods
+    @Query("SELECT r FROM Rental r " +
+           "WHERE r.house.host.id = :hostId " +
+           "AND DATE(r.startDate) >= :startDate " +
+           "AND DATE(r.startDate) <= :endDate " +
+           "AND r.status IN ('APPROVED', 'SCHEDULED', 'CHECKED_IN', 'CHECKED_OUT') " +
+           "ORDER BY r.startDate DESC")
+    List<Rental> findByHouseHostIdAndDateRange(@Param("hostId") Long hostId,
+                                              @Param("startDate") java.time.LocalDate startDate,
+                                              @Param("endDate") java.time.LocalDate endDate);
+
+    // Admin search methods
+    @Query("SELECT r FROM Rental r WHERE " +
+           "(:keyword IS NULL OR LOWER(r.house.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(r.renter.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(r.house.address) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(r.renter.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+           "AND (:status IS NULL OR r.status = :status) " +
+           "AND (:houseType IS NULL OR r.house.houseType = :houseType)")
+    org.springframework.data.domain.Page<Rental> findByKeywordAndStatusAndHouseType(@Param("keyword") String keyword,
+                                                                                    @Param("status") Rental.Status status,
+                                                                                    @Param("houseType") com.codegym.entity.House.HouseType houseType,
+                                                                                    org.springframework.data.domain.Pageable pageable);
+
+    @Query("SELECT r FROM Rental r WHERE " +
+           "(:status IS NULL OR r.status = :status) " +
+           "AND (:houseType IS NULL OR r.house.houseType = :houseType)")
+    org.springframework.data.domain.Page<Rental> findByStatusAndHouseType(@Param("status") Rental.Status status,
+                                                                         @Param("houseType") com.codegym.entity.House.HouseType houseType,
+                                                                         org.springframework.data.domain.Pageable pageable);
+
+    // Method for HouseStatusSchedulerService
+    List<Rental> findByStatusAndStartDateLessThanEqual(Rental.Status status, LocalDateTime startDate);
 }

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class RentalHistoryDTO {
     private Long houseId;
     private String houseName;
-    private LocalDate checkinDate;  // Vẫn dùng LocalDate để hiển thị gọn gàng
-    private LocalDate checkoutDate; // Vẫn dùng LocalDate
-    private Double price;           // <-- ĐÃ SỬA: từ BigDecimal sang Double
+    private LocalDate checkinDate;
+    private LocalDate checkoutDate;
+    private Double price;
 }

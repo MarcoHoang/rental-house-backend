@@ -8,7 +8,7 @@ import com.codegym.dto.response.HostDTO;
 import com.codegym.entity.*;
 import com.codegym.exception.AppException;
 import com.codegym.exception.ResourceNotFoundException;
-import com.codegym.repository.PasswordResetTokenRepository;
+import com.codegym.repository.PasswordResetOtpRepository;
 import com.codegym.repository.RentalRepository;
 import com.codegym.repository.UserRepository;
 import com.codegym.service.EmailService;
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final PasswordResetOtpRepository passwordResetOtpRepository;
     private final EmailService emailService;
     private final RentalRepository rentalRepository;
 
@@ -230,6 +230,7 @@ public class UserServiceImpl implements UserService {
                 .email(currentUser.getEmail())
                 .phone(currentUser.getPhone())
                 .avatar(currentUser.getAvatarUrl())
+                .avatarUrl(currentUser.getAvatarUrl())
                 .nationalId(host.getNationalId())
                 .proofOfOwnershipUrl(host.getProofOfOwnershipUrl())
                 .address(host.getAddress())
@@ -250,31 +251,33 @@ public class UserServiceImpl implements UserService {
 
         User user = userOpt.get();
 
-        passwordResetTokenRepository.deleteByUser(user);
+        // Xóa OTP cũ nếu có
+        passwordResetOtpRepository.deleteByUser(user);
 
-        String token = UUID.randomUUID().toString();
-        PasswordResetToken resetToken = new PasswordResetToken();
-        resetToken.setToken(token);
-        resetToken.setUser(user);
-        resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
-        passwordResetTokenRepository.save(resetToken);
+        // Tạo OTP 6 số
+        String otp = String.format("%06d", new Random().nextInt(1000000));
+        PasswordResetOtp resetOtp = new PasswordResetOtp();
+        resetOtp.setOtp(otp);
+        resetOtp.setUser(user);
+        resetOtp.setExpiryDate(LocalDateTime.now().plusMinutes(5)); // OTP hết hạn sau 5 phút
+        passwordResetOtpRepository.save(resetOtp);
 
-        emailService.sendResetPasswordEmail(email, token);
+        emailService.sendResetPasswordEmail(email, otp);
     }
 
 
     @Override
     @Transactional
-    public void resetPassword(String token, String newPassword) {
-        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+    public void resetPassword(String otp, String newPassword) {
+        PasswordResetOtp resetOtp = passwordResetOtpRepository.findByOtp(otp)
                 .orElseThrow(() -> new AppException(StatusCode.TOKEN_INVALID));
 
-        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            passwordResetTokenRepository.delete(resetToken);
+        if (resetOtp.getExpiryDate().isBefore(LocalDateTime.now())) {
+            passwordResetOtpRepository.delete(resetOtp);
             throw new AppException(StatusCode.TOKEN_INVALID);
         }
 
-        User user = resetToken.getUser();
+        User user = resetOtp.getUser();
 
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
             throw new AppException(StatusCode.DUPLICATE_OLD_PASSWORD);
@@ -282,7 +285,32 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        passwordResetTokenRepository.delete(resetToken);
+        passwordResetOtpRepository.delete(resetOtp);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean verifyOtp(String otp) {
+        Optional<PasswordResetOtp> otpOpt = passwordResetOtpRepository.findByOtp(otp);
+        
+        if (otpOpt.isEmpty()) {
+            return false;
+        }
+
+        PasswordResetOtp resetOtp = otpOpt.get();
+        
+        if (resetOtp.getExpiryDate().isBefore(LocalDateTime.now())) {
+            passwordResetOtpRepository.delete(resetOtp);
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean checkEmailExists(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 
     @Override
@@ -291,23 +319,18 @@ public class UserServiceImpl implements UserService {
         User userToUpdate = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, userId));
 
-        // 2. Lấy thông tin admin đang thực hiện hành động (để kiểm tra)
         String currentAdminEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentAdmin = userRepository.findByEmail(currentAdminEmail)
                 .orElseThrow(() -> new ResourceNotFoundException(StatusCode.USER_NOT_FOUND, currentAdminEmail));
 
-        // 3. Quy tắc bảo vệ: Admin không được tự khóa chính mình
         if (userToUpdate.getId().equals(currentAdmin.getId())) {
             throw new AppException(StatusCode.FORBIDDEN_ACTION, "Admin cannot lock their own account.");
         }
 
-        // 4. Quy tắc bảo vệ: Không được phép thay đổi trạng thái của các Admin khác
         if (userToUpdate.getRole().getName().equals(RoleName.ADMIN)) {
             throw new AppException(StatusCode.FORBIDDEN_ACTION, "Cannot change status of another admin account.");
         }
 
-        // 5. Nếu vượt qua tất cả các kiểm tra, thực hiện thay đổi
-        //    Quy tắc này sẽ áp dụng đúng cho cả USER và HOST
         userToUpdate.setActive(active);
         userRepository.save(userToUpdate);
     }
@@ -315,19 +338,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserDetailAdminDTO findUserDetailById(Long userId) {
-        // 1. Tìm user
         User user = findUserByIdOrThrow(userId);
 
-        // 2. Lấy lịch sử thuê nhà bằng phương thức có sẵn
         List<Rental> rentalRecords = rentalRepository.findByRenterIdOrderByStartDateDesc(user.getId());
 
-        // 3. Tính tổng số tiền đã chi tiêu bằng phương thức mới thêm vào
         Double totalSpent = rentalRepository.sumTotalPriceByRenterId(user.getId());
         if (totalSpent == null) {
             totalSpent = 0.0;
         }
 
-        // 4. Chuyển đổi danh sách Rental sang DTO (giữ nguyên logic này)
         List<RentalHistoryDTO> rentalHistory;
         if (rentalRecords != null && !rentalRecords.isEmpty()) {
             rentalHistory = rentalRecords.stream()
@@ -343,7 +362,6 @@ public class UserServiceImpl implements UserService {
             rentalHistory = Collections.emptyList();
         }
 
-        // 5. Xây dựng và trả về DTO chi tiết (giữ nguyên logic này)
         return UserDetailAdminDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -357,6 +375,44 @@ public class UserServiceImpl implements UserService {
                 .totalSpent(totalSpent)
                 .rentalHistory(rentalHistory)
                 .build();
+    }
+
+    // Dashboard statistics methods
+    @Override
+    @Transactional(readOnly = true)
+    public long countAllUsers() {
+        return userRepository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countHosts() {
+        return userRepository.countByRoleName(RoleName.HOST);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countAdmins() {
+        return userRepository.countByRoleName(RoleName.ADMIN);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserDTO> searchUsers(String keyword, String role, Boolean active) {
+        List<User> users;
+        
+        // Nếu có keyword, tìm kiếm theo keyword
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String searchTerm = keyword.trim().toLowerCase();
+            users = userRepository.findByKeywordAndFilters(searchTerm, role, active);
+        } else {
+            // Nếu không có keyword, chỉ filter theo role và active
+            users = userRepository.findByFilters(role, active);
+        }
+        
+        return users.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
 }

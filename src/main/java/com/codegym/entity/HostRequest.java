@@ -25,6 +25,18 @@ public class HostRequest {
     @Column(nullable = false)
     private Status status;
 
+    @Column(name = "national_id")
+    private String nationalId;
+
+    @Column(name = "proof_of_ownership_url")
+    private String proofOfOwnershipUrl;
+
+    @Column(name = "id_front_photo_url")
+    private String idFrontPhotoUrl;
+
+    @Column(name = "id_back_photo_url")
+    private String idBackPhotoUrl;
+
     private String reason;
 
     private LocalDateTime requestDate;
@@ -41,4 +53,5 @@ public class HostRequest {
         this.requestDate = LocalDateTime.now();
     }
 }
+
 

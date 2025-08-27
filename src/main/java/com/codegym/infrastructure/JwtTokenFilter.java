@@ -23,10 +23,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
 
     @Value("${api.prefix}")
     private String apiPrefix;
@@ -60,6 +64,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
                 if (jwtTokenUtil.validateToken(token, userDetails)) {
+                    // Kiểm tra thêm xem user có bị khóa không
+                    if (!userDetails.isEnabled()) {
+                        logger.warn("User account is locked: {}", email);
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account is locked");
+                        return;
+                    }
+
                     Claims claims = jwtTokenUtil.extractClaims(token);
                     String role = claims.get("role", String.class);
 
@@ -91,15 +102,45 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final List<Pair<String, String>> bypassTokens = Arrays.asList(
                 Pair.of(String.format("%s/auth/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/auth/login", apiPrefix), "POST"),
-                Pair.of(String.format("%s/admin/login", apiPrefix), "POST")
+                Pair.of(String.format("%s/auth/google", apiPrefix), "POST"), // Google OAuth login
+                Pair.of(String.format("%s/admin/login", apiPrefix), "POST"),
+                Pair.of(String.format("%s/files/", apiPrefix), "GET"),
+                Pair.of(String.format("%s/users/check-email", apiPrefix), "GET"),
+                // Thêm các endpoint công khai
+                Pair.of(String.format("%s/houses", apiPrefix), "GET"),
+                Pair.of(String.format("%s/houses/top", apiPrefix), "GET"),
+                Pair.of(String.format("%s/houses/search", apiPrefix), "GET")
         );
 
+        String servletPath = request.getServletPath();
+        String method = request.getMethod();
+
         for (Pair<String, String> bypass : bypassTokens) {
-            if (request.getServletPath().contains(bypass.getFirst()) &&
-                    request.getMethod().equalsIgnoreCase(bypass.getSecond())) {
+            if (servletPath.contains(bypass.getFirst()) &&
+                    method.equalsIgnoreCase(bypass.getSecond())) {
+
+                // Đặc biệt xử lý cho /houses để không bypass /houses/my-houses
+                if (bypass.getFirst().contains("/houses") && servletPath.contains("/my-houses")) {
+                    return false;
+                }
+
                 return true;
             }
         }
+
+        // Đặc biệt xử lý cho /houses/{id} - chỉ bypass cho GET request với pattern số
+        if (servletPath.matches(String.format("%s/houses/\\d+", apiPrefix.replace("/", "\\/")))) {
+            if (method.equalsIgnoreCase("GET")) {
+                return true;
+            }
+        }
+
+        // Đặc biệt xử lý cho password-reset endpoints
+        if (servletPath.contains(String.format("%s/users/password-reset", apiPrefix))) {
+            // Cho phép cả GET và POST method cho password-reset
+            return true;
+        }
+
         return false;
     }
 }

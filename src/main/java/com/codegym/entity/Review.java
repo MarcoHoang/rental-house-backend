@@ -31,5 +31,6 @@ public class Review extends BaseEntity {
     private String comment;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean isVisible = true;
 }
