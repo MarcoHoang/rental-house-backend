@@ -107,3 +107,4 @@ Sau khi deploy thành công:
 - Railway có free tier
 - MySQL database có thể tính phí
 - Monitor usage trong dashboard
+

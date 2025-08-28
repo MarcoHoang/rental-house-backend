@@ -48,6 +48,9 @@ README.md
 Dockerfile
 .dockerignore
 docker-compose*.yml
+env.docker
+build-and-deploy.sh
+DOCKER_DEPLOYMENT.md
 
 
 
